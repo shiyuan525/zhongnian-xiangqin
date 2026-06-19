@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安全交友指南 - 中年相亲网</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    /* ===== Page-Specific Styles ===== */
+    :root {
+      --warm-red: #c0392b;
+      --warm-red-light: #e74c3c;
+      --warm-pink: #f8e8e8;
+      --warm-cream: #fef9f4;
+      --warm-gold: #d4a574;
+      --warm-brown: #8b5e3c;
+      --safety-blue: #2c6fce;
+      --safety-blue-light: #e8f0fe;
+      --safety-green: #1a8a4a;
+      --safety-green-light: #e6f7ee;
+      --safety-orange: #e67e22;
+      --safety-orange-light: #fef5ec;
+      --safety-purple: #7b3fa3;
+      --safety-purple-light: #f5edfa;
+      --safety-red: #c0392b;
+      --safety-red-light: #fdeaea;
+    }
+
+    body {
+      background: #f7f5f2;
+    }
+
+    /* ===== Public Header (same as stories) ===== */
+    .pub-header {
+      background: #fff;
+      border-bottom: 3px solid var(--warm-red);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pub-header .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 16px;
+    }
+    .pub-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--warm-red);
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pub-header .logo .icon { font-size: 32px; }
+    .pub-header .main-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pub-header .main-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 16px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .pub-header .main-nav a:hover,
+    .pub-header .main-nav a.active {
+      background: var(--warm-pink);
+      color: var(--warm-red);
+    }
+    .pub-header .auth-btns {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .pub-header .btn-login {
+      padding: 9px 22px;
+      border: 2px solid var(--warm-red);
+      background: transparent;
+      color: var(--warm-red);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .pub-header .btn-login:hover { background: var(--warm-pink); }
+    .pub-header .btn-register {
+      padding: 9px 22px;
+      background: var(--warm-red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .pub-header .btn-register:hover { background: var(--warm-red-light); }
+    .pub-header .user-nav {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .pub-header .user-nav .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--warm-red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .pub-header .user-nav .user-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .pub-header .user-nav .logout-btn {
+      background: none;
+      border: 1px solid #ccc;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* ===== Page Title Area ===== */
+    .page-hero {
+      text-align: center;
+      padding: 48px 24px 12px;
+    }
+    .page-hero h1 {
+      font-size: 36px;
+      color: #333;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    .page-hero .hero-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .page-hero .subtitle {
+      font-size: 18px;
+      color: #666;
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===== Category Tabs ===== */
+    .category-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 24px 24px 12px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .category-tab {
+      padding: 10px 24px;
+      border: 2px solid #ddd;
+      background: #fff;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .category-tab:hover {
+      border-color: var(--safety-blue);
+      color: var(--safety-blue);
+    }
+    .category-tab.active {
+      background: var(--safety-blue);
+      color: #fff;
+      border-color: var(--safety-blue);
+    }
+
+    /* ===== Tips Container ===== */
+    .tips-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+
+    /* ===== Accordion Card ===== */
+    .tip-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+      overflow: hidden;
+      border: 1px solid #e8e8e8;
+      transition: box-shadow 0.2s;
+    }
+    .tip-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .tip-card.open {
+      border-color: #c0d0e0;
+      box-shadow: 0 4px 20px rgba(44,111,206,0.12);
+    }
+    .tip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      cursor: pointer;
+      user-select: none;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+    .tip-header:hover {
+      background: #fafbfc;
+    }
+    .tip-header .tip-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .tip-header .tip-title-area {
+      flex: 1;
+      min-width: 0;
+    }
+    .tip-header .tip-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .tip-header .tip-category-badge {
+      display: inline-block;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .badge-chat { background: var(--safety-blue-light); color: var(--safety-blue); }
+    .badge-meet { background: var(--safety-green-light); color: var(--safety-green); }
+    .badge-privacy { background: var(--safety-purple-light); color: var(--safety-purple); }
+    .badge-scam { background: var(--safety-red-light); color: var(--safety-red); }
+
+    .tip-header .expand-icon {
+      font-size: 20px;
+      color: #999;
+      transition: transform 0.3s;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: center;
+    }
+    .tip-card.open .expand-icon {
+      transform: rotate(180deg);
+      color: var(--safety-blue);
+    }
+
+    .tip-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .tip-card.open .tip-body {
+      max-height: 600px;
+    }
+    .tip-body-inner {
+      padding: 0 24px 22px;
+      font-size: 18px;
+      line-height: 2;
+      color: #444;
+    }
+    .tip-body-inner ul {
+      margin: 8px 0 0;
+      padding-left: 24px;
+    }
+    .tip-body-inner li {
+      margin-bottom: 8px;
+    }
+    .tip-body-inner p {
+      margin: 0 0 10px;
+    }
+
+    /* ===== Emergency Card ===== */
+    .emergency-card {
+      max-width: 900px;
+      margin: 0 auto 40px;
+      padding: 0 24px;
+    }
+    .emergency-card .inner {
+      background: linear-gradient(135deg, #fff5f5 0%, #fff0e6 100%);
+      border: 3px solid var(--safety-red);
+      border-radius: 16px;
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .emergency-card h3 {
+      font-size: 24px;
+      color: var(--safety-red);
+      margin: 0 0 16px;
+    }
+    .emergency-card .phone-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .emergency-card .phone-item {
+      text-align: center;
+    }
+    .emergency-card .phone-label {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .emergency-card .phone-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--safety-red);
+      letter-spacing: 2px;
+    }
+    .emergency-card .note {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+    .emergency-card .report-btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 28px;
+      background: var(--safety-red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* ===== CTA Banner ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, #2c6fce 0%, #4a90d9 50%, #357abd 100%);
+      color: #fff;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .cta-banner h2 {
+      font-size: 28px;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .cta-banner p {
+      font-size: 17px;
+      margin: 0 0 22px;
+      opacity: 0.9;
+    }
+    .cta-banner .cta-btn {
+      display: inline-block;
+      background: #fff;
+      color: var(--safety-blue);
+      padding: 13px 36px;
+      border-radius: 30px;
+      font-size: 19px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+    }
+    .cta-banner .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 24px;
+      color: #999;
+      font-size: 18px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 700px) {
+      .tip-header .tip-title { font-size: 18px; }
+      .tip-body-inner { font-size: 16px; }
+      .emergency-card .phone-numbers { gap: 20px; }
+      .emergency-card .phone-number { font-size: 26px; }
+      .pub-header .inner { flex-wrap: wrap; gap: 10px; }
+      .pub-header .main-nav { order: 3; width: 100%; justify-content: center; }
+      .pub-header .main-nav a { font-size: 14px; padding: 6px 10px; }
+      .category-tab { padding: 8px 16px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Public Header ===== -->
+<header class="pub-header">
+  <div class="inner">
+    <a href="../index.html" class="logo">
+      <span class="icon">💕</span>
+      <span>中年相亲网</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">首页</a>
+      <a href="safety.html" class="active">安全指南</a>
+      <a href="stories.html">成功故事</a>
+    </nav>
+    <div class="auth-btns" id="authBtns">
+      <button class="btn-login" onclick="window.location.href='login.html'">登录</button>
+      <button class="btn-register" onclick="window.location.href='register.html'">免费注册</button>
+    </div>
+    <div class="user-nav" id="userNav">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <span class="user-name" id="userNameDisplay">用户</span>
+      <button class="logout-btn" onclick="doLogout()">退出</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Page Title ===== -->
+<section class="page-hero">
+  <span class="hero-icon">🛡️</span>
+  <h1>安全交友指南</h1>
+  <p class="subtitle">您的安全是我们最关心的事，请花几分钟了解这些重要的安全提示</p>
+</section>
+
+<!-- ===== Category Tabs ===== -->
+<div class="category-tabs" id="categoryTabs">
+  <button class="category-tab active" data-category="all">全部</button>
+  <button class="category-tab" data-category="聊天安全">💬 聊天安全</button>
+  <button class="category-tab" data-category="见面安全">🤝 见面安全</button>
+  <button class="category-tab" data-category="隐私保护">🔒 隐私保护</button>
+  <button class="category-tab" data-category="防骗指南">🚨 防骗指南</button>
+</div>
+
+<!-- ===== Tips Container ===== -->
+<div class="tips-container" id="tipsContainer">
+  <!-- Rendered by JavaScript -->
+</div>
+
+<!-- ===== Emergency Info Card ===== -->
+<div class="emergency-card">
+  <div class="inner">
+    <h3>🚨 紧急联系方式</h3>
+    <div class="phone-numbers">
+      <div class="phone-item">
+        <div class="phone-label">全国反诈中心电话</div>
+        <div class="phone-number">96110</div>
+      </div>
+      <div class="phone-item">
+        <div class="phone-label">报警电话</div>
+        <div class="phone-number">110</div>
+      </div>
+    </div>
+    <p class="note">如果您遇到可疑行为，请立即向我们举报</p>
+    <button class="report-btn" onclick="alert('如需举报，请联系客服或拨打上述电话。平台举报功能即将上线。')">📝 立即举报</button>
+  </div>
+</div>
+
+<!-- ===== CTA Banner ===== -->
+<section class="cta-banner">
+  <h2>安全交友，幸福相伴</h2>
+  <p>在安全的环境中，安心寻找属于您的缘分</p>
+  <a href="register.html" class="cta-btn">免费注册，开始安全交友</a>
+</section>
+
+<!-- ===== Common Scripts ===== -->
+<script src="../js/utils.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/match.js"></script>
+<script src="../data/seed-data.js"></script>
+
+<script>
+(function() {
+
+// ===== Hardcoded Safety Tips =====
+var hardcodedTips = [
+  {
+    id: 1,
+    category: '聊天安全',
+    icon: '💬',
+    title: '不要轻易透露个人信息',
+    content: '在初次交流时，请不要轻易透露您的真实姓名、家庭住址、工作单位等个人敏感信息。建议先使用平台内的聊天系统进行沟通，等建立了一定的信任基础后，再逐步分享更多信息。即使对方看起来很友善，也要给自己留足了解对方的时间。',
+    points: ['使用平台聊天系统，不急于交换私人联系方式', '不要透露具体家庭住址和工作单位', '对方索要身份证号、银行卡号等敏感信息时，立即拒绝']
+  },
+  {
+    id: 2,
+    category: '聊天安全',
+    icon: '⚠️',
+    title: '警惕异常热情的陌生人',
+    content: '如果对方表现得过于热情，或在很短时间内就表达强烈的好感和承诺，请保持警惕。真正的感情需要时间来培养，过于急切的表白往往是骗局的开始。注意观察对方的言行是否前后一致，是否有矛盾之处。',
+    points: ['对快速表白保持警惕——骗子常用"感情轰炸"战术', '留意对方故事中是否有矛盾', '如果对方总是回避视频通话或见面，要提高警惕']
+  },
+  {
+    id: 3,
+    category: '聊天安全',
+    icon: '📵',
+    title: '不要发送私密照片或视频',
+    content: '切勿向网上认识的人发送私密照片、视频或进行视频裸聊。这些内容可能会被对方录屏或截屏，用于敲诈勒索。尤其要注意，一些不法分子会以"谈恋爱"为由诱导您发送私密内容，然后以此为把柄进行诈骗。',
+    points: ['任何情况下都不要发送私密照片或视频', '警惕对方诱导进行视频裸聊', '如果对方要求"证明你的真心"而索要私密照片，一定是骗局']
+  },
+  {
+    id: 4,
+    category: '见面安全',
+    icon: '☕',
+    title: '首次见面选择公共场所',
+    content: '首次见面务必选择人多的公共场所，如咖啡厅、餐厅、公园、商场等。白天见面比晚上更安全。不要在第一次见面时去对方家里，也不要让对方来您家。即使聊得很投缘，也要等多次见面建立了充分信任后再考虑更私密的场合。',
+    points: ['选择咖啡厅、餐厅、公园等白天人多的地方', '不去对方家中或让对方来自己家', '避免去偏远、人少的地方']
+  },
+  {
+    id: 5,
+    category: '见面安全',
+    icon: '📞',
+    title: '告知家人朋友您的行踪',
+    content: '见面之前，请告知至少一位家人或朋友您要去哪里、和谁见面、预计几点回来。可以把对方的平台资料截图发给信任的朋友。见面期间保持手机畅通，可以在约定的时间给朋友发个信息报平安。这是最基本的安全措施。',
+    points: ['告诉至少一位亲友见面地点和时间', '分享对方的平台信息给朋友', '见面中定时报平安']
+  },
+  {
+    id: 6,
+    category: '见面安全',
+    icon: '🚗',
+    title: '不要搭乘对方的车去偏僻地方',
+    content: '首次见面请自行前往见面地点，不要让对方来接您，更不要搭乘对方的车去偏僻或陌生的地方。保持对自己行程的掌控权。如果对方坚持要接送，或者临时改变见面地点去更偏僻的地方，请果断拒绝并离开。',
+    points: ['自己安排交通，不依赖对方接送', '如果对方临时改去偏僻地点，立刻拒绝', '保持自己的交通工具或打车软件随时可用']
+  },
+  {
+    id: 7,
+    category: '隐私保护',
+    icon: '🔐',
+    title: '设置合理的隐私权限',
+    content: '在隐私设置页面中，您可以选择哪些人可以看到您的完整资料。建议将敏感信息（如具体住址、收入详情等）设置为"仅匹配用户可见"或"仅自己可见"。定期检查您的隐私设置，确保您的信息安全。',
+    points: ['定期检查和更新隐私设置', '敏感信息设置较高的可见权限', '使用强密码，不与他人共享账号']
+  },
+  {
+    id: 8,
+    category: '隐私保护',
+    icon: '📷',
+    title: '谨慎处理照片信息',
+    content: '上传照片时请注意：检查照片中是否包含家庭门牌号、车牌号、工作证、孩子学校名称等可识别的位置信息。有些智能手机拍摄的照片会包含GPS位置数据，建议在上传前使用简单的照片处理工具去除这些信息。',
+    points: ['上传前检查照片是否有门牌号、车牌号等信息', '注意照片背景中可能泄露的隐私', '如有条件，关闭手机相机的位置标记功能']
+  },
+  {
+    id: 9,
+    category: '防骗指南',
+    icon: '💰',
+    title: '警惕投资理财诈骗',
+    content: '如果网友向您推荐"稳赚不赔"的投资项目、博彩网站或虚拟货币，请立即停止联系并举报。这些是典型的"杀猪盘"诈骗手法：骗子先通过感情建立信任（"养猪"），然后诱导您投资或赌博（"杀猪"）。中老年人是这类诈骗的重点目标群体，请务必提高警惕。',
+    points: ['任何"稳赚不赔"的投资都是骗局', '不要在网友引导下下载不明理财APP', '不参与对方推荐的博彩、虚拟货币等', '如已转账，请立即拨打96110报警']
+  },
+  {
+    id: 10,
+    category: '防骗指南',
+    icon: '🚫',
+    title: '绝不向网友转账',
+    content: '无论对方以什么理由（生病急用钱、生意周转、家人出事、投资赚钱等）向您借钱，请坚决拒绝。真正想和您交往的人，不会在认识不久就向您要钱。如果对方以"考验感情"为由要求转账，这本身就是最大的危险信号。记住一句话：谈钱伤感情，谈感情不借钱。',
+    points: ['任何理由的借钱都要拒绝', '"考验感情"要求转账是危险信号', '如果对方说"这是我们之间的秘密，不要告诉别人"——立即停止联系', '发现可疑行为，立即通过平台举报']
+  }
+];
+
+// ===== Get Tips =====
+function getTips() {
+  // Try Store
+  if (typeof Store !== 'undefined' && typeof Store.getSafetyTips === 'function') {
+    var storeTips = Store.getSafetyTips();
+    if (storeTips && storeTips.length > 0) return storeTips;
+  }
+  // Try localStorage
+  try {
+    var data = localStorage.getItem('safetyTips');
+    if (data) {
+      var parsed = JSON.parse(data);
+      if (parsed && parsed.length > 0) return parsed;
+    }
+  } catch(e) {}
+  // Fallback
+  return hardcodedTips;
+}
+
+// ===== Render Tips =====
+var currentCategory = 'all';
+var openTipId = null;
+
+function renderTips(category) {
+  var container = document.getElementById('tipsContainer');
+  var tips = getTips();
+  var filtered = category === 'all' ? tips : tips.filter(function(t) {
+    return t.category === category;
+  });
+
+  if (!filtered || filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state">该分类暂无提示</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(tip) {
+    var isOpen = tip.id === openTipId;
+    var badgeClass = '';
+    switch(tip.category) {
+      case '聊天安全': badgeClass = 'badge-chat'; break;
+      case '见面安全': badgeClass = 'badge-meet'; break;
+      case '隐私保护': badgeClass = 'badge-privacy'; break;
+      case '防骗指南': badgeClass = 'badge-scam'; break;
+    }
+
+    var pointsHtml = '';
+    if (tip.points && tip.points.length > 0) {
+      pointsHtml = '<ul>' + tip.points.map(function(p) {
+        return '<li>' + escapeHtml(p) + '</li>';
+      }).join('') + '</ul>';
+    }
+
+    html += '<div class="tip-card' + (isOpen ? ' open' : '') + '" data-tip-id="' + tip.id + '">';
+    html += '  <div class="tip-header" onclick="toggleTip(' + tip.id + ')">';
+    html += '    <span class="tip-icon">' + escapeHtml(tip.icon) + '</span>';
+    html += '    <div class="tip-title-area">';
+    html += '      <h3 class="tip-title">' + escapeHtml(tip.title) + '</h3>';
+    html += '      <span class="tip-category-badge ' + badgeClass + '">' + escapeHtml(tip.category) + '</span>';
+    html += '    </div>';
+    html += '    <span class="expand-icon">▼</span>';
+    html += '  </div>';
+    html += '  <div class="tip-body">';
+    html += '    <div class="tip-body-inner">';
+    html += '      <p>' + escapeHtml(tip.content) + '</p>';
+    html +=        pointsHtml;
+    html += '    </div>';
+    html += '  </div>';
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== Toggle Tip =====
+window.toggleTip = function(tipId) {
+  if (openTipId === tipId) {
+    openTipId = null;
+  } else {
+    openTipId = tipId;
+  }
+  renderTips(currentCategory);
+};
+
+// ===== Helper =====
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
+// ===== Category Tabs =====
+document.getElementById('categoryTabs').addEventListener('click', function(e) {
+  var tab = e.target.closest('.category-tab');
+  if (!tab) return;
+  var category = tab.getAttribute('data-category');
+  currentCategory = category;
+  openTipId = null; // close any open tip when switching categories
+
+  // Update active tab
+  var tabs = document.querySelectorAll('.category-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  tab.classList.add('active');
+
+  renderTips(category);
+});
+
+// ===== Toast =====
+function showToast(msg) {
+  var toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2c6fce;color:#fff;padding:12px 28px;border-radius:30px;font-size:18px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);animation:fadeInUp 0.3s ease;pointer-events:none;';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s';
+    setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+  }, 2000);
+}
+
+// ===== Header: Check Login State =====
+function updateHeader() {
+  var currentUser = null;
+  try {
+    var stored = localStorage.getItem('currentUser');
+    if (stored) currentUser = JSON.parse(stored);
+    if (!currentUser && typeof Auth !== 'undefined' && typeof Auth.getCurrentUser === 'function') {
+      currentUser = Auth.getCurrentUser();
+    }
+  } catch(e) {}
+
+  var authBtns = document.getElementById('authBtns');
+  var userNav = document.getElementById('userNav');
+
+  if (currentUser && currentUser.name) {
+    if (authBtns) authBtns.style.display = 'none';
+    if (userNav) {
+      userNav.style.display = 'flex';
+      document.getElementById('userNameDisplay').textContent = currentUser.name;
+      document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0);
+    }
+  } else {
+    if (authBtns) authBtns.style.display = 'flex';
+    if (userNav) userNav.style.display = 'none';
+  }
+}
+
+window.doLogout = function() {
+  try { localStorage.removeItem('currentUser'); } catch(e) {}
+  if (typeof Auth !== 'undefined' && typeof Auth.logout === 'function') {
+    Auth.logout();
+  }
+  updateHeader();
+  showToast('已退出登录');
+};
+
+// ===== Init =====
+renderTips('all');
+updateHeader();
+
+})();
+</script>
+
+</body>
+</html>

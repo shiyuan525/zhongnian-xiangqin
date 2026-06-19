@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>缘分推荐 - 中年相亲网</title>
+
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute; top: -100%; left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus { top: var(--space-sm); }
+
+    /* Sticky Header */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .header-logo:hover { color: var(--color-primary-hover); }
+
+    .main-nav { display: flex; align-items: center; gap: var(--space-xs); list-style: none; }
+    .main-nav a {
+      display: inline-flex; align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover { color: var(--color-primary); background-color: var(--color-primary-subtle); }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu */
+    .user-menu { position: relative; flex-shrink: 0; }
+    .user-menu-trigger {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none; border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover { background-color: var(--color-bg); }
+    .user-menu-trigger .avatar-sm { width: 40px; height: 40px; font-size: calc(18px * var(--font-scale)); }
+    .user-menu-trigger .arrow-down { font-size: 12px; color: var(--color-text-tertiary); transition: transform var(--transition-fast); }
+    .user-menu.open .user-menu-trigger .arrow-down { transform: rotate(180deg); }
+    .user-dropdown {
+      display: none; position: absolute; top: calc(100% + 4px); right: 0;
+      min-width: 200px; background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown); overflow: hidden; padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown { display: block; }
+    .user-dropdown a, .user-dropdown button {
+      display: flex; align-items: center; gap: var(--space-sm);
+      width: 100%; padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none; background: none; border: none;
+      cursor: pointer; text-align: left; min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover, .user-dropdown button:hover { background-color: var(--color-bg); }
+    .user-dropdown .dropdown-divider { height: 1px; background: var(--color-border-light); margin: var(--space-xs) 0; }
+    .user-dropdown .logout-btn { color: var(--color-danger); }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none; width: 48px; height: 48px;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; background: none; border: none; cursor: pointer;
+      padding: 8px; border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span { display: block; width: 24px; height: 3px; background: var(--color-text-primary); border-radius: 2px; transition: all var(--transition-fast); }
+    .mobile-nav-panel {
+      display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0;
+      background: var(--color-surface); z-index: var(--z-fixed);
+      padding: var(--space-lg); overflow-y: auto;
+    }
+    .mobile-nav-panel.open { display: flex; flex-direction: column; }
+    .mobile-nav-panel a {
+      display: flex; align-items: center; padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary); text-decoration: none;
+      border-radius: var(--radius-md); min-height: 56px;
+    }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+    .mobile-nav-panel a:hover { background-color: var(--color-bg); }
+
+    /* ========== Main Content ========== */
+    .main-content {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    .page-title {
+      font-size: calc(var(--font-size-h2) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-lg);
+      text-align: center;
+    }
+
+    /* ========== Tab Switcher ========== */
+    .tab-switcher {
+      display: flex;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: var(--space-sm) var(--space-lg);
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      font-family: var(--font-family-base);
+      color: var(--color-text-secondary);
+      background: var(--color-surface);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      min-height: var(--btn-min-height);
+      transition: all var(--transition-fast);
+      display: inline-flex; align-items: center; gap: var(--space-xs);
+    }
+    .tab-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .tab-btn.active {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .tab-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 24px; height: 24px;
+      background: rgba(255,255,255,0.3);
+      border-radius: var(--radius-full);
+      font-size: calc(14px * var(--font-scale));
+      padding: 0 8px;
+    }
+    .tab-btn.active .tab-badge {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ========== Match Cards Grid ========== */
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    /* ========== Match Card ========== */
+    .match-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+      display: flex; flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .match-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-3px);
+    }
+
+    /* Score Badge */
+    .match-card-score-badge {
+      position: absolute;
+      top: var(--space-md); right: var(--space-md);
+      display: flex; align-items: center; gap: 4px;
+      padding: 6px 16px;
+      border-radius: var(--radius-tag);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+    }
+    .score-excellent {
+      background: var(--color-success-light);
+      color: var(--color-success);
+    }
+    .score-good {
+      background: var(--color-info-light);
+      color: var(--color-info);
+    }
+    .score-ok {
+      background: var(--color-warning-light);
+      color: var(--color-warning-hover);
+    }
+    .score-low {
+      background: var(--color-bg-alt);
+      color: var(--color-text-tertiary);
+    }
+
+    /* Avatar */
+    .match-card-avatar-wrap {
+      display: flex; justify-content: center;
+      margin-bottom: var(--space-md);
+    }
+    .match-card-avatar {
+      width: 150px; height: 150px;
+      border-radius: var(--radius-avatar);
+      display: flex; align-items: center; justify-content: center;
+      font-size: calc(56px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      box-shadow: var(--shadow-md);
+    }
+    .match-card-avatar img {
+      width: 100%; height: 100%;
+      border-radius: var(--radius-avatar);
+      object-fit: cover;
+    }
+
+    /* Name & Meta */
+    .match-card-header {
+      text-align: center;
+      margin-bottom: var(--space-md);
+    }
+    .match-card-name {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .match-card-meta {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+    }
+    .match-card-meta .dot {
+      margin: 0 var(--space-xs);
+      color: var(--color-text-disabled);
+    }
+
+    /* Tags */
+    .match-card-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      justify-content: center;
+      margin-bottom: var(--space-md);
+    }
+    .match-card-tags .tag {
+      font-size: calc(14px * var(--font-scale));
+      padding: 4px 14px;
+      background: var(--color-secondary-light);
+      color: var(--color-secondary-active);
+      border-radius: var(--radius-tag);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Self Intro Preview */
+    .match-card-intro {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      text-align: center;
+      margin-bottom: var(--space-lg);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    /* Action Buttons */
+    .match-card-actions {
+      display: flex; gap: var(--space-sm);
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border-light);
+    }
+    .match-card-actions .btn {
+      flex: 1;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      min-height: 48px;
+      padding: 0 var(--space-md);
+    }
+    .btn-like-card {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+    .btn-like-card:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+    .btn-message-card {
+      background: var(--color-surface);
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+    .btn-message-card:hover { background: var(--color-primary-subtle); }
+    .btn-profile-card {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 2px solid var(--color-border);
+    }
+    .btn-profile-card:hover { background: var(--color-bg); border-color: var(--color-text-tertiary); }
+
+    /* Liked back badge */
+    .liked-back-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px;
+      background: var(--color-success-light);
+      color: var(--color-success);
+      font-size: calc(13px * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-full);
+      margin-left: var(--space-sm);
+    }
+
+    /* ========== Empty States ========== */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-3xl) var(--space-xl);
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      border: 2px dashed var(--color-border-light);
+    }
+    .empty-state-icon {
+      font-size: calc(64px * var(--font-scale));
+      opacity: 0.4;
+      margin-bottom: var(--space-md);
+    }
+    .empty-state-title {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .empty-state-description {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-lg);
+    }
+
+    /* Refresh Button */
+    .refresh-row {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    /* ========== Liked Me (prominent display) ========== */
+    .liked-card {
+      display: flex; align-items: center; gap: var(--space-lg);
+      background: var(--color-surface);
+      border: 2px solid var(--color-primary-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-md);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+    }
+    .liked-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+    }
+    .liked-card-avatar {
+      width: 120px; height: 120px;
+      border-radius: var(--radius-avatar);
+      display: flex; align-items: center; justify-content: center;
+      font-size: calc(48px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+    }
+    .liked-card-avatar img {
+      width: 100%; height: 100%;
+      border-radius: var(--radius-avatar);
+      object-fit: cover;
+    }
+    .liked-card-body {
+      flex: 1; min-width: 0;
+    }
+    .liked-card-name {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .liked-card-meta {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    .liked-card-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+    .liked-card-tags .tag {
+      font-size: calc(14px * var(--font-scale));
+      padding: 3px 12px;
+      background: var(--color-secondary-light);
+      color: var(--color-secondary-active);
+      border-radius: var(--radius-tag);
+    }
+    .liked-card-intro {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .liked-card-actions {
+      display: flex; flex-direction: column; gap: var(--space-sm);
+      flex-shrink: 0;
+    }
+    .liked-card-actions .btn {
+      min-width: 120px;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center; padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 var(--space-md); }
+      .main-nav { display: none; }
+      .mobile-nav-toggle { display: flex; }
+      .main-content { padding: var(--space-md); }
+      .matches-grid { grid-template-columns: 1fr; }
+      .match-card-avatar { width: 120px; height: 120px; font-size: calc(42px * var(--font-scale)); }
+      .liked-card { flex-direction: column; text-align: center; }
+      .liked-card-actions { flex-direction: row; width: 100%; }
+      .liked-card-actions .btn { flex: 1; }
+      .tab-btn { font-size: calc(var(--font-size-base) * var(--font-scale)); padding: var(--space-sm) var(--space-md); }
+    }
+    @media (max-width: 576px) {
+      .header-logo { font-size: calc(var(--font-size-lg) * var(--font-scale)); }
+      .user-menu-trigger .user-menu-name { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html" class="nav-current">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html" class="nav-current">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content" id="main-content">
+
+    <h1 class="page-title">💝 缘分推荐</h1>
+
+    <!-- Tab Switcher -->
+    <div class="tab-switcher" id="tabSwitcher">
+      <button class="tab-btn active" data-tab="smart" onclick="switchTab('smart')">
+        🤖 智能推荐
+      </button>
+      <button class="tab-btn" data-tab="daily" onclick="switchTab('daily')">
+        ✨ 每日精选
+      </button>
+      <button class="tab-btn" data-tab="liked" onclick="switchTab('liked')">
+        💌 喜欢我的
+        <span class="tab-badge" id="likedTabBadge" style="display:none;">0</span>
+      </button>
+    </div>
+
+    <!-- Tab 1: Smart Recommendations -->
+    <div class="tab-content" id="tab-smart">
+      <div class="matches-grid" id="smartMatchesGrid">
+        <!-- Filled by JS -->
+      </div>
+      <div class="empty-state" id="smartEmpty" style="display:none;">
+        <div class="empty-state-icon">🤖</div>
+        <h3 class="empty-state-title">还没有推荐</h3>
+        <p class="empty-state-description">完善资料后即可获得精准推荐，系统会根据您的条件智能匹配合适的对象</p>
+        <a href="profile-edit.html" class="btn btn-primary">完善资料</a>
+      </div>
+    </div>
+
+    <!-- Tab 2: Daily Picks -->
+    <div class="tab-content" id="tab-daily" style="display:none;">
+      <div class="refresh-row">
+        <button class="btn btn-outline" id="refreshDailyBtn" onclick="refreshDailyMatches()">
+          🔄 换一批
+        </button>
+      </div>
+      <div class="matches-grid" id="dailyMatchesGrid">
+        <!-- Filled by JS -->
+      </div>
+      <div class="empty-state" id="dailyEmpty" style="display:none;">
+        <div class="empty-state-icon">✨</div>
+        <h3 class="empty-state-title">今日精选已全部浏览</h3>
+        <p class="empty-state-description">明天再来看看，系统每天都会为您准备全新的缘分推荐</p>
+      </div>
+    </div>
+
+    <!-- Tab 3: Liked Me -->
+    <div class="tab-content" id="tab-liked" style="display:none;">
+      <div id="likedMeList">
+        <!-- Filled by JS -->
+      </div>
+      <div class="empty-state" id="likedEmpty" style="display:none;">
+        <div class="empty-state-icon">💌</div>
+        <h3 class="empty-state-title">还没有人向您表示好感</h3>
+        <p class="empty-state-description">完善资料能提高曝光率，让更多人看到优秀的您</p>
+        <a href="profile-edit.html" class="btn btn-primary">完善资料</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('matches.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var currentProfile = Store.getProfile(currentUser.id);
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+
+    // State
+    var activeTab = 'smart';
+    var smartRecommendations = [];
+    var dailyMatches = [];
+    var likesReceived = [];
+
+    // =========================================================================
+    // 2. Header
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % avatarColors.length;
+      }
+      avatarEl.style.backgroundColor = avatarColors[colorIndex];
+    }
+
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+      var dropdown = document.getElementById('userDropdown');
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) { menu.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); }
+        else { menu.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+      });
+      document.addEventListener('click', function () {
+        menu.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false');
+      });
+      dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+      document.getElementById('logoutBtn').addEventListener('click', function () { Auth.logout(); });
+      var ml = document.getElementById('mobileLogoutBtn');
+      if (ml) { ml.addEventListener('click', function (e) { e.preventDefault(); Auth.logout(); }); }
+    }
+
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) { panel.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', '打开菜单'); }
+        else { panel.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); toggle.setAttribute('aria-label', '关闭菜单'); }
+      });
+    }
+
+    // =========================================================================
+    // 3. Helper Functions
+    // =========================================================================
+    function getColorForUser(userId) {
+      var idx = 0;
+      if (userId) {
+        for (var i = 0; i < userId.length; i++) { idx += userId.charCodeAt(i); }
+        idx = idx % avatarColors.length;
+      }
+      return avatarColors[idx];
+    }
+
+    function getScoreClass(score) {
+      if (score >= 80) return 'score-excellent';
+      if (score >= 60) return 'score-good';
+      if (score >= 40) return 'score-ok';
+      return 'score-low';
+    }
+
+    function getScoreLabel(score) {
+      if (score >= 80) return '非常匹配';
+      if (score >= 60) return '比较匹配';
+      if (score >= 40) return '一般匹配';
+      return '低匹配';
+    }
+
+    // =========================================================================
+    // 4. Render Match Card
+    // =========================================================================
+    function renderMatchCardHTML(match) {
+      var user = match.user;
+      var profile = match.profile;
+      var score = match.score || 0;
+      var name = user.name || '用户';
+      var initial = name.charAt(0);
+      var age = match.age || calculateAge(user.birthDate);
+      var city = (user.location && user.location.city) ? user.location.city : '';
+      var province = (user.location && user.location.province) ? user.location.province : '';
+      var locationStr = city || province || '';
+      var occupation = (profile && profile.occupation) ? profile.occupation : '';
+      var hobbies = (profile && Array.isArray(profile.hobbies)) ? profile.hobbies.slice(0, 3) : [];
+      var selfIntro = (profile && profile.selfIntro) ? profile.selfIntro : '';
+      var avatarUrl = user.avatar || '';
+      var scoreClass = getScoreClass(score);
+      var scoreLabel = getScoreLabel(score);
+
+      var html = '<div class="match-card">';
+
+      // Score badge
+      html += '<div class="match-card-score-badge ' + scoreClass + '">';
+      html += '♥ 兼容度 ' + score + '%';
+      html += '</div>';
+
+      // Avatar
+      html += '<div class="match-card-avatar-wrap">';
+      html += '<div class="match-card-avatar" style="background-color:' + getColorForUser(user.id) + ';">';
+      if (avatarUrl) {
+        html += '<img src="' + escapeHtml(avatarUrl) + '" alt="' + escapeHtml(name) + '的头像" loading="lazy">';
+      } else {
+        html += escapeHtml(initial);
+      }
+      html += '</div>';
+      html += '</div>';
+
+      // Name & Meta
+      html += '<div class="match-card-header">';
+      html += '<div class="match-card-name">' + escapeHtml(name);
+      if (age !== null) {
+        html += '，' + age + '岁';
+      }
+      html += '</div>';
+      html += '<div class="match-card-meta">';
+      if (locationStr) html += escapeHtml(locationStr);
+      if (occupation) {
+        if (locationStr) html += '<span class="dot">·</span>';
+        html += escapeHtml(occupation);
+      }
+      html += '</div>';
+      html += '</div>';
+
+      // Hobby tags
+      if (hobbies.length > 0) {
+        html += '<div class="match-card-tags">';
+        for (var h = 0; h < hobbies.length; h++) {
+          html += '<span class="tag">' + escapeHtml(hobbies[h]) + '</span>';
+        }
+        html += '</div>';
+      }
+
+      // Self intro
+      if (selfIntro) {
+        html += '<div class="match-card-intro">"' + escapeHtml(selfIntro) + '"</div>';
+      } else {
+        html += '<div class="match-card-intro" style="color:var(--color-text-disabled);">暂无自我介绍</div>';
+      }
+
+      // Action buttons
+      var userId = user.id;
+      html += '<div class="match-card-actions">';
+      html += '<a href="profile.html?id=' + escapeHtml(userId) + '" class="btn btn-profile-card">查看资料</a>';
+      html += '<a href="chat.html?partner=' + encodeURIComponent(userId) + '" class="btn btn-message-card">💬 发消息</a>';
+      html += '<button class="btn btn-like-card" onclick="handleMatchLike(event, \'' + escapeHtml(userId) + '\')">❤️ 表示好感</button>';
+      html += '</div>';
+
+      html += '</div>';
+      return html;
+    }
+
+    // =========================================================================
+    // 5. Render Smart Recommendations
+    // =========================================================================
+    function renderSmartRecommendations() {
+      smartRecommendations = MatchEngine.getRecommendations(currentUser.id, 20);
+      var grid = document.getElementById('smartMatchesGrid');
+      var empty = document.getElementById('smartEmpty');
+
+      if (smartRecommendations.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      var html = '';
+      for (var i = 0; i < smartRecommendations.length; i++) {
+        html += renderMatchCardHTML(smartRecommendations[i]);
+      }
+      grid.innerHTML = html;
+    }
+
+    // =========================================================================
+    // 6. Render Daily Matches
+    // =========================================================================
+    function renderDailyMatches() {
+      dailyMatches = MatchEngine.getDailyMatches(currentUser.id, 8);
+      var grid = document.getElementById('dailyMatchesGrid');
+      var empty = document.getElementById('dailyEmpty');
+      var refreshBtn = document.getElementById('refreshDailyBtn');
+
+      if (dailyMatches.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        refreshBtn.style.display = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+      refreshBtn.style.display = 'inline-flex';
+      var html = '';
+      for (var i = 0; i < dailyMatches.length; i++) {
+        html += renderMatchCardHTML(dailyMatches[i]);
+      }
+      grid.innerHTML = html;
+    }
+
+    window.refreshDailyMatches = function () {
+      var btn = document.getElementById('refreshDailyBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ 换一批...';
+      dailyMatches = MatchEngine.getDailyMatches(currentUser.id, 8);
+      setTimeout(function () {
+        renderDailyMatches();
+        btn.disabled = false;
+        btn.textContent = '🔄 换一批';
+      }, 400);
+    };
+
+    // =========================================================================
+    // 7. Render Likes Received
+    // =========================================================================
+    function renderLikesReceived() {
+      likesReceived = Store.getLikesReceived(currentUser.id);
+      var container = document.getElementById('likedMeList');
+      var empty = document.getElementById('likedEmpty');
+      var badge = document.getElementById('likedTabBadge');
+
+      // Update badge
+      if (likesReceived.length > 0) {
+        badge.style.display = 'inline-flex';
+        badge.textContent = likesReceived.length;
+      } else {
+        badge.style.display = 'none';
+      }
+
+      if (likesReceived.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      var html = '';
+
+      for (var i = 0; i < likesReceived.length; i++) {
+        var like = likesReceived[i];
+        var liker = Store.getUserById(like.userId);
+        var likerProfile = Store.getProfile(like.userId);
+
+        if (!liker) continue;
+
+        var name = liker.name || '用户';
+        var initial = name.charAt(0);
+        var age = calculateAge(liker.birthDate);
+        var city = (liker.location && liker.location.city) ? liker.location.city : '';
+        var province = (liker.location && liker.location.province) ? liker.location.province : '';
+        var locationStr = city || province || '';
+        var occupation = (likerProfile && likerProfile.occupation) ? likerProfile.occupation : '';
+        var hobbies = (likerProfile && Array.isArray(likerProfile.hobbies)) ? likerProfile.hobbies.slice(0, 3) : [];
+        var selfIntro = (likerProfile && likerProfile.selfIntro) ? likerProfile.selfIntro : '';
+        var avatarUrl = liker.avatar || '';
+        var timeAgo = relativeTime(like.createdAt);
+
+        // Check if current user has liked back
+        var mutualCheck = Store.getMatches(currentUser.id);
+        var isMutual = false;
+        for (var m = 0; m < mutualCheck.length; m++) {
+          if (mutualCheck[m].targetUserId === like.userId && mutualCheck[m].type === 'like') {
+            isMutual = true;
+            break;
+          }
+          if (mutualCheck[m].status === 'matched' &&
+              (mutualCheck[m].userId === like.userId || mutualCheck[m].targetUserId === like.userId)) {
+            isMutual = true;
+            break;
+          }
+        }
+
+        html += '<div class="liked-card">';
+        html += '<div class="liked-card-avatar" style="background-color:' + getColorForUser(liker.id) + ';">';
+        if (avatarUrl) {
+          html += '<img src="' + escapeHtml(avatarUrl) + '" alt="' + escapeHtml(name) + '的头像" loading="lazy">';
+        } else {
+          html += escapeHtml(initial);
+        }
+        html += '</div>';
+        html += '<div class="liked-card-body">';
+        html += '<div class="liked-card-name">';
+        html += escapeHtml(name);
+        if (age !== null) html += '，' + age + '岁';
+        if (isMutual) html += '<span class="liked-back-badge">💕 互相喜欢</span>';
+        html += '</div>';
+        html += '<div class="liked-card-meta">';
+        if (locationStr) html += escapeHtml(locationStr);
+        if (occupation) {
+          if (locationStr) html += ' · ';
+          html += escapeHtml(occupation);
+        }
+        html += ' · ' + escapeHtml(timeAgo) + ' 表示了好感';
+        html += '</div>';
+        if (hobbies.length > 0) {
+          html += '<div class="liked-card-tags">';
+          for (var h = 0; h < hobbies.length; h++) {
+            html += '<span class="tag">' + escapeHtml(hobbies[h]) + '</span>';
+          }
+          html += '</div>';
+        }
+        if (selfIntro) {
+          html += '<div class="liked-card-intro">' + escapeHtml(selfIntro) + '</div>';
+        }
+        html += '</div>';
+        html += '<div class="liked-card-actions">';
+        html += '<a href="profile.html?id=' + escapeHtml(liker.id) + '" class="btn btn-outline">查看资料</a>';
+        if (!isMutual) {
+          html += '<button class="btn btn-primary" onclick="handleLikeBack(event, \'' + escapeHtml(liker.id) + '\')">❤️ 回关</button>';
+        } else {
+          html += '<a href="chat.html?partner=' + encodeURIComponent(liker.id) + '" class="btn btn-primary">💬 去聊天</a>';
+        }
+        html += '</div>';
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    // =========================================================================
+    // 8. Tab Switching
+    // =========================================================================
+    window.switchTab = function (tabName) {
+      activeTab = tabName;
+
+      // Update tab buttons
+      var buttons = document.querySelectorAll('.tab-btn');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove('active');
+        if (buttons[i].getAttribute('data-tab') === tabName) {
+          buttons[i].classList.add('active');
+        }
+      }
+
+      // Show/hide tab content
+      document.getElementById('tab-smart').style.display = (tabName === 'smart') ? 'block' : 'none';
+      document.getElementById('tab-daily').style.display = (tabName === 'daily') ? 'block' : 'none';
+      document.getElementById('tab-liked').style.display = (tabName === 'liked') ? 'block' : 'none';
+
+      // Lazy load if needed
+      if (tabName === 'daily' && dailyMatches.length === 0) {
+        // Reload daily matches
+        dailyMatches = MatchEngine.getDailyMatches(currentUser.id, 8);
+        renderDailyMatches();
+      }
+    };
+
+    // =========================================================================
+    // 9. Action Handlers
+    // =========================================================================
+    window.handleMatchLike = function (event, targetUserId) {
+      event.preventDefault();
+      event.stopPropagation();
+      var btn = event.target;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var result = Store.likeUser(currentUser.id, targetUserId);
+      if (result.matched) {
+        btn.textContent = '💕 配对成功！';
+        btn.style.background = '#5B8C5A';
+        btn.style.borderColor = '#5B8C5A';
+        showToast('太棒了！你们互相喜欢，快去聊天吧！', 'success', 4000);
+      } else {
+        btn.textContent = '✓ 已喜欢';
+        btn.style.opacity = '0.7';
+        showToast('已表示好感', 'success');
+      }
+    };
+
+    window.handleLikeBack = function (event, targetUserId) {
+      event.preventDefault();
+      event.stopPropagation();
+      var btn = event.target;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var result = Store.likeUser(currentUser.id, targetUserId);
+      if (result.matched) {
+        btn.textContent = '💕 已配对！';
+        btn.className = 'btn';
+        btn.style.cssText = 'background:#5B8C5A;color:#fff;border-color:#5B8C5A;';
+        showToast('太棒了！你们互相喜欢，现在可以开始聊天了！', 'success', 4000);
+        // Refresh likes view
+        setTimeout(function () {
+          renderLikesReceived();
+        }, 1000);
+      } else {
+        btn.textContent = '✓ 已回关';
+        btn.disabled = true;
+        showToast('已回关对方', 'success');
+      }
+    };
+
+    // =========================================================================
+    // 10. Init Everything
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      renderSmartRecommendations();
+      renderLikesReceived(); // Preload for badge count
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

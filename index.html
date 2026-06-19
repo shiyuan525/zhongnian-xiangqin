@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="中年相亲网 — 专为40-65岁单身朋友打造的安全、真实、温暖的交友平台。实名认证，智能匹配，让每一次相遇都温暖真诚。">
+  <meta name="theme-color" content="#D45161">
+  <title>中年相亲网 — 安全、真实、温暖的交友平台</title>
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <style>
+    /* ===================================================================
+       HOMEPAGE-SPECIFIC STYLES
+       =================================================================== */
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-fixed);
+      background-color: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: 0 1px 8px rgba(45, 45, 45, 0.04);
+      transition: box-shadow var(--transition-base);
+    }
+
+    .site-header.scrolled {
+      box-shadow: 0 2px 16px rgba(45, 45, 45, 0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+      min-height: 72px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      text-decoration: none;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+    }
+
+    .header-logo .logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light));
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+
+    .header-logo .logo-text {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .header-tagline {
+      display: none;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-left: var(--space-sm);
+      white-space: nowrap;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .header-nav .nav-link {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      padding: var(--space-sm) var(--space-md);
+      white-space: nowrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-shrink: 0;
+    }
+
+    /* User menu dropdown */
+    .user-menu {
+      display: none;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .user-menu .user-name {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-menu .btn {
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+    }
+
+    /* Mobile hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-sm);
+      min-width: 48px;
+      min-height: 48px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      background-color: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-base);
+    }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: calc(72px + var(--space-3xl)) var(--space-md) var(--space-3xl);
+      background: linear-gradient(
+        160deg,
+        #FFF8F0 0%,
+        #FFF0E5 30%,
+        #FFE8D6 60%,
+        #FFF5EC 85%,
+        #FFF8F0 100%
+      );
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative elements */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(232, 168, 124, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: -100px;
+      left: -60px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(212, 81, 97, 0.10) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-decoration {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.06;
+      font-size: 48px;
+    }
+
+    .hero-decoration:nth-child(1) { top: 15%; left: 8%; }
+    .hero-decoration:nth-child(2) { top: 20%; right: 10%; }
+    .hero-decoration:nth-child(3) { bottom: 25%; left: 12%; }
+    .hero-decoration:nth-child(4) { bottom: 20%; right: 8%; }
+    .hero-decoration:nth-child(5) { top: 50%; left: 5%; transform: translateY(-50%); }
+    .hero-decoration:nth-child(6) { top: 45%; right: 5%; transform: translateY(-50%); }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .hero-content h1 {
+      font-size: calc(48px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-md);
+      line-height: 1.25;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-content h1 .highlight {
+      color: var(--color-primary);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-content h1 .highlight::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background-color: var(--color-primary-light);
+      border-radius: 4px;
+      z-index: -1;
+      opacity: 0.6;
+    }
+
+    .hero-subtitle {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-xl);
+      line-height: var(--line-height-base);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .hero-cta .btn {
+      font-size: calc(22px * var(--font-scale));
+      padding: 0 var(--space-xl);
+      min-height: 60px;
+      border-radius: var(--radius-lg);
+    }
+
+    .hero-trust-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+      flex-wrap: wrap;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    .hero-trust-badge span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-trust-badge .trust-icon {
+      font-size: 20px;
+    }
+
+    /* ── Section Common ──────────────────────────────────────── */
+    .section {
+      padding: var(--space-3xl) var(--space-md);
+    }
+
+    .section-alt {
+      background-color: var(--color-surface);
+    }
+
+    .section-warm {
+      background: linear-gradient(180deg, var(--color-secondary-subtle) 0%, var(--color-bg) 100%);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .section-header h2 {
+      font-size: calc(var(--font-size-h1) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-header p {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: var(--line-height-base);
+    }
+
+    .section-header .section-divider {
+      display: inline-block;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: 2px;
+      margin-top: var(--space-md);
+    }
+
+    /* ── Features Grid ───────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--card-gap);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .feature-card .feature-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      font-size: 40px;
+      background: linear-gradient(135deg, var(--color-primary-subtle), var(--color-secondary-subtle));
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--space-md);
+      transition: transform var(--transition-spring);
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+    }
+
+    .feature-card h3 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .feature-card p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin: 0;
+    }
+
+    /* ── Stories Preview ─────────────────────────────────────── */
+    .stories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--card-gap);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+    }
+
+    .story-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .story-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+    }
+
+    .story-card .story-icon {
+      font-size: 36px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .story-card h3 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .story-card p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      flex: 1;
+      margin: 0;
+    }
+
+    .stories-more {
+      text-align: center;
+      margin-top: var(--space-lg);
+    }
+
+    .stories-more a {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      text-decoration: none;
+      padding: var(--space-sm) var(--space-lg);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--radius-btn);
+      transition: all var(--transition-base);
+    }
+
+    .stories-more a:hover {
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+    }
+
+    /* ── Safety Tips Preview ─────────────────────────────────── */
+    .safety-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--card-gap);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+    }
+
+    .safety-tip-card {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+
+    .safety-tip-card .tip-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .safety-tip-card .tip-content h4 {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .safety-tip-card .tip-content p {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin: 0;
+    }
+
+    .safety-more {
+      text-align: center;
+      margin-top: var(--space-lg);
+    }
+
+    /* ── How It Works ────────────────────────────────────────── */
+    .steps-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: var(--space-xl);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Connecting line */
+    .steps-container::before {
+      content: "";
+      position: absolute;
+      top: 56px;
+      left: calc(16.67% + 56px);
+      right: calc(16.67% + 56px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-primary-light), var(--color-secondary-light), var(--color-primary-light));
+      z-index: 0;
+    }
+
+    .step-item {
+      flex: 1;
+      max-width: 320px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-on-primary);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      border-radius: 50%;
+      margin-bottom: var(--space-md);
+      box-shadow: 0 6px 24px rgba(212, 81, 97, 0.25);
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-item .step-icon {
+      position: absolute;
+      bottom: -12px;
+      right: -12px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border-light);
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .step-item h3 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .step-item p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin: 0;
+    }
+
+    /* ── Statistics ──────────────────────────────────────────── */
+    .stats-section {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #C44A58 50%, var(--color-secondary-active) 100%);
+      padding: var(--space-3xl) var(--space-md);
+      color: var(--color-text-on-primary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xl);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .stat-item .stat-number {
+      font-size: calc(52px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      line-height: 1.1;
+      margin-bottom: var(--space-sm);
+    }
+
+    .stat-item .stat-label {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      opacity: 0.9;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .stat-item .stat-sub {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    /* ── Why Choose Us ───────────────────────────────────────── */
+    .why-us-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--card-gap);
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+    }
+
+    .why-us-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+    }
+
+    .why-us-card .why-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
+      font-size: 28px;
+      background-color: var(--color-primary-subtle);
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+
+    .why-us-card .why-content h3 {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .why-us-card .why-content p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin: 0;
+    }
+
+    /* ── CTA Banner ──────────────────────────────────────────── */
+    .cta-banner {
+      text-align: center;
+      padding: var(--space-3xl) var(--space-md);
+      background: linear-gradient(180deg, var(--color-secondary-subtle) 0%, var(--color-primary-subtle) 100%);
+    }
+
+    .cta-banner h2 {
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .cta-banner p {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+    }
+
+    .cta-banner .btn {
+      font-size: calc(22px * var(--font-scale));
+      padding: 0 var(--space-xl);
+      min-height: 64px;
+      border-radius: var(--radius-lg);
+    }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .site-footer {
+      background-color: #2D2D2D;
+      color: #C5C5C5;
+      padding: var(--space-3xl) var(--space-md) var(--space-xl);
+    }
+
+    .footer-inner {
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-brand .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .footer-brand .footer-logo .logo-icon {
+      font-size: 28px;
+    }
+
+    .footer-brand .footer-logo .logo-text {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #FFFFFF;
+    }
+
+    .footer-brand p {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: #9A9A9A;
+      line-height: var(--line-height-base);
+      margin-bottom: var(--space-sm);
+    }
+
+    .footer-links h4 {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: #FFFFFF;
+      margin-bottom: var(--space-md);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .footer-links a {
+      display: block;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: #9A9A9A;
+      text-decoration: none;
+      margin-bottom: var(--space-sm);
+      transition: color var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: var(--color-secondary);
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: #777;
+      padding-top: var(--space-md);
+    }
+
+    .footer-warm-text {
+      text-align: center;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-secondary);
+      margin-top: var(--space-md);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* ── Empty State (for no data) ───────────────────────────── */
+    .stories-empty,
+    .safety-empty {
+      text-align: center;
+      padding: var(--space-xl);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stories-grid,
+      .safety-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .why-us-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .steps-container::before {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-tagline {
+        display: none;
+      }
+
+      .header-nav {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background-color: var(--color-surface);
+        border-bottom: 1px solid var(--color-border-light);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-md);
+        gap: var(--space-xs);
+      }
+
+      .header-nav.open {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .hero {
+        min-height: 60vh;
+        padding-top: calc(72px + var(--space-xl));
+        padding-bottom: var(--space-xl);
+      }
+
+      .hero-content h1 {
+        font-size: calc(36px * var(--font-scale));
+      }
+
+      .hero-subtitle {
+        font-size: calc(var(--font-size-base) * var(--font-scale));
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stories-grid,
+      .safety-grid,
+      .why-us-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+
+      .stat-item .stat-number {
+        font-size: calc(40px * var(--font-scale));
+      }
+
+      .steps-container {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-lg);
+      }
+
+      .steps-container::before {
+        display: none;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .hero-cta .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-content h1 {
+        font-size: calc(30px * var(--font-scale));
+      }
+
+      .hero-trust-badge {
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+
+      .section-header h2 {
+        font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      }
+
+      .header-actions .btn span {
+        display: none;
+      }
+
+      .header-actions .btn {
+        padding: 0 var(--space-md);
+        min-height: 44px;
+        font-size: calc(var(--font-size-sm) * var(--font-scale));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ===================================================================
+       HEADER
+       =================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <!-- Logo -->
+      <a href="index.html" class="header-logo" aria-label="中年相亲网首页">
+        <span class="logo-icon" aria-hidden="true">❤️</span>
+        <span class="logo-text">中年相亲网</span>
+      </a>
+      <span class="header-tagline">安全、真实、温暖的交友平台</span>
+
+      <!-- Navigation -->
+      <nav class="header-nav" id="header-nav" aria-label="主导航">
+        <a href="index.html" class="nav-link nav-link-active" aria-current="page">首页</a>
+        <a href="safety.html" class="nav-link">安全指南</a>
+        <a href="stories.html" class="nav-link">成功故事</a>
+      </nav>
+
+      <!-- Actions -->
+      <div class="header-actions">
+        <!-- Auth buttons (not logged in) -->
+        <div id="auth-buttons" style="display:flex;align-items:center;gap:var(--space-sm);">
+          <a href="login.html" class="btn btn-outline">
+            <span>登录</span>
+          </a>
+          <a href="register.html" class="btn btn-primary">
+            <span>免费注册</span>
+          </a>
+        </div>
+
+        <!-- User menu (logged in) -->
+        <div id="user-menu" class="user-menu" style="display:none;">
+          <span class="user-name" id="user-name"></span>
+          <a href="profile.html" class="btn btn-text">我的资料</a>
+          <a href="messages.html" class="btn btn-text">我的消息</a>
+          <button class="btn btn-text" onclick="handleLogout()">退出登录</button>
+        </div>
+
+        <!-- Hamburger -->
+        <button class="hamburger" id="hamburger-btn" aria-label="菜单" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       MAIN CONTENT
+       =================================================================== -->
+  <main id="main-content">
+
+    <!-- ── Hero ───────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <!-- Decorative elements -->
+      <span class="hero-decoration" aria-hidden="true">🌸</span>
+      <span class="hero-decoration" aria-hidden="true">💕</span>
+      <span class="hero-decoration" aria-hidden="true">🌺</span>
+      <span class="hero-decoration" aria-hidden="true">❤️</span>
+      <span class="hero-decoration" aria-hidden="true">🌷</span>
+      <span class="hero-decoration" aria-hidden="true">💝</span>
+
+      <div class="hero-content">
+        <h1 id="hero-heading">
+          遇见<span class="highlight">懂你</span>的人
+        </h1>
+        <p class="hero-subtitle">
+          专为40-65岁单身朋友打造的安全交友平台<br>
+          让每一次相遇都温暖真诚
+        </p>
+        <div class="hero-cta">
+          <a href="register.html" class="btn btn-primary btn-large">
+            ❤️ 免费注册
+          </a>
+          <a href="#features" class="btn btn-outline btn-large">
+            了解更多
+          </a>
+        </div>
+        <div class="hero-trust-badge">
+          <span><span class="trust-icon">🔒</span> 实名认证</span>
+          <span><span class="trust-icon">🛡️</span> 隐私保护</span>
+          <span><span class="trust-icon">✅</span> 真人审核</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Features ───────────────────────────────────────────── -->
+    <section class="section" id="features" aria-labelledby="features-heading">
+      <div class="section-header">
+        <h2 id="features-heading">为什么选择我们</h2>
+        <p>我们深知中年交友的需求与顾虑，用心打造值得信赖的交友平台</p>
+        <span class="section-divider" aria-hidden="true"></span>
+      </div>
+      <div class="features-grid">
+        <div class="card card-hover feature-card">
+          <span class="feature-icon" aria-hidden="true">🔒</span>
+          <h3>安全可靠</h3>
+          <p>实名认证体系，多重隐私保护，让您安心交友。您的每一份信息都受到严格保护。</p>
+        </div>
+        <div class="card card-hover feature-card">
+          <span class="feature-icon" aria-hidden="true">❤️</span>
+          <h3>精准匹配</h3>
+          <p>根据兴趣爱好、性格特点、生活理念智能推荐，帮您找到真正合拍的人生伴侣。</p>
+        </div>
+        <div class="card card-hover feature-card">
+          <span class="feature-icon" aria-hidden="true">👥</span>
+          <h3>真实社区</h3>
+          <p>兴趣群组、线下活动，找到志同道合的朋友。在这里，您不是一个人在寻找。</p>
+        </div>
+        <div class="card card-hover feature-card">
+          <span class="feature-icon" aria-hidden="true">🛡️</span>
+          <h3>贴心守护</h3>
+          <p>专业安全提示，全程交友指导，远离网络陷阱。我们守护您的每一次相遇。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How It Works ───────────────────────────────────────── -->
+    <section class="section section-alt" aria-labelledby="how-heading">
+      <div class="section-header">
+        <h2 id="how-heading">只需三步，开启缘分之旅</h2>
+        <p>简单便捷的操作流程，让您轻松迈出第一步</p>
+        <span class="section-divider" aria-hidden="true"></span>
+      </div>
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-number" style="position:relative;">
+            1
+            <span class="step-icon" aria-hidden="true">📝</span>
+          </div>
+          <h3>注册账号</h3>
+          <p>填写基本信息，完成身份认证。只需几分钟，就能拥有属于自己的交友主页。</p>
+        </div>
+        <div class="step-item">
+          <div class="step-number" style="position:relative;">
+            2
+            <span class="step-icon" aria-hidden="true">🔍</span>
+          </div>
+          <h3>寻找缘分</h3>
+          <p>智能推荐或自主搜索，浏览真实资料，找到那个与您心灵相通的人。</p>
+        </div>
+        <div class="step-item">
+          <div class="step-number" style="position:relative;">
+            3
+            <span class="step-icon" aria-hidden="true">💬</span>
+          </div>
+          <h3>真诚交流</h3>
+          <p>在线聊天，参加活动，从相识到相知，开启属于你们的美好缘分。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Statistics ─────────────────────────────────────────── -->
+    <section class="stats-section" aria-label="平台数据统计">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">52<span style="font-size:0.5em;">万+</span></div>
+          <div class="stat-label">注册用户</div>
+          <div class="stat-sub">遍布全国各省市</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2,680<span style="font-size:0.5em;">对</span></div>
+          <div class="stat-label">成功牵手</div>
+          <div class="stat-sub">找到人生伴侣</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98<span style="font-size:0.5em;">%</span></div>
+          <div class="stat-label">用户好评</div>
+          <div class="stat-sub">满意是我们的追求</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Success Stories Preview ────────────────────────────── -->
+    <section class="section section-warm" aria-labelledby="stories-heading">
+      <div class="section-header">
+        <h2 id="stories-heading">他们在这里找到了幸福</h2>
+        <p>真实用户的温暖故事，也许下一个就是你</p>
+        <span class="section-divider" aria-hidden="true"></span>
+      </div>
+      <div class="stories-grid" id="stories-preview">
+        <!-- Populated by JS -->
+      </div>
+      <div class="stories-more">
+        <a href="stories.html">查看更多故事 →</a>
+      </div>
+    </section>
+
+    <!-- ── Safety Tips Preview ────────────────────────────────── -->
+    <section class="section" aria-labelledby="safety-heading">
+      <div class="section-header">
+        <h2 id="safety-heading">安全交友小贴士</h2>
+        <p>您的安全是我们最关心的事，请记住这些要点</p>
+        <span class="section-divider" aria-hidden="true"></span>
+      </div>
+      <div class="safety-grid" id="safety-tips-preview">
+        <!-- Populated by JS -->
+      </div>
+      <div class="safety-more">
+        <a href="safety.html" class="btn btn-outline">查看完整安全指南</a>
+      </div>
+    </section>
+
+    <!-- ── Why Choose Us ──────────────────────────────────────── -->
+    <section class="section section-alt" aria-labelledby="why-heading">
+      <div class="section-header">
+        <h2 id="why-heading">我们用心守护每一份缘分</h2>
+        <p>不只是交友平台，更是您值得信赖的朋友</p>
+        <span class="section-divider" aria-hidden="true"></span>
+      </div>
+      <div class="why-us-grid">
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">🎯</span>
+          <div class="why-content">
+            <h3>专为中年人设计</h3>
+            <p>我们了解中年人的交友需求，界面简洁大方，操作直观易懂，让每一位用户都能轻松上手。</p>
+          </div>
+        </div>
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">🔐</span>
+          <div class="why-content">
+            <h3>严格的身份审核</h3>
+            <p>采用手机验证和人工审核相结合的方式，确保平台上的每一个用户都是真实可靠的。</p>
+          </div>
+        </div>
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">💡</span>
+          <div class="why-content">
+            <h3>智能匹配系统</h3>
+            <p>基于您的生活经历、兴趣爱好和择偶标准，智能推荐最合适的人选，提高交友成功率。</p>
+          </div>
+        </div>
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">🤝</span>
+          <div class="why-content">
+            <h3>丰富的线下活动</h3>
+            <p>定期组织各类线下聚会、兴趣小组活动，让您有机会在真实场景中认识新朋友。</p>
+          </div>
+        </div>
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">📞</span>
+          <div class="why-content">
+            <h3>贴心的客服支持</h3>
+            <p>专业的客服团队随时为您解答疑问，处理问题。遇到任何困扰，我们都在这里。</p>
+          </div>
+        </div>
+        <div class="card why-us-card">
+          <span class="why-icon" aria-hidden="true">🌱</span>
+          <div class="why-content">
+            <h3>温暖的社区氛围</h3>
+            <p>我们倡导真诚、友善、尊重的交友文化。在这里，每一份感情都值得被温柔以待。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA Banner ─────────────────────────────────────────── -->
+    <section class="cta-banner">
+      <h2>缘分不等人，勇敢迈出第一步</h2>
+      <p>已有52万+中年朋友在这里开启了新的生活篇章，您呢？</p>
+      <a href="register.html" class="btn btn-primary btn-large">❤️ 立即免费注册</a>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-icon" aria-hidden="true">❤️</span>
+            <span class="logo-text">中年相亲网</span>
+          </div>
+          <p>
+            专为40-65岁单身朋友打造的安全、真实、温暖的交友平台。
+            实名认证，智能匹配，贴心守护。让每一次相遇都温暖真诚。
+          </p>
+          <p style="color:var(--color-secondary);">
+            📞 客服热线：400-888-6688（工作日 9:00-18:00）
+          </p>
+        </div>
+
+        <!-- Link Column 1 -->
+        <div class="footer-links">
+          <h4>关于我们</h4>
+          <a href="about.html">平台介绍</a>
+          <a href="contact.html">联系方式</a>
+          <a href="stories.html">成功故事</a>
+        </div>
+
+        <!-- Link Column 2 -->
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <a href="safety.html">安全指南</a>
+          <a href="faq.html">常见问题</a>
+          <a href="guide.html">使用帮助</a>
+        </div>
+
+        <!-- Link Column 3 -->
+        <div class="footer-links">
+          <h4>法律信息</h4>
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">用户协议</a>
+          <a href="dispute.html">纠纷处理</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 中年相亲网 版权所有 | ICP备案号：京ICP备2026XXXXXXXX号</p>
+        <p>经营性网站备案信息 | 网络文化经营许可证</p>
+      </div>
+
+      <p class="footer-warm-text">
+        愿每一位中年人，都能找到属于自己的温暖 ❤️
+      </p>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       SCRIPTS
+       =================================================================== -->
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/match.js"></script>
+  <script src="js/app.js"></script>
+  <script src="data/seed-data.js"></script>
+
+  <script>
+    /**
+     * 中年相亲网 — 首页交互逻辑
+     */
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // ── Initialize Store with seed data ──────────────────────
+      if (typeof SeedData !== 'undefined' && !localStorage.getItem('dating_app_users')) {
+        SeedData.load();
+      }
+
+      // ── Update header based on auth state ────────────────────
+      updateAuthUI();
+
+      // ── Load success stories preview ─────────────────────────
+      loadStoriesPreview();
+
+      // ── Load safety tips preview ─────────────────────────────
+      loadSafetyTipsPreview();
+
+      // ── Header scroll effect ─────────────────────────────────
+      initHeaderScroll();
+
+      // ── Mobile hamburger menu ────────────────────────────────
+      initMobileMenu();
+
+      // ── Smooth scroll for "了解更多" ─────────────────────────
+      initSmoothScroll();
+    });
+
+    /**
+     * 更新导航栏的用户认证界面
+     */
+    function updateAuthUI() {
+      var currentUser = JSON.parse(localStorage.getItem('dating_app_currentUser') || 'null');
+      var authButtons = document.getElementById('auth-buttons');
+      var userMenu = document.getElementById('user-menu');
+      var userName = document.getElementById('user-name');
+
+      if (currentUser) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) {
+          userMenu.style.display = 'flex';
+          if (userName) {
+            // Try profile displayName first, fallback to user name
+            var profiles = JSON.parse(localStorage.getItem('dating_app_profiles') || '[]');
+            var profile = null;
+            for (var i = 0; i < profiles.length; i++) {
+              if (profiles[i].userId === currentUser.id) {
+                profile = profiles[i];
+                break;
+              }
+            }
+            userName.textContent = (profile && profile.displayName) || currentUser.name || currentUser.email || '用户';
+          }
+        }
+      } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+      }
+    }
+
+    /**
+     * 加载成功故事预览（最多3个）
+     */
+    function loadStoriesPreview() {
+      var stories = JSON.parse(localStorage.getItem('dating_app_stories') || '[]');
+      var published = stories.filter(function (s) {
+        return s.isPublished !== false;
+      }).slice(0, 3);
+      var container = document.getElementById('stories-preview');
+
+      if (!container) return;
+
+      if (published.length === 0) {
+        container.innerHTML = '<div class="stories-empty" style="grid-column:1/-1;">更多美好故事正在赶来……</div>';
+        return;
+      }
+
+      container.innerHTML = published.map(function (s) {
+        return '<div class="card card-hover story-card">' +
+          '<span class="story-icon" aria-hidden="true">💑</span>' +
+          '<h3>' + escapeHtml(s.name) + '</h3>' +
+          '<p>' + escapeHtml(s.summary) + '</p>' +
+          '</div>';
+      }).join('');
+    }
+
+    /**
+     * 加载安全提示预览（最多3个）
+     */
+    function loadSafetyTipsPreview() {
+      var tips = JSON.parse(localStorage.getItem('dating_app_safetyTips') || '[]');
+      // Sort by order if available
+      tips.sort(function (a, b) {
+        return (a.order || 99) - (b.order || 99);
+      });
+      var container = document.getElementById('safety-tips-preview');
+
+      if (!container) return;
+
+      if (tips.length === 0) {
+        container.innerHTML = '<div class="safety-empty" style="grid-column:1/-1;">安全提示加载中……</div>';
+        return;
+      }
+
+      container.innerHTML = tips.slice(0, 3).map(function (t, index) {
+        var contentPreview = t.content.length > 80 ? t.content.substring(0, 80) + '……' : t.content;
+        var icons = ['🔒', '💰', '👤'];
+        return '<div class="card card-hover safety-tip-card">' +
+          '<span class="tip-number" aria-hidden="true">' + (icons[index] || '📌') + '</span>' +
+          '<div class="tip-content">' +
+          '<h4>' + escapeHtml(t.title) + '</h4>' +
+          '<p>' + escapeHtml(contentPreview) + '</p>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    /**
+     * 退出登录
+     */
+    function handleLogout() {
+      if (typeof Store !== 'undefined' && Store.logout) {
+        Store.logout();
+      } else {
+        localStorage.removeItem('dating_app_currentUser');
+      }
+      updateAuthUI();
+      // Show toast if available
+      if (typeof showToast === 'function') {
+        showToast('已退出登录，期待您的再次光临！', 'success', 3000);
+      }
+    }
+
+    /**
+     * 初始化头部滚动阴影效果
+     */
+    function initHeaderScroll() {
+      var header = document.getElementById('site-header');
+      if (!header) return;
+
+      var lastScrollY = 0;
+
+      function onScroll() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollY > 10) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+        lastScrollY = scrollY;
+      }
+
+      // Throttled scroll listener
+      var ticking = false;
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          window.requestAnimationFrame(function () {
+            onScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Initial check
+      onScroll();
+    }
+
+    /**
+     * 初始化移动端汉堡菜单
+     */
+    function initMobileMenu() {
+      var hamburger = document.getElementById('hamburger-btn');
+      var nav = document.getElementById('header-nav');
+
+      if (!hamburger || !nav) return;
+
+      hamburger.addEventListener('click', function () {
+        var isOpen = nav.classList.contains('open');
+        if (isOpen) {
+          nav.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        } else {
+          nav.classList.add('open');
+          hamburger.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      // Close menu when clicking nav links
+      var navLinks = nav.querySelectorAll('a');
+      for (var i = 0; i < navLinks.length; i++) {
+        navLinks[i].addEventListener('click', function () {
+          nav.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!nav.contains(e.target) && e.target !== hamburger && !hamburger.contains(e.target)) {
+          nav.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    /**
+     * 初始化"了解更多"平滑滚动
+     */
+    function initSmoothScroll() {
+      // All internal anchor links get smooth scroll (complements CSS scroll-behavior)
+      var anchorLinks = document.querySelectorAll('a[href^="#"]');
+      for (var i = 0; i < anchorLinks.length; i++) {
+        anchorLinks[i].addEventListener('click', function (e) {
+          var targetId = this.getAttribute('href');
+          if (!targetId || targetId === '#') return;
+          var target = document.querySelector(targetId);
+          if (target) {
+            e.preventDefault();
+            var headerHeight = document.getElementById('site-header');
+            var offset = headerHeight ? headerHeight.offsetHeight + 24 : 88;
+            var targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

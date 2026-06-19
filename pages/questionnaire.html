@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>缘分测试问卷 - 中年相亲网</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    /* ===== Page-Specific Styles ===== */
+    :root {
+      --primary: #c0392b;
+      --primary-light: #f8e8e8;
+      --primary-dark: #a93226;
+      --warm-cream: #fefaf6;
+      --warm-gold: #d4a574;
+      --text: #333;
+      --text-light: #777;
+      --border: #e8e0d8;
+      --card-bg: #fff;
+      --progress-bg: #e8e0d8;
+      --love-pink: #f06292;
+      --nature-green: #66bb6a;
+      --sky-blue: #42a5f5;
+      --sunset-orange: #ff7043;
+      --royal-purple: #ab47bc;
+    }
+
+    body {
+      background: var(--warm-cream);
+    }
+
+    /* ===== Auth Header (same as privacy) ===== */
+    .auth-header {
+      background: #fff;
+      border-bottom: 3px solid var(--primary);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .auth-header .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 12px;
+    }
+    .auth-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--primary);
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .auth-header .logo .icon { font-size: 32px; }
+    .auth-header .main-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .auth-header .main-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 15px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .auth-header .main-nav a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .auth-header .user-dropdown {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .auth-header .user-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s;
+    }
+    .auth-header .user-trigger:hover { background: #f0f0f0; }
+    .auth-header .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .auth-header .user-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+    .auth-header .user-arrow { font-size: 12px; color: #999; }
+    .auth-header .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 6px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.14);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 200;
+      border: 1px solid #e8e8e8;
+    }
+    .auth-header .dropdown-menu.show { display: block; }
+    .auth-header .dropdown-menu a,
+    .auth-header .dropdown-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: #333;
+      font-size: 15px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .auth-header .dropdown-menu a:hover,
+    .auth-header .dropdown-menu button:hover { background: #f7f7f7; }
+    .auth-header .dropdown-menu .divider {
+      height: 1px;
+      background: #eee;
+      margin: 4px 0;
+    }
+    .auth-header .dropdown-menu .logout-item {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ===== Page Layout ===== */
+    .page-wrapper {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .page-hero {
+      text-align: center;
+      padding: 40px 0 20px;
+    }
+    .page-hero h1 {
+      font-size: 32px;
+      color: var(--text);
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .page-hero .subtitle {
+      font-size: 17px;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ===== Progress Bar ===== */
+    .progress-section {
+      margin-bottom: 28px;
+      position: sticky;
+      top: 72px;
+      background: var(--warm-cream);
+      padding: 16px 0 10px;
+      z-index: 10;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .progress-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #555;
+    }
+    .progress-percent {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .progress-bar-track {
+      width: 100%;
+      height: 12px;
+      background: var(--progress-bg);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c, #e67e22, #f1c40f);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ===== Question Section ===== */
+    .question-section {
+      margin-bottom: 32px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--border);
+    }
+    .section-header .section-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .badge-attitude { background: #fce4ec; }
+    .badge-spending { background: #e8f5e9; }
+    .badge-family { background: #e3f2fd; }
+    .badge-interests { background: #fff3e0; }
+    .badge-relationship { background: #f3e5f5; }
+
+    .section-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+    .section-header .section-count {
+      font-size: 14px;
+      color: #999;
+      font-weight: 400;
+    }
+
+    /* ===== Question Card ===== */
+    .question-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      border: 1px solid #eee;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .question-card.answered {
+      border-color: #c0dcc0;
+      border-left: 4px solid var(--nature-green);
+    }
+    .question-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .question-number {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--primary);
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .question-card.answered .question-number {
+      background: var(--nature-green);
+    }
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+
+    /* ===== Options ===== */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 18px;
+      color: #444;
+      background: #fafafa;
+    }
+    .option-item:hover {
+      border-color: #c0c0c0;
+      background: #f5f5f5;
+    }
+    .option-item.selected {
+      border-color: var(--primary);
+      background: #fef5f5;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .option-item input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+    }
+    .option-item .option-text {
+      flex: 1;
+    }
+
+    /* ===== Submit Button ===== */
+    .submit-section {
+      text-align: center;
+      padding: 20px 0 0;
+    }
+    .submit-btn {
+      width: 100%;
+      max-width: 400px;
+      padding: 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(192,57,43,0.3);
+    }
+    .submit-btn:hover {
+      background: #e74c3c;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(192,57,43,0.4);
+    }
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    .submit-hint {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 8px;
+    }
+
+    /* ===== Result Summary ===== */
+    .result-section {
+      display: none;
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 28px;
+      margin-top: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 2px solid var(--nature-green);
+    }
+    .result-section.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .result-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .result-header .result-icon {
+      font-size: 56px;
+      display: block;
+    }
+    .result-header h2 {
+      font-size: 26px;
+      color: var(--nature-green);
+      margin: 8px 0 4px;
+    }
+    .result-header .result-score {
+      font-size: 18px;
+      color: #888;
+    }
+
+    .result-traits {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .trait-card {
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid #eee;
+    }
+    .trait-card .trait-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+    .trait-card .trait-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 2px;
+    }
+    .trait-card .trait-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .result-suggestion {
+      background: #f0fdf4;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--nature-green);
+    }
+    .result-suggestion h3 {
+      font-size: 18px;
+      color: var(--nature-green);
+      margin: 0 0 8px;
+    }
+    .result-suggestion p {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .result-cta {
+      text-align: center;
+    }
+    .result-cta .matches-link {
+      display: inline-block;
+      padding: 14px 36px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .result-cta .matches-link:hover {
+      background: #e74c3c;
+      transform: translateY(-1px);
+    }
+    .result-cta .retake-link {
+      display: inline-block;
+      margin-left: 16px;
+      color: #888;
+      text-decoration: underline;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 17px;
+      z-index: 9999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.3s ease;
+      pointer-events: none;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(15px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 700px) {
+      .auth-header .inner { flex-wrap: wrap; gap: 10px; }
+      .auth-header .main-nav { order: 3; width: 100%; justify-content: center; overflow-x: auto; }
+      .auth-header .main-nav a { font-size: 13px; padding: 6px 10px; white-space: nowrap; }
+      .question-card { padding: 18px; }
+      .question-text { font-size: 18px; }
+      .option-item { font-size: 16px; padding: 12px 14px; }
+      .result-traits { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Auth Header ===== -->
+<header class="auth-header">
+  <div class="inner">
+    <a href="../index.html" class="logo">
+      <span class="icon">💕</span>
+      <span>中年相亲网</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">首页</a>
+      <a href="search.html">搜索</a>
+      <a href="recommend.html">推荐</a>
+      <a href="messages.html">消息</a>
+      <a href="groups.html">群组</a>
+      <a href="activities.html">活动</a>
+    </nav>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-trigger" onclick="toggleDropdown()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span class="user-name" id="userNameDisplay">用户</span>
+        <span class="user-arrow">▼</span>
+      </div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 个人资料</a>
+        <a href="privacy.html">🔒 隐私设置</a>
+        <a href="questionnaire.html">📝 缘分问卷</a>
+        <div class="divider"></div>
+        <button class="logout-item" onclick="doLogout()">🚪 退出登录</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Page Content ===== -->
+<div class="page-wrapper">
+  <div class="page-hero">
+    <h1>缘分测试问卷</h1>
+    <p class="subtitle">完成以下问题，帮我们更了解您，为您推荐更合适的缘分</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="progress-info">
+      <span class="progress-label">📊 完成进度</span>
+      <span class="progress-percent" id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+  </div>
+
+  <!-- Questions Form -->
+  <form id="questionnaireForm" onsubmit="return false;">
+    <div id="questionsContainer">
+      <!-- Rendered by JavaScript -->
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button type="button" class="submit-btn" id="submitBtn" onclick="submitQuestionnaire()">
+        📝 提交问卷
+      </button>
+      <p class="submit-hint" id="submitHint">请回答所有问题后再提交</p>
+    </div>
+  </form>
+
+  <!-- Result Summary -->
+  <div class="result-section" id="resultSection">
+    <div class="result-header">
+      <span class="result-icon" id="resultIcon">🎉</span>
+      <h2 id="resultTitle">问卷提交成功！</h2>
+      <p class="result-score" id="resultScore"></p>
+    </div>
+    <div class="result-traits" id="resultTraits"></div>
+    <div class="result-suggestion" id="resultSuggestion"></div>
+    <div class="result-cta">
+      <a href="recommend.html" class="matches-link">💕 查看更新后的推荐</a>
+      <span class="retake-link" onclick="retakeQuestionnaire()">重新填写问卷</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Common Scripts ===== -->
+<script src="../js/utils.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/match.js"></script>
+<script src="../data/seed-data.js"></script>
+
+<script>
+(function() {
+
+// ===== Auth Check =====
+function checkAuth() {
+  var currentUser = null;
+  try {
+    var stored = localStorage.getItem('currentUser');
+    if (stored) currentUser = JSON.parse(stored);
+    if (!currentUser && typeof Auth !== 'undefined' && typeof Auth.getCurrentUser === 'function') {
+      currentUser = Auth.getCurrentUser();
+    }
+  } catch(e) {}
+
+  if (!currentUser || !currentUser.id) {
+    showToast('请先登录后再访问缘分问卷');
+    setTimeout(function() {
+      window.location.href = 'login.html';
+    }, 1200);
+    return null;
+  }
+  return currentUser;
+}
+
+var currentUser = checkAuth();
+if (!currentUser) {
+  throw new Error('Auth required');
+}
+
+// ===== Questions Definition =====
+var questions = [
+  // 生活态度 (Life Attitude) - group 0
+  { id: 1, group: 0, groupName: '生活态度', groupIcon: '🌅', groupBadgeClass: 'badge-attitude',
+    text: '您的作息习惯是？',
+    options: [
+      { value: 'early', label: '早睡早起，规律作息' },
+      { value: 'normal', label: '正常作息，不早不晚' },
+      { value: 'night', label: '晚睡晚起，是个夜猫子' }
+    ]
+  },
+  { id: 2, group: 0, groupName: '生活态度', groupIcon: '🌅', groupBadgeClass: 'badge-attitude',
+    text: '周末您最喜欢怎么度过？',
+    options: [
+      { value: 'home', label: '在家休息，享受安静时光' },
+      { value: 'outdoor', label: '户外活动，呼吸新鲜空气' },
+      { value: 'friends', label: '朋友聚会，热闹一下' },
+      { value: 'learn', label: '学习充电，充实自己' }
+    ]
+  },
+  { id: 3, group: 0, groupName: '生活态度', groupIcon: '🌅', groupBadgeClass: 'badge-attitude',
+    text: '您对生活的态度是？',
+    options: [
+      { value: 'content', label: '知足常乐，珍惜当下' },
+      { value: 'active', label: '积极进取，不断追求更好' },
+      { value: 'easy', label: '随遇而安，顺其自然' }
+    ]
+  },
+  { id: 4, group: 0, groupName: '生活态度', groupIcon: '🌅', groupBadgeClass: 'badge-attitude',
+    text: '您喜欢尝试新事物吗？',
+    options: [
+      { value: 'very', label: '非常喜欢，乐于探索' },
+      { value: 'sometimes', label: '偶尔尝试，看情况' },
+      { value: 'familiar', label: '喜欢熟悉的事物，不太愿意改变' }
+    ]
+  },
+
+  // 消费观念 (Spending Habits) - group 1
+  { id: 5, group: 1, groupName: '消费观念', groupIcon: '💰', groupBadgeClass: 'badge-spending',
+    text: '您的消费观念是？',
+    options: [
+      { value: 'frugal', label: '节俭为主，能省则省' },
+      { value: 'moderate', label: '适度消费，该花就花' },
+      { value: 'enjoy', label: '享受生活，不亏待自己' }
+    ]
+  },
+  { id: 6, group: 1, groupName: '消费观念', groupIcon: '💰', groupBadgeClass: 'badge-spending',
+    text: '对于旅游的预算态度？',
+    options: [
+      { value: 'budget', label: '经济实惠，性价比最重要' },
+      { value: 'comfort', label: '舒适为主，不要太差就行' },
+      { value: 'quality', label: '追求品质，体验最重要' }
+    ]
+  },
+
+  // 家庭观念 (Family Values) - group 2
+  { id: 7, group: 2, groupName: '家庭观念', groupIcon: '🏠', groupBadgeClass: 'badge-family',
+    text: '您对家庭的理解是？',
+    options: [
+      { value: 'traditional', label: '传统观念，男主外女主内' },
+      { value: 'equal', label: '平等互助，共同承担' },
+      { value: 'natural', label: '顺其自然，不刻意分工' }
+    ]
+  },
+  { id: 8, group: 2, groupName: '家庭观念', groupIcon: '🏠', groupBadgeClass: 'badge-family',
+    text: '是否愿意与对方的子女共同生活？',
+    options: [
+      { value: 'yes', label: '愿意，一家人在一起挺好' },
+      { value: 'depends', label: '视情况而定' },
+      { value: 'no', label: '不太愿意，希望有独立空间' }
+    ]
+  },
+  { id: 9, group: 2, groupName: '家庭观念', groupIcon: '🏠', groupBadgeClass: 'badge-family',
+    text: '如何对待对方的父母？',
+    options: [
+      { value: 'own', label: '像对自己父母一样' },
+      { value: 'respect', label: '保持尊重礼貌' },
+      { value: 'depends2', label: '看相处情况决定' }
+    ]
+  },
+  { id: 10, group: 2, groupName: '家庭观念', groupIcon: '🏠', groupBadgeClass: 'badge-family',
+    text: '家务活应该怎么分配？',
+    options: [
+      { value: 'together', label: '一起分担，有商有量' },
+      { value: 'specialized', label: '各自做擅长的事' },
+      { value: 'whatever', label: '无所谓，看情况' }
+    ]
+  },
+
+  // 兴趣爱好 (Interests) - group 3
+  { id: 11, group: 3, groupName: '兴趣爱好', groupIcon: '🎨', groupBadgeClass: 'badge-interests',
+    text: '您最看重的休闲活动类型？',
+    options: [
+      { value: 'sports', label: '运动健身，保持健康' },
+      { value: 'culture', label: '文化艺术，陶冶情操' },
+      { value: 'travel', label: '旅游探索，开阔眼界' },
+      { value: 'quiet', label: '安静居家，享受慢生活' }
+    ]
+  },
+  { id: 12, group: 3, groupName: '兴趣爱好', groupIcon: '🎨', groupBadgeClass: 'badge-interests',
+    text: '对于养宠物的态度？',
+    options: [
+      { value: 'like', label: '喜欢，愿意养' },
+      { value: 'neutral', label: '一般，不排斥也不主动' },
+      { value: 'dislike', label: '不喜欢，不想养' }
+    ]
+  },
+
+  // 感情观 (Relationship Views) - group 4
+  { id: 13, group: 4, groupName: '感情观', groupIcon: '💝', groupBadgeClass: 'badge-relationship',
+    text: '您认为两个人最重要的是？',
+    options: [
+      { value: 'understand', label: '相互理解和包容' },
+      { value: 'finance', label: '经济基础稳定' },
+      { value: 'interest', label: '有共同的兴趣爱好' },
+      { value: 'family', label: '双方家庭的支持' }
+    ]
+  },
+  { id: 14, group: 4, groupName: '感情观', groupIcon: '💝', groupBadgeClass: 'badge-relationship',
+    text: '您能接受异地恋吗？',
+    options: [
+      { value: 'yes_ld', label: '可以，距离不是问题' },
+      { value: 'short', label: '短期可以，长期不行' },
+      { value: 'no_ld', label: '不接受异地' }
+    ]
+  },
+  { id: 15, group: 4, groupName: '感情观', groupIcon: '💝', groupBadgeClass: 'badge-relationship',
+    text: '吵架后您通常会？',
+    options: [
+      { value: 'talk', label: '主动沟通，尽快解决' },
+      { value: 'wait', label: '等对方先开口' },
+      { value: 'cool', label: '先冷静一段时间再谈' }
+    ]
+  }
+];
+
+// ===== State =====
+var answers = {};
+var submitted = false;
+
+// Load previous answers
+function loadPreviousAnswers() {
+  try {
+    var key = 'questionnaire_' + currentUser.id;
+    var data = localStorage.getItem(key);
+    if (data) {
+      var parsed = JSON.parse(data);
+      if (parsed && parsed.answers) {
+        answers = parsed.answers;
+      }
+      if (parsed && parsed.submitted) {
+        submitted = true;
+      }
+    }
+  } catch(e) {}
+}
+
+// ===== Render Questions =====
+function renderQuestions() {
+  var container = document.getElementById('questionsContainer');
+  var html = '';
+  var currentGroup = -1;
+
+  questions.forEach(function(q, index) {
+    // New group header
+    if (q.group !== currentGroup) {
+      currentGroup = q.group;
+      html += '<div class="question-section">';
+      html += '  <div class="section-header">';
+      html += '    <div class="section-badge ' + q.groupBadgeClass + '">' + q.groupIcon + '</div>';
+      html += '    <h2>' + escapeHtml(q.groupName) + '</h2>';
+      html += '  </div>';
+    }
+
+    var isAnswered = !!answers[q.id];
+    var selectedValue = answers[q.id] || '';
+
+    html += '<div class="question-card' + (isAnswered ? ' answered' : '') + '" id="qCard-' + q.id + '">';
+    html += '  <span class="question-number">第 ' + q.id + ' 题</span>';
+    html += '  <p class="question-text">' + escapeHtml(q.text) + '</p>';
+    html += '  <div class="options-list">';
+    q.options.forEach(function(opt) {
+      var isSelected = selectedValue === opt.value;
+      html += '    <label class="option-item' + (isSelected ? ' selected' : '') + '" data-qid="' + q.id + '" data-value="' + opt.value + '">';
+      html += '      <input type="radio" name="q' + q.id + '" value="' + opt.value + '"' + (isSelected ? ' checked' : '') + '>';
+      html += '      <span class="option-text">' + escapeHtml(opt.label) + '</span>';
+      html += '    </label>';
+    });
+    html += '  </div>';
+    html += '</div>';
+
+    // Close group section at last question of group
+    var isLastInGroup = (index === questions.length - 1) || (questions[index + 1].group !== q.group);
+    if (isLastInGroup) {
+      html += '</div>'; // close question-section
+    }
+  });
+
+  container.innerHTML = html;
+
+  // Attach event listeners
+  document.querySelectorAll('.option-item').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      var qid = parseInt(this.getAttribute('data-qid'));
+      var value = this.getAttribute('data-value');
+      selectOption(qid, value);
+    });
+  });
+}
+
+// ===== Select Option =====
+function selectOption(qid, value) {
+  answers[qid] = value;
+
+  // Update UI
+  // Deselect all options for this question
+  document.querySelectorAll('.option-item[data-qid="' + qid + '"]').forEach(function(item) {
+    item.classList.remove('selected');
+    item.querySelector('input[type="radio"]').checked = false;
+  });
+
+  // Select the chosen option
+  var selectedEl = document.querySelector('.option-item[data-qid="' + qid + '"][data-value="' + value + '"]');
+  if (selectedEl) {
+    selectedEl.classList.add('selected');
+    selectedEl.querySelector('input[type="radio"]').checked = true;
+  }
+
+  // Mark card as answered
+  var card = document.getElementById('qCard-' + qid);
+  if (card) {
+    card.classList.add('answered');
+  }
+
+  updateProgress();
+}
+
+// ===== Update Progress =====
+function updateProgress() {
+  var total = questions.length;
+  var answered = Object.keys(answers).length;
+  var percent = Math.round((answered / total) * 100);
+
+  document.getElementById('progressPercent').textContent = percent + '%';
+  document.getElementById('progressBarFill').style.width = percent + '%';
+
+  var submitBtn = document.getElementById('submitBtn');
+  var submitHint = document.getElementById('submitHint');
+
+  if (answered === total && !submitted) {
+    submitBtn.disabled = false;
+    submitHint.textContent = '全部问题已回答完毕，可以提交了！';
+    submitHint.style.color = '#66bb6a';
+  } else if (submitted) {
+    submitBtn.disabled = true;
+    submitHint.textContent = '问卷已提交，您可以查看下方结果';
+    submitHint.style.color = '#888';
+  } else {
+    submitBtn.disabled = false; // allow partial submit
+    submitHint.textContent = '已回答 ' + answered + '/' + total + ' 题，继续加油！';
+    submitHint.style.color = '#aaa';
+  }
+}
+
+// ===== Submit Questionnaire =====
+window.submitQuestionnaire = function() {
+  if (submitted) {
+    showToast('问卷已经提交过了，您可以查看下方结果或重新填写');
+    return;
+  }
+
+  var total = questions.length;
+  var answered = Object.keys(answers).length;
+
+  if (answered < total) {
+    showToast('还有 ' + (total - answered) + ' 道题未回答，请完成所有问题后再提交');
+    return;
+  }
+
+  // Calculate personality profile
+  var profile = calculateProfile();
+
+  // Save to localStorage
+  var record = {
+    answers: answers,
+    submitted: true,
+    submittedAt: new Date().toISOString(),
+    profile: profile
+  };
+  try {
+    var key = 'questionnaire_' + currentUser.id;
+    localStorage.setItem(key, JSON.stringify(record));
+  } catch(e) {}
+
+  // Also save to Store if available
+  if (typeof Store !== 'undefined' && typeof Store.saveQuestionnaire === 'function') {
+    Store.saveQuestionnaire(currentUser.id, record);
+  }
+
+  submitted = true;
+  updateProgress();
+
+  // Show result
+  showResult(profile);
+
+  // Scroll to result
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  showToast('✅ 问卷已提交！您的匹配推荐将更加精准');
+};
+
+// ===== Calculate Profile =====
+function calculateProfile() {
+  // Group scores
+  var attitude = { early: 0, normal: 0, night: 0 };
+  var spending = { frugal: 0, moderate: 0, enjoy: 0 };
+  var family = { traditional: 0, equal: 0, natural: 0 };
+  var interests = { sports: 0, culture: 0, travel: 0, quiet: 0 };
+  var relationship = { understand: 0, finance: 0, interest: 0, familySup: 0 };
+
+  // Tally answers
+  if (answers[1] === 'early') attitude.early++;
+  else if (answers[1] === 'normal') attitude.normal++;
+  else if (answers[1] === 'night') attitude.night++;
+
+  if (answers[2] === 'home') interests.quiet++;
+  else if (answers[2] === 'outdoor') interests.sports++;
+  else if (answers[2] === 'friends') interests.travel++;
+  else if (answers[2] === 'learn') interests.culture++;
+
+  if (answers[3] === 'content') attitude.early++;
+  else if (answers[3] === 'active') attitude.normal++;
+  else if (answers[3] === 'easy') attitude.night++;
+
+  if (answers[4] === 'very') attitude.normal++;
+  else if (answers[4] === 'sometimes') attitude.early++;
+  else if (answers[4] === 'familiar') attitude.night++;
+
+  if (answers[5] === 'frugal') spending.frugal++;
+  else if (answers[5] === 'moderate') spending.moderate++;
+  else if (answers[5] === 'enjoy') spending.enjoy++;
+
+  if (answers[6] === 'budget') spending.frugal++;
+  else if (answers[6] === 'comfort') spending.moderate++;
+  else if (answers[6] === 'quality') spending.enjoy++;
+
+  if (answers[7] === 'traditional') family.traditional++;
+  else if (answers[7] === 'equal') family.equal++;
+  else if (answers[7] === 'natural') family.natural++;
+
+  if (answers[8] === 'yes') family.equal++;
+  else if (answers[8] === 'depends') family.natural++;
+  else if (answers[8] === 'no') family.traditional++;
+
+  if (answers[9] === 'own') family.equal++;
+  else if (answers[9] === 'respect') family.natural++;
+  else if (answers[9] === 'depends2') family.traditional++;
+
+  if (answers[10] === 'together') family.equal++;
+  else if (answers[10] === 'specialized') family.natural++;
+  else if (answers[10] === 'whatever') family.traditional++;
+
+  if (answers[11] === 'sports') interests.sports++;
+  else if (answers[11] === 'culture') interests.culture++;
+  else if (answers[11] === 'travel') interests.travel++;
+  else if (answers[11] === 'quiet') interests.quiet++;
+
+  if (answers[12] === 'like') interests.travel++;  // open to experiences
+  else if (answers[12] === 'neutral') interests.quiet++;
+  else if (answers[12] === 'dislike') interests.sports++;
+
+  if (answers[13] === 'understand') relationship.understand++;
+  else if (answers[13] === 'finance') relationship.finance++;
+  else if (answers[13] === 'interest') relationship.interest++;
+  else if (answers[13] === 'family') relationship.familySup++;
+
+  if (answers[14] === 'yes_ld') relationship.understand++;
+  else if (answers[14] === 'short') relationship.interest++;
+  else if (answers[14] === 'no_ld') relationship.finance++;
+
+  if (answers[15] === 'talk') relationship.understand++;
+  else if (answers[15] === 'wait') relationship.finance++;
+  else if (answers[15] === 'cool') relationship.interest++;
+
+  // Determine dominant traits
+  function topKey(obj) {
+    var maxKey = null, maxVal = -1;
+    for (var k in obj) {
+      if (obj[k] > maxVal) { maxVal = obj[k]; maxKey = k; }
+    }
+    return maxKey;
+  }
+
+  var lifeStyle = topKey(attitude);
+  var spendStyle = topKey(spending);
+  var familyStyle = topKey(family);
+  var interestStyle = topKey(interests);
+  var relationStyle = topKey(relationship);
+
+  // Trait labels
+  var lifeStyleLabels = {
+    early: { label: '规律养生型', icon: '🌿', desc: '作息规律，注重健康，享受安静的日常生活节奏。' },
+    normal: { label: '活力进取型', icon: '⭐', desc: '精力充沛，乐于尝试，对生活充满热情。' },
+    night: { label: '自在随性型', icon: '🌙', desc: '随遇而安，不喜束缚，按自己的步调生活。' }
+  };
+  var spendStyleLabels = {
+    frugal: { label: '勤俭持家型', icon: '🪴', desc: '消费理性，注重储蓄，善于精打细算。' },
+    moderate: { label: '均衡消费型', icon: '⚖️', desc: '该省则省该花则花，追求合理的消费平衡。' },
+    enjoy: { label: '品质享受型', icon: '🌟', desc: '注重生活品质，愿意为体验和舒适投资。' }
+  };
+  var familyStyleLabels = {
+    traditional: { label: '传统顾家型', icon: '🏡', desc: '重视家庭责任感，尊重传统家庭角色分工。' },
+    equal: { label: '平等互助型', icon: '🤝', desc: '崇尚伴侣间的平等互助和共同成长。' },
+    natural: { label: '顺其自然型', icon: '🍃', desc: '灵活应对家庭关系，不过度拘泥于规则。' }
+  };
+  var interestStyleLabels = {
+    sports: { label: '活力运动型', icon: '🏃', desc: '热爱运动和户外活动，享受汗水带来的快乐。' },
+    culture: { label: '文艺雅致型', icon: '📚', desc: '热衷文化艺术，在精神世界中寻找满足。' },
+    travel: { label: '探索体验型', icon: '✈️', desc: '喜欢旅行和新体验，对世界充满好奇心。' },
+    quiet: { label: '安静居家型', icon: '🏠', desc: '享受居家生活的温馨与安宁，知足常乐。' }
+  };
+  var relationStyleLabels = {
+    understand: { label: '沟通理解型', icon: '💬', desc: '重视沟通与相互理解，是伴侣关系中的"和事佬"。' },
+    finance: { label: '务实稳重型', icon: '🔑', desc: '注重经济基础和现实条件，脚踏实地经营感情。' },
+    interest: { label: '趣味相投型', icon: '🎯', desc: '看重共同兴趣和生活方式的一致性。' },
+    familySup: { label: '家庭为重型', icon: '👨‍👩‍👧', desc: '重视家庭支持和整体和谐，顾全大局。' }
+  };
+
+  return {
+    lifeStyle: lifeStyleLabels[lifeStyle],
+    spendStyle: spendStyleLabels[spendStyle],
+    familyStyle: familyStyleLabels[familyStyle],
+    interestStyle: interestStyleLabels[interestStyle],
+    relationStyle: relationStyleLabels[relationStyle],
+    // Overall compatibility type
+    overallType: lifeStyle === 'night' ? '自在随性' : (lifeStyle === 'early' ? '稳健踏实' : '活力进取'),
+    overallCompatibility: familyStyle === 'equal' ? '平等型伴侣' : (familyStyle === 'traditional' ? '传统型伴侣' : '灵活型伴侣'),
+    partnerSuggestion: getPartnerSuggestion(lifeStyle, familyStyle, relationStyle)
+  };
+}
+
+function getPartnerSuggestion(lifeStyle, familyStyle, relationStyle) {
+  if (relationStyle === 'understand' && familyStyle === 'equal') {
+    return '您适合寻找一位善于沟通、懂得平等相处的伴侣。建议关注那些在资料中展现包容心和良好沟通能力的用户。';
+  } else if (relationStyle === 'understand') {
+    return '您重视沟通，建议寻找一位同样愿意敞开心扉、真诚交流的伴侣。好的沟通是幸福关系的基石。';
+  } else if (familyStyle === 'traditional') {
+    return '您重视家庭传统，建议寻找一位家庭观念相近、愿意共同经营家庭生活的伴侣。志同道合才能走得长远。';
+  } else if (lifeStyle === 'early') {
+    return '您注重健康规律的生活，建议寻找一位生活习惯相近的伴侣。相似的作息和生活方式会让相处更加融洽。';
+  } else if (relationStyle === 'finance') {
+    return '您很务实，注重现实基础。建议寻找一位经济观念一致、同样脚踏实地的伴侣，共同规划安稳的晚年生活。';
+  } else {
+    return '建议您寻找一位与您生活节奏相仿、价值观契合的伴侣。最美好的关系，是彼此舒服、相互成就。';
+  }
+}
+
+// ===== Show Result =====
+function showResult(profile) {
+  var section = document.getElementById('resultSection');
+  section.classList.add('show');
+
+  document.getElementById('resultIcon').textContent = '🎉';
+  document.getElementById('resultTitle').textContent = '问卷提交成功！';
+  document.getElementById('resultScore').textContent = '您的缘分画像已生成';
+
+  // Traits grid
+  var traitsHtml = '';
+  var traitData = [
+    { label: '生活态度', value: profile.lifeStyle.label, icon: profile.lifeStyle.icon },
+    { label: '消费观念', value: profile.spendStyle.label, icon: profile.spendStyle.icon },
+    { label: '家庭观念', value: profile.familyStyle.label, icon: profile.familyStyle.icon },
+    { label: '兴趣爱好', value: profile.interestStyle.label, icon: profile.interestStyle.icon },
+    { label: '感情沟通', value: profile.relationStyle.label, icon: profile.relationStyle.icon }
+  ];
+  traitData.forEach(function(t) {
+    traitsHtml += '<div class="trait-card">';
+    traitsHtml += '  <div class="trait-icon">' + t.icon + '</div>';
+    traitsHtml += '  <div class="trait-label">' + t.label + '</div>';
+    traitsHtml += '  <div class="trait-value">' + t.value + '</div>';
+    traitsHtml += '</div>';
+  });
+  document.getElementById('resultTraits').innerHTML = traitsHtml;
+
+  // Suggestion
+  var sugHtml = '<h3>💡 择偶小贴士</h3>';
+  sugHtml += '<p>' + profile.partnerSuggestion + '</p>';
+  document.getElementById('resultSuggestion').innerHTML = sugHtml;
+}
+
+// ===== Retake =====
+window.retakeQuestionnaire = function() {
+  if (confirm('确定要重新填写问卷吗？之前的回答将被清除。')) {
+    answers = {};
+    submitted = false;
+    try {
+      var key = 'questionnaire_' + currentUser.id;
+      localStorage.removeItem(key);
+    } catch(e) {}
+    document.getElementById('resultSection').classList.remove('show');
+    renderQuestions();
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('问卷已重置，请重新填写');
+  }
+};
+
+// ===== Helper =====
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  var existing = document.querySelector('.toast');
+  if (existing) existing.parentNode.removeChild(existing);
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s';
+    setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+  }, 2500);
+}
+
+// ===== User Dropdown =====
+window.toggleDropdown = function() {
+  var menu = document.getElementById('dropdownMenu');
+  menu.classList.toggle('show');
+};
+
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('userDropdown');
+  if (dd && !dd.contains(e.target)) {
+    var menu = document.getElementById('dropdownMenu');
+    if (menu) menu.classList.remove('show');
+  }
+});
+
+// ===== Header User Info =====
+function updateHeader() {
+  if (!currentUser) return;
+  document.getElementById('userNameDisplay').textContent = currentUser.name || '用户';
+  document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0);
+}
+
+window.doLogout = function() {
+  try { localStorage.removeItem('currentUser'); } catch(e) {}
+  if (typeof Auth !== 'undefined' && typeof Auth.logout === 'function') {
+    Auth.logout();
+  }
+  showToast('已退出登录');
+  setTimeout(function() {
+    window.location.href = '../index.html';
+  }, 800);
+};
+
+// ===== Init =====
+loadPreviousAnswers();
+updateHeader();
+renderQuestions();
+updateProgress();
+
+// If previously submitted, show result
+if (submitted) {
+  try {
+    var key = 'questionnaire_' + currentUser.id;
+    var data = localStorage.getItem(key);
+    if (data) {
+      var parsed = JSON.parse(data);
+      if (parsed.profile) {
+        setTimeout(function() {
+          showResult(parsed.profile);
+        }, 300);
+      }
+    }
+  } catch(e) {}
+}
+
+})();
+</script>
+
+</body>
+</html>

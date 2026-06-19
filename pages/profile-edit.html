@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑资料 - 中年相亲网</title>
+
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute; top: -100%; left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus { top: var(--space-sm); }
+
+    /* Sticky Header */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .header-logo:hover { color: var(--color-primary-hover); }
+
+    .main-nav { display: flex; align-items: center; gap: var(--space-xs); list-style: none; }
+    .main-nav a {
+      display: inline-flex; align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover { color: var(--color-primary); background-color: var(--color-primary-subtle); }
+
+    /* User Menu */
+    .user-menu { position: relative; flex-shrink: 0; }
+    .user-menu-trigger {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none; border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover { background-color: var(--color-bg); }
+    .user-menu-trigger .avatar-sm { width: 40px; height: 40px; font-size: calc(18px * var(--font-scale)); }
+    .user-menu-trigger .arrow-down { font-size: 12px; color: var(--color-text-tertiary); transition: transform var(--transition-fast); }
+    .user-menu.open .user-menu-trigger .arrow-down { transform: rotate(180deg); }
+    .user-dropdown {
+      display: none; position: absolute; top: calc(100% + 4px); right: 0;
+      min-width: 200px; background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown); overflow: hidden; padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown { display: block; }
+    .user-dropdown a, .user-dropdown button {
+      display: flex; align-items: center; gap: var(--space-sm);
+      width: 100%; padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none; background: none; border: none;
+      cursor: pointer; text-align: left; min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover, .user-dropdown button:hover { background-color: var(--color-bg); }
+    .user-dropdown .dropdown-divider { height: 1px; background: var(--color-border-light); margin: var(--space-xs) 0; }
+    .user-dropdown .logout-btn { color: var(--color-danger); }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none; width: 48px; height: 48px;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; background: none; border: none; cursor: pointer;
+      padding: 8px; border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span { display: block; width: 24px; height: 3px; background: var(--color-text-primary); border-radius: 2px; transition: all var(--transition-fast); }
+    .mobile-nav-panel {
+      display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0;
+      background: var(--color-surface); z-index: var(--z-fixed);
+      padding: var(--space-lg); overflow-y: auto;
+    }
+    .mobile-nav-panel.open { display: flex; flex-direction: column; }
+    .mobile-nav-panel a {
+      display: flex; align-items: center; padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary); text-decoration: none;
+      border-radius: var(--radius-md); min-height: 56px;
+    }
+    .mobile-nav-panel a:hover { background-color: var(--color-bg); }
+
+    /* ========== Main Content ========== */
+    .main-content {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    .page-title {
+      font-size: calc(var(--font-size-h2) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    /* ========== Profile Completeness Bar ========== */
+    .completeness-bar-wrap {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      display: flex; align-items: center; gap: var(--space-md);
+    }
+    .completeness-label {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
+      color: var(--color-text-secondary);
+    }
+    .completeness-bar-outer {
+      flex: 1;
+      height: 12px;
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .completeness-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: var(--radius-full);
+      transition: width var(--transition-slow);
+    }
+    .completeness-pct {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* ========== Section ========== */
+    .edit-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 0;
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-lg);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+      border-bottom: 1px solid transparent;
+    }
+    .section-header:hover { background-color: var(--color-surface-hover); }
+    .edit-section.collapsed .section-header { border-bottom: none; }
+    .section-header h2 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin: 0;
+      display: flex; align-items: center; gap: var(--space-sm);
+    }
+    .section-header h2 .sec-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      background: var(--color-primary-light);
+      border-radius: var(--radius-md);
+      font-size: 20px;
+    }
+    .section-toggle {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-base);
+      background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .edit-section.collapsed .section-toggle { transform: rotate(-90deg); }
+    .section-body {
+      padding: var(--space-lg);
+      transition: max-height var(--transition-slow), padding var(--transition-slow);
+    }
+    .edit-section.collapsed .section-body { display: none; }
+
+    /* ========== Form Styles ========== */
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .form-label .required {
+      color: var(--color-danger);
+      margin-left: 4px;
+    }
+    .form-label .locked {
+      display: inline-block;
+      font-size: calc(13px * var(--font-scale));
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-disabled);
+      margin-left: var(--space-sm);
+    }
+    .form-hint {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: 4px;
+    }
+    .form-hint.warning {
+      color: var(--color-warning-hover);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      min-height: var(--input-min-height);
+      padding: var(--space-sm) var(--space-md);
+      font-family: var(--font-family-base);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+    .form-input:disabled, .form-select:disabled {
+      background: var(--color-bg);
+      color: var(--color-text-disabled);
+      cursor: not-allowed;
+    }
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.8;
+    }
+    .char-counter {
+      text-align: right;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: 4px;
+    }
+    .char-counter.over { color: var(--color-danger); }
+
+    /* Radio & Checkbox Groups */
+    .radio-group, .checkbox-group {
+      display: flex; flex-wrap: wrap; gap: var(--space-sm);
+    }
+    .radio-item, .checkbox-item {
+      display: flex; align-items: center; gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--color-bg);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      min-height: 48px;
+    }
+    .radio-item:hover, .checkbox-item:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-subtle);
+    }
+    .radio-item input, .checkbox-item input { transform: scale(1.3); margin-right: 4px; }
+    .radio-item input:checked + span, .checkbox-item input:checked + span { color: var(--color-primary); font-weight: var(--font-weight-semibold); }
+    .radio-item:has(input:checked), .checkbox-item:has(input:checked) {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    /* Chip select for personality */
+    .chip-select {
+      display: flex; flex-wrap: wrap; gap: var(--space-sm);
+    }
+    .chip-option {
+      display: inline-flex; align-items: center;
+      padding: 8px 20px;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      background: var(--color-bg);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-tag);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+      min-height: 44px;
+    }
+    .chip-option:hover { border-color: var(--color-info); background: var(--color-info-light); }
+    .chip-option.selected {
+      border-color: var(--color-info);
+      background: var(--color-info-light);
+      color: var(--color-info);
+      font-weight: var(--font-weight-semibold);
+    }
+    .chip-counter {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: var(--space-xs);
+    }
+
+    /* Hobby Categories */
+    .hobby-category {
+      margin-bottom: var(--space-md);
+    }
+    .hobby-category-title {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Photo Management */
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    .photo-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      background: var(--color-bg-alt);
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .photo-thumb.has-photo {
+      border-style: solid;
+      border-color: var(--color-border-light);
+    }
+    .photo-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .photo-thumb .photo-initial {
+      font-size: calc(40px * var(--font-scale));
+      color: var(--color-text-disabled);
+    }
+    .photo-thumb .photo-actions {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      display: flex;
+      background: rgba(0,0,0,0.6);
+      padding: 4px;
+    }
+    .photo-thumb .photo-actions button {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: calc(12px * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: #fff;
+      background: none; border: none;
+      cursor: pointer;
+      min-height: 32px;
+    }
+    .photo-thumb .photo-actions button:hover { background: rgba(255,255,255,0.2); }
+    .photo-thumb .photo-actions .btn-set-avatar { border-right: 1px solid rgba(255,255,255,0.3); }
+    .photo-thumb .photo-actions .btn-delete { color: #ff6b6b; }
+    .photo-thumb.is-avatar {
+      border-color: var(--color-primary);
+      border-width: 3px;
+    }
+    .photo-thumb .avatar-badge {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: calc(12px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+    }
+    .photo-upload-wrap {
+      text-align: center;
+      margin-bottom: var(--space-md);
+    }
+    .photo-upload-wrap input[type="file"] { display: none; }
+
+    /* Conditional field */
+    .conditional-field {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      display: none;
+    }
+    .conditional-field.visible { display: block; }
+
+    /* Save Button Area */
+    .save-area {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+    .save-area .btn-save {
+      width: 100%;
+      min-height: 64px;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+    }
+
+    /* Auto-save toast */
+    .auto-save-indicator {
+      text-align: center;
+      margin-top: var(--space-sm);
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-success);
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center; padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 var(--space-md); }
+      .main-nav { display: none; }
+      .mobile-nav-toggle { display: flex; }
+      .main-content { padding: var(--space-md); }
+      .photos-grid { grid-template-columns: repeat(2, 1fr); }
+      .radio-group, .checkbox-group { flex-direction: column; }
+      .radio-item, .checkbox-item { width: 100%; }
+    }
+    @media (max-width: 576px) {
+      .header-logo { font-size: calc(var(--font-size-lg) * var(--font-scale)); }
+      .user-menu-trigger .user-menu-name { display: none; }
+      .photos-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content" id="main-content">
+
+    <h1 class="page-title">编辑个人资料</h1>
+
+    <!-- Profile Completeness -->
+    <div class="completeness-bar-wrap">
+      <span class="completeness-label">资料完整度</span>
+      <div class="completeness-bar-outer">
+        <div class="completeness-bar-inner" id="completenessBar" style="width:0%"></div>
+      </div>
+      <span class="completeness-pct" id="completenessPct">0%</span>
+    </div>
+
+    <!-- Section 1: Basic Info -->
+    <div class="edit-section" id="section1">
+      <div class="section-header" onclick="toggleSection('section1')">
+        <h2><span class="sec-icon">📋</span> 基本信息</h2>
+        <span class="section-toggle">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">姓名 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="editName" placeholder="您的姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">性别 <span class="required">*</span> <span class="locked">一经设定不可修改</span></label>
+          <div class="radio-group" id="editGenderGroup">
+            <label class="radio-item"><input type="radio" name="gender" value="男" disabled> <span>男</span></label>
+            <label class="radio-item"><input type="radio" name="gender" value="女" disabled> <span>女</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">出生日期 <span class="required">*</span> <span class="locked">出生日期一经设定不可修改</span></label>
+          <input type="date" class="form-input" id="editBirthDate" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">手机号 <span class="locked">手机号不可修改</span></label>
+          <input type="text" class="form-input" id="editPhone" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input type="email" class="form-input" id="editEmail" placeholder="您的邮箱地址">
+        </div>
+        <div class="form-group">
+          <label class="form-label">所在省份</label>
+          <select class="form-select" id="editProvince">
+            <option value="">请选择省份</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">所在城市</label>
+          <input type="text" class="form-input" id="editCity" placeholder="请输入所在城市">
+        </div>
+        <div class="form-group">
+          <label class="form-label">所在区县</label>
+          <input type="text" class="form-input" id="editDistrict" placeholder="请输入所在区县（选填）">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Personal Details -->
+    <div class="edit-section" id="section2">
+      <div class="section-header" onclick="toggleSection('section2')">
+        <h2><span class="sec-icon">👤</span> 个人详情</h2>
+        <span class="section-toggle">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">身高 (cm)</label>
+          <input type="number" class="form-input" id="editHeight" placeholder="例如：170" min="130" max="220">
+          <div class="form-hint">请输入130-220之间的数值</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">体重 (kg)</label>
+          <input type="number" class="form-input" id="editWeight" placeholder="例如：65" min="30" max="200">
+        </div>
+        <div class="form-group">
+          <label class="form-label">学历</label>
+          <select class="form-select" id="editEducation">
+            <option value="">请选择学历</option>
+            <option value="高中及以下">高中及以下</option>
+            <option value="中专">中专</option>
+            <option value="大专">大专</option>
+            <option value="本科">本科</option>
+            <option value="硕士">硕士</option>
+            <option value="博士">博士</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">职业</label>
+          <input type="text" class="form-input" id="editOccupation" placeholder="例如：教师、工程师、医生">
+        </div>
+        <div class="form-group">
+          <label class="form-label">月收入</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="income" value="3000以下"> <span>3000以下</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="3000-5000"> <span>3000-5000</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="5000-8000"> <span>5000-8000</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="8000-10000"> <span>8000-10000</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="10000-15000"> <span>10000-15000</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="15000-20000"> <span>15000-20000</span></label>
+            <label class="radio-item"><input type="radio" name="income" value="20000以上"> <span>20000以上</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">婚姻状况 <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="maritalStatus" value="未婚"> <span>未婚</span></label>
+            <label class="radio-item"><input type="radio" name="maritalStatus" value="离异"> <span>离异</span></label>
+            <label class="radio-item"><input type="radio" name="maritalStatus" value="丧偶"> <span>丧偶</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">有无子女</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="hasChildren" value="no" onchange="toggleChildrenField(false)"> <span>无子女</span></label>
+            <label class="radio-item"><input type="radio" name="hasChildren" value="yes" onchange="toggleChildrenField(true)"> <span>有子女</span></label>
+          </div>
+        </div>
+        <div class="conditional-field" id="childrenField">
+          <div class="form-group">
+            <label class="form-label">子女情况说明</label>
+            <input type="text" class="form-input" id="editChildrenDetails" placeholder="例如：有一个女儿，上初中">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Hobbies & Personality -->
+    <div class="edit-section" id="section3">
+      <div class="section-header" onclick="toggleSection('section3')">
+        <h2><span class="sec-icon">🌟</span> 兴趣爱好</h2>
+        <span class="section-toggle">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="hobby-category">
+          <div class="hobby-category-title">🏃 运动健身</div>
+          <div class="checkbox-group" data-hobby-group="sports">
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="跑步"> <span>跑步</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="游泳"> <span>游泳</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="太极拳"> <span>太极拳</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="瑜伽"> <span>瑜伽</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="羽毛球"> <span>羽毛球</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="广场舞"> <span>广场舞</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="登山"> <span>登山</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="骑行"> <span>骑行</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="钓鱼"> <span>钓鱼</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="高尔夫"> <span>高尔夫</span></label>
+          </div>
+        </div>
+        <div class="hobby-category">
+          <div class="hobby-category-title">🎨 文化艺术</div>
+          <div class="checkbox-group" data-hobby-group="culture">
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="阅读"> <span>阅读</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="书法"> <span>书法</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="绘画"> <span>绘画</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="摄影"> <span>摄影</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="音乐"> <span>音乐</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="茶道"> <span>茶道</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="下棋"> <span>下棋</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="看电影"> <span>看电影</span></label>
+          </div>
+        </div>
+        <div class="hobby-category">
+          <div class="hobby-category-title">🏡 生活休闲</div>
+          <div class="checkbox-group" data-hobby-group="lifestyle">
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="烹饪"> <span>烹饪</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="园艺"> <span>园艺</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="旅游"> <span>旅游</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="养宠物"> <span>养宠物</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="烘焙"> <span>烘焙</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="美食"> <span>美食</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="hobbies" value="收藏"> <span>收藏</span></label>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: var(--space-lg);">
+          <label class="form-label">💭 性格特征（最多选4个）</label>
+          <div class="chip-select" id="personalityChips">
+            <span class="chip-option" data-value="稳重">稳重</span>
+            <span class="chip-option" data-value="开朗">开朗</span>
+            <span class="chip-option" data-value="温柔">温柔</span>
+            <span class="chip-option" data-value="幽默">幽默</span>
+            <span class="chip-option" data-value="独立">独立</span>
+            <span class="chip-option" data-value="顾家">顾家</span>
+            <span class="chip-option" data-value="贤惠">贤惠</span>
+            <span class="chip-option" data-value="成熟">成熟</span>
+            <span class="chip-option" data-value="细心">细心</span>
+            <span class="chip-option" data-value="善良">善良</span>
+            <span class="chip-option" data-value="勤快">勤快</span>
+            <span class="chip-option" data-value="大方">大方</span>
+            <span class="chip-option" data-value="知性">知性</span>
+            <span class="chip-option" data-value="文静">文静</span>
+            <span class="chip-option" data-value="传统">传统</span>
+            <span class="chip-option" data-value="有涵养">有涵养</span>
+            <span class="chip-option" data-value="实在">实在</span>
+            <span class="chip-option" data-value="能干">能干</span>
+          </div>
+          <div class="chip-counter">已选：<span id="personalityCount">0</span> / 4</div>
+          <input type="hidden" id="editPersonality" value="">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Self-intro & Partner Requirements -->
+    <div class="edit-section" id="section4">
+      <div class="section-header" onclick="toggleSection('section4')">
+        <h2><span class="sec-icon">💝</span> 自我介绍与择偶要求</h2>
+        <span class="section-toggle">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">自我介绍 <span class="required">*</span></label>
+          <textarea class="form-textarea" id="editSelfIntro" placeholder="介绍一下自己，让更多人了解您...（至少20个字）" maxlength="500"></textarea>
+          <div class="char-counter"><span id="selfIntroCount">0</span> / 500</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">期望对方年龄范围</label>
+          <div style="display:flex; gap:var(--space-md); align-items:center;">
+            <select class="form-select" id="editPartnerAgeMin" style="flex:1;">
+              <option value="">最小年龄</option>
+            </select>
+            <span style="font-size:calc(var(--font-size-lg)*var(--font-scale));color:var(--color-text-tertiary);">—</span>
+            <select class="form-select" id="editPartnerAgeMax" style="flex:1;">
+              <option value="">最大年龄</option>
+            </select>
+            <span>岁</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">期望对方学历</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="partnerEducation" value="高中及以上"> <span>高中及以上</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerEducation" value="大专及以上"> <span>大专及以上</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerEducation" value="本科及以上"> <span>本科及以上</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerEducation" value="不限"> <span>不限</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">期望对方收入</label>
+          <select class="form-select" id="editPartnerIncome">
+            <option value="">请选择</option>
+            <option value="不限">不限</option>
+            <option value="3000以上">3000以上</option>
+            <option value="5000以上">5000以上</option>
+            <option value="8000以上">8000以上</option>
+            <option value="10000以上">10000以上</option>
+            <option value="15000以上">15000以上</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">可接受婚姻状况</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="partnerMaritalPref" value="未婚"> <span>未婚</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerMaritalPref" value="离异"> <span>离异</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerMaritalPref" value="丧偶"> <span>丧偶</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="partnerMaritalPref" value="不限"> <span>不限</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">择偶要求描述</label>
+          <textarea class="form-textarea" id="editPartnerRequirements" placeholder="对理想伴侣的具体要求..." maxlength="300"></textarea>
+          <div class="char-counter"><span id="partnerReqCount">0</span> / 300</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Photo Management -->
+    <div class="edit-section" id="section5">
+      <div class="section-header" onclick="toggleSection('section5')">
+        <h2><span class="sec-icon">📷</span> 照片管理</h2>
+        <span class="section-toggle">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="form-hint" style="margin-bottom: var(--space-md);">最多可上传6张照片，第一张将作为头像展示</div>
+        <div class="photos-grid" id="photosGrid">
+          <!-- Filled by JS -->
+        </div>
+        <div class="photo-upload-wrap">
+          <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoUpload(event)">
+          <button class="btn btn-outline" onclick="document.getElementById('photoFileInput').click()" id="uploadPhotoBtn">
+            📷 上传照片
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="save-area">
+      <button class="btn btn-primary btn-save" id="saveBtn" onclick="saveProfile()">
+        💾 保存修改
+      </button>
+      <div class="auto-save-indicator" id="autoSaveIndicator"></div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('profile-edit.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var currentProfile = Store.getProfile(currentUser.id);
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+
+    // Photos state (in memory)
+    var photos = [];
+    if (currentProfile && Array.isArray(currentProfile.photos)) {
+      photos = currentProfile.photos.slice();
+    }
+    var selectedPersonalities = [];
+    if (currentProfile && Array.isArray(currentProfile.personality)) {
+      selectedPersonalities = currentProfile.personality.slice();
+    }
+
+    // =========================================================================
+    // 2. Header
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % avatarColors.length;
+      }
+      avatarEl.style.backgroundColor = avatarColors[colorIndex];
+    }
+
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+      var dropdown = document.getElementById('userDropdown');
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) { menu.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); }
+        else { menu.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+      });
+      document.addEventListener('click', function () {
+        menu.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false');
+      });
+      dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+      document.getElementById('logoutBtn').addEventListener('click', function () { Auth.logout(); });
+      var ml = document.getElementById('mobileLogoutBtn');
+      if (ml) { ml.addEventListener('click', function (e) { e.preventDefault(); Auth.logout(); }); }
+    }
+
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) { panel.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', '打开菜单'); }
+        else { panel.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); toggle.setAttribute('aria-label', '关闭菜单'); }
+      });
+    }
+
+    // =========================================================================
+    // 3. Province List
+    // =========================================================================
+    var provinces = [
+      '北京市','天津市','上海市','重庆市',
+      '河北省','山西省','辽宁省','吉林省','黑龙江省',
+      '江苏省','浙江省','安徽省','福建省','江西省','山东省',
+      '河南省','湖北省','湖南省','广东省','海南省',
+      '四川省','贵州省','云南省','陕西省','甘肃省','青海省',
+      '台湾省','内蒙古自治区','广西壮族自治区','西藏自治区','宁夏回族自治区','新疆维吾尔自治区',
+      '香港特别行政区','澳门特别行政区'
+    ];
+
+    function populateProvinceSelect() {
+      var sel = document.getElementById('editProvince');
+      for (var i = 0; i < provinces.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = provinces[i];
+        opt.textContent = provinces[i];
+        sel.appendChild(opt);
+      }
+    }
+
+    function populateAgeSelects() {
+      var minSel = document.getElementById('editPartnerAgeMin');
+      var maxSel = document.getElementById('editPartnerAgeMax');
+      for (var age = 25; age <= 80; age++) {
+        var opt1 = document.createElement('option');
+        opt1.value = age;
+        opt1.textContent = age;
+        minSel.appendChild(opt1);
+        var opt2 = document.createElement('option');
+        opt2.value = age;
+        opt2.textContent = age;
+        maxSel.appendChild(opt2);
+      }
+    }
+
+    // =========================================================================
+    // 4. Pre-fill Form
+    // =========================================================================
+    function prefillForm() {
+      // Basic info
+      if (currentUser.name) document.getElementById('editName').value = currentUser.name;
+      if (currentUser.gender) {
+        var genderRadios = document.querySelectorAll('input[name="gender"]');
+        for (var i = 0; i < genderRadios.length; i++) {
+          if (genderRadios[i].value === currentUser.gender) {
+            genderRadios[i].checked = true;
+            genderRadios[i].disabled = true;
+          }
+        }
+      }
+      if (currentUser.birthDate) document.getElementById('editBirthDate').value = currentUser.birthDate;
+      if (currentUser.phone) document.getElementById('editPhone').value = currentUser.phone;
+      if (currentUser.email) document.getElementById('editEmail').value = currentUser.email;
+      if (currentUser.location) {
+        if (currentUser.location.province) document.getElementById('editProvince').value = currentUser.location.province;
+        if (currentUser.location.city) document.getElementById('editCity').value = currentUser.location.city;
+        if (currentUser.location.district) document.getElementById('editDistrict').value = currentUser.location.district;
+      }
+
+      // Personal details
+      if (currentProfile) {
+        if (currentProfile.height) document.getElementById('editHeight').value = currentProfile.height;
+        if (currentProfile.weight) document.getElementById('editWeight').value = currentProfile.weight;
+        if (currentProfile.education) document.getElementById('editEducation').value = currentProfile.education;
+        if (currentProfile.occupation) document.getElementById('editOccupation').value = currentProfile.occupation;
+        if (currentProfile.incomeRange || currentProfile.income) {
+          var inc = currentProfile.incomeRange || currentProfile.income;
+          var incRadios = document.querySelectorAll('input[name="income"]');
+          for (var j = 0; j < incRadios.length; j++) {
+            if (incRadios[j].value === inc) { incRadios[j].checked = true; break; }
+          }
+        }
+        if (currentProfile.maritalStatus) {
+          var msRadios = document.querySelectorAll('input[name="maritalStatus"]');
+          for (var k = 0; k < msRadios.length; k++) {
+            if (msRadios[k].value === currentProfile.maritalStatus) { msRadios[k].checked = true; break; }
+          }
+        }
+        if (currentProfile.hasChildren) {
+          var hcYes = document.querySelector('input[name="hasChildren"][value="yes"]');
+          if (hcYes) { hcYes.checked = true; toggleChildrenField(true); }
+          if (currentProfile.childrenDetails) {
+            document.getElementById('editChildrenDetails').value = currentProfile.childrenDetails;
+          }
+        } else if (currentProfile.hasChildren === false) {
+          var hcNo = document.querySelector('input[name="hasChildren"][value="no"]');
+          if (hcNo) { hcNo.checked = true; }
+        }
+
+        // Hobbies
+        if (currentProfile.hobbies && currentProfile.hobbies.length > 0) {
+          var hobbyCheckboxes = document.querySelectorAll('input[name="hobbies"]');
+          for (var h = 0; h < hobbyCheckboxes.length; h++) {
+            if (currentProfile.hobbies.indexOf(hobbyCheckboxes[h].value) !== -1) {
+              hobbyCheckboxes[h].checked = true;
+            }
+          }
+        }
+
+        // Personality
+        if (currentProfile.personality && currentProfile.personality.length > 0) {
+          selectedPersonalities = currentProfile.personality.slice();
+          updatePersonalityChips();
+        }
+
+        // Self-intro & partner
+        if (currentProfile.selfIntro) document.getElementById('editSelfIntro').value = currentProfile.selfIntro;
+        if (currentProfile.partnerAgeMin) document.getElementById('editPartnerAgeMin').value = currentProfile.partnerAgeMin;
+        if (currentProfile.partnerAgeMax) document.getElementById('editPartnerAgeMax').value = currentProfile.partnerAgeMax;
+        if (currentProfile.partnerEducation) {
+          var peValues = currentProfile.partnerEducation.split(',').map(function (s) { return s.trim(); });
+          var peCheckboxes = document.querySelectorAll('input[name="partnerEducation"]');
+          for (var p = 0; p < peCheckboxes.length; p++) {
+            if (peValues.indexOf(peCheckboxes[p].value) !== -1) { peCheckboxes[p].checked = true; }
+          }
+        }
+        if (currentProfile.partnerIncome) document.getElementById('editPartnerIncome').value = currentProfile.partnerIncome;
+        if (currentProfile.partnerMaritalPref) {
+          var pmValues = currentProfile.partnerMaritalPref.split(',').map(function (s) { return s.trim(); });
+          var pmCheckboxes = document.querySelectorAll('input[name="partnerMaritalPref"]');
+          for (var q = 0; q < pmCheckboxes.length; q++) {
+            if (pmValues.indexOf(pmCheckboxes[q].value) !== -1) { pmCheckboxes[q].checked = true; }
+          }
+        }
+        if (currentProfile.partnerRequirements) document.getElementById('editPartnerRequirements').value = currentProfile.partnerRequirements;
+      }
+
+      // Update counters
+      updateSelfIntroCounter();
+      updatePartnerReqCounter();
+      updateCompleteness();
+    }
+
+    // =========================================================================
+    // 5. Personality Chips
+    // =========================================================================
+    function initPersonalityChips() {
+      var chips = document.querySelectorAll('#personalityChips .chip-option');
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].addEventListener('click', function () {
+          var val = this.getAttribute('data-value');
+          if (this.classList.contains('selected')) {
+            this.classList.remove('selected');
+            var idx = selectedPersonalities.indexOf(val);
+            if (idx !== -1) selectedPersonalities.splice(idx, 1);
+          } else {
+            if (selectedPersonalities.length >= 4) {
+              showToast('最多只能选择4个性格特征', 'warning');
+              return;
+            }
+            this.classList.add('selected');
+            selectedPersonalities.push(val);
+          }
+          document.getElementById('editPersonality').value = selectedPersonalities.join(',');
+          document.getElementById('personalityCount').textContent = selectedPersonalities.length;
+          updateCompleteness();
+        });
+      }
+    }
+
+    function updatePersonalityChips() {
+      var chips = document.querySelectorAll('#personalityChips .chip-option');
+      for (var i = 0; i < chips.length; i++) {
+        var val = chips[i].getAttribute('data-value');
+        if (selectedPersonalities.indexOf(val) !== -1) {
+          chips[i].classList.add('selected');
+        } else {
+          chips[i].classList.remove('selected');
+        }
+      }
+      document.getElementById('editPersonality').value = selectedPersonalities.join(',');
+      document.getElementById('personalityCount').textContent = selectedPersonalities.length;
+    }
+
+    // =========================================================================
+    // 6. Photo Management
+    // =========================================================================
+    function renderPhotos() {
+      var grid = document.getElementById('photosGrid');
+      var html = '';
+      var maxPhotos = 6;
+
+      for (var i = 0; i < maxPhotos; i++) {
+        if (i < photos.length) {
+          var isAvatar = (i === 0);
+          html += '<div class="photo-thumb has-photo' + (isAvatar ? ' is-avatar' : '') + '">';
+          html += '<img src="' + escapeHtml(photos[i]) + '" alt="照片' + (i+1) + '">';
+          if (isAvatar) {
+            html += '<div class="avatar-badge">头像</div>';
+          }
+          html += '<div class="photo-actions">';
+          if (!isAvatar) {
+            html += '<button class="btn-set-avatar" onclick="setAsAvatar(' + i + ')">设为头像</button>';
+          }
+          html += '<button class="btn-delete" onclick="deletePhoto(' + i + ')">删除</button>';
+          html += '</div>';
+          html += '</div>';
+        } else {
+          html += '<div class="photo-thumb">';
+          html += '<span class="photo-initial">📷</span>';
+          html += '</div>';
+        }
+      }
+
+      grid.innerHTML = html;
+      // Update upload button state
+      var uploadBtn = document.getElementById('uploadPhotoBtn');
+      if (photos.length >= maxPhotos) {
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = '📷 已达上限（6张）';
+      } else {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = '📷 上传照片';
+      }
+    }
+
+    window.handlePhotoUpload = function (event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      if (photos.length >= 6) {
+        showToast('最多只能上传6张照片', 'warning');
+        return;
+      }
+      if (!file.type.match(/^image\//)) {
+        showToast('请选择图片文件', 'error');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        photos.push(e.target.result);
+        renderPhotos();
+        updateCompleteness();
+        showToast('照片上传成功', 'success');
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    };
+
+    window.setAsAvatar = function (index) {
+      if (index <= 0 || index >= photos.length) return;
+      var avatar = photos.splice(index, 1)[0];
+      photos.unshift(avatar);
+      renderPhotos();
+      showToast('头像设置成功', 'success');
+    };
+
+    window.deletePhoto = function (index) {
+      if (!confirm('确认删除这张照片吗？')) return;
+      photos.splice(index, 1);
+      renderPhotos();
+      updateCompleteness();
+      showToast('照片已删除', 'info');
+    };
+
+    // =========================================================================
+    // 7. Conditional Fields
+    // =========================================================================
+    window.toggleChildrenField = function (show) {
+      var field = document.getElementById('childrenField');
+      if (show) { field.classList.add('visible'); }
+      else { field.classList.remove('visible'); }
+    };
+
+    window.toggleSection = function (sectionId) {
+      var section = document.getElementById(sectionId);
+      section.classList.toggle('collapsed');
+    };
+
+    // =========================================================================
+    // 8. Character Counters
+    // =========================================================================
+    function updateSelfIntroCounter() {
+      var val = document.getElementById('editSelfIntro').value;
+      var count = val.length;
+      document.getElementById('selfIntroCount').textContent = count;
+      var counter = document.getElementById('selfIntroCount').parentElement;
+      if (count > 500) { counter.classList.add('over'); }
+      else { counter.classList.remove('over'); }
+    }
+
+    function updatePartnerReqCounter() {
+      var val = document.getElementById('editPartnerRequirements').value;
+      var count = val.length;
+      document.getElementById('partnerReqCount').textContent = count;
+      var counter = document.getElementById('partnerReqCount').parentElement;
+      if (count > 300) { counter.classList.add('over'); }
+      else { counter.classList.remove('over'); }
+    }
+
+    document.getElementById('editSelfIntro').addEventListener('input', function () {
+      updateSelfIntroCounter();
+      updateCompleteness();
+    });
+    document.getElementById('editPartnerRequirements').addEventListener('input', function () {
+      updatePartnerReqCounter();
+      updateCompleteness();
+    });
+
+    // =========================================================================
+    // 9. Completeness Calculation
+    // =========================================================================
+    function updateCompleteness() {
+      var fields = [
+        { el: 'editName', weight: 1 },
+        { el: null, weight: 1, check: function () { return currentUser && !!currentUser.gender; } },
+        { el: null, weight: 1, check: function () { return currentUser && !!currentUser.birthDate; } },
+        { el: 'editProvince', weight: 1 },
+        { el: 'editCity', weight: 1 },
+        { el: 'editHeight', weight: 1 },
+        { el: 'editWeight', weight: 0.5 },
+        { el: 'editEducation', weight: 1 },
+        { el: 'editOccupation', weight: 1 },
+        { el: null, weight: 1, check: function () { return !!document.querySelector('input[name="income"]:checked'); } },
+        { el: null, weight: 1, check: function () { return !!document.querySelector('input[name="maritalStatus"]:checked'); } },
+        { el: null, weight: 0.5, check: function () { return !!document.querySelector('input[name="hasChildren"]:checked'); } },
+        { el: null, weight: 1, check: function () { return document.querySelectorAll('input[name="hobbies"]:checked').length > 0; } },
+        { el: null, weight: 1, check: function () { return selectedPersonalities.length > 0; } },
+        { el: 'editSelfIntro', weight: 1.5, check: function () { return document.getElementById('editSelfIntro').value.length >= 10; } },
+        { el: null, weight: 0.5, check: function () { return photos.length > 0; } },
+        { el: 'editPartnerAgeMin', weight: 0.5 },
+        { el: 'editPartnerAgeMax', weight: 0.5 },
+        { el: 'editPartnerIncome', weight: 0.5 },
+        { el: 'editPartnerRequirements', weight: 0.5, check: function () { return document.getElementById('editPartnerRequirements').value.length > 0; } }
+      ];
+
+      var totalWeight = 0;
+      var earnedWeight = 0;
+      for (var i = 0; i < fields.length; i++) {
+        totalWeight += fields[i].weight;
+        var f = fields[i];
+        if (f.check) {
+          if (f.check()) earnedWeight += f.weight;
+        } else {
+          var el = document.getElementById(f.el);
+          if (el && el.value && el.value.trim()) earnedWeight += f.weight;
+        }
+      }
+
+      var pct = Math.round((earnedWeight / totalWeight) * 100);
+      document.getElementById('completenessBar').style.width = pct + '%';
+      document.getElementById('completenessPct').textContent = pct + '%';
+    }
+
+    // Add listeners for completeness updates
+    function addCompletenessListeners() {
+      var inputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('input', updateCompleteness);
+        inputs[i].addEventListener('change', updateCompleteness);
+      }
+      var radios = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+      for (var j = 0; j < radios.length; j++) {
+        radios[j].addEventListener('change', updateCompleteness);
+      }
+    }
+
+    // =========================================================================
+    // 10. Save Profile
+    // =========================================================================
+    window.saveProfile = function () {
+      // Validate
+      var name = document.getElementById('editName').value.trim();
+      if (!name || name.length < 2) {
+        showToast('请输入您的姓名（至少2个字符）', 'error');
+        document.getElementById('editName').focus();
+        return;
+      }
+
+      var selfIntro = document.getElementById('editSelfIntro').value.trim();
+      if (selfIntro.length < 10) {
+        showToast('自我介绍至少需要10个字符', 'error');
+        document.getElementById('editSelfIntro').focus();
+        return;
+      }
+
+      var saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = '⏳ 保存中...';
+
+      // Collect form data
+      var province = document.getElementById('editProvince').value;
+      var city = document.getElementById('editCity').value.trim();
+      var district = document.getElementById('editDistrict').value.trim();
+
+      var incomeRadio = document.querySelector('input[name="income"]:checked');
+      var income = incomeRadio ? incomeRadio.value : '';
+
+      var msRadio = document.querySelector('input[name="maritalStatus"]:checked');
+      var maritalStatus = msRadio ? msRadio.value : '';
+
+      var hcRadio = document.querySelector('input[name="hasChildren"]:checked');
+      var hasChildren = false;
+      if (hcRadio && hcRadio.value === 'yes') hasChildren = true;
+      var childrenDetails = document.getElementById('editChildrenDetails').value.trim();
+
+      var hobbyCheckboxes = document.querySelectorAll('input[name="hobbies"]:checked');
+      var hobbies = [];
+      for (var i = 0; i < hobbyCheckboxes.length; i++) {
+        hobbies.push(hobbyCheckboxes[i].value);
+      }
+
+      var peCheckboxes = document.querySelectorAll('input[name="partnerEducation"]:checked');
+      var partnerEducation = [];
+      for (var j = 0; j < peCheckboxes.length; j++) {
+        partnerEducation.push(peCheckboxes[j].value);
+      }
+
+      var pmCheckboxes = document.querySelectorAll('input[name="partnerMaritalPref"]:checked');
+      var partnerMaritalPref = [];
+      for (var k = 0; k < pmCheckboxes.length; k++) {
+        partnerMaritalPref.push(pmCheckboxes[k].value);
+      }
+
+      // Update user
+      Store.updateUser(currentUser.id, {
+        name: name,
+        location: { province: province, city: city, district: district }
+      });
+
+      // Update profile
+      Store.updateProfile(currentUser.id, {
+        height: parseFloat(document.getElementById('editHeight').value) || null,
+        weight: parseFloat(document.getElementById('editWeight').value) || null,
+        education: document.getElementById('editEducation').value,
+        occupation: document.getElementById('editOccupation').value.trim(),
+        income: income,
+        incomeRange: income,
+        maritalStatus: maritalStatus,
+        hasChildren: hasChildren,
+        childrenDetails: childrenDetails,
+        hobbies: hobbies,
+        personality: selectedPersonalities,
+        selfIntro: selfIntro,
+        photos: photos,
+        partnerAgeMin: parseInt(document.getElementById('editPartnerAgeMin').value) || null,
+        partnerAgeMax: parseInt(document.getElementById('editPartnerAgeMax').value) || null,
+        partnerEducation: partnerEducation.join(','),
+        partnerIncome: document.getElementById('editPartnerIncome').value,
+        partnerMaritalPref: partnerMaritalPref.join(','),
+        partnerRequirements: document.getElementById('editPartnerRequirements').value.trim()
+      });
+
+      // If first photo is set, update avatar on user
+      if (photos.length > 0 && currentUser.avatar !== photos[0]) {
+        Store.updateUser(currentUser.id, { avatar: photos[0] });
+      }
+
+      // Refresh currentUser in memory
+      currentUser = Store.getUserById(currentUser.id);
+      currentProfile = Store.getProfile(currentUser.id);
+
+      setTimeout(function () {
+        saveBtn.disabled = false;
+        saveBtn.textContent = '💾 保存修改';
+        showToast('资料保存成功！', 'success');
+        updateCompleteness();
+        // Redirect to profile view
+        setTimeout(function () {
+          window.location.href = 'profile.html?id=' + currentUser.id;
+        }, 800);
+      }, 500);
+    };
+
+    // =========================================================================
+    // 11. Auto-save (every 30 seconds)
+    // =========================================================================
+    var autoSaveTimer = null;
+
+    function startAutoSave() {
+      autoSaveTimer = setInterval(function () {
+        // Only auto-save valid drafts to localStorage
+        var draft = collectDraftData();
+        storageSet('dating_profile_draft_' + currentUser.id, draft);
+        var indicator = document.getElementById('autoSaveIndicator');
+        indicator.textContent = '✓ 草稿已自动保存 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        setTimeout(function () { indicator.textContent = ''; }, 3000);
+      }, 30000);
+    }
+
+    function collectDraftData() {
+      return {
+        name: document.getElementById('editName').value,
+        province: document.getElementById('editProvince').value,
+        city: document.getElementById('editCity').value,
+        district: document.getElementById('editDistrict').value,
+        height: document.getElementById('editHeight').value,
+        weight: document.getElementById('editWeight').value,
+        education: document.getElementById('editEducation').value,
+        occupation: document.getElementById('editOccupation').value,
+        maritalStatus: (document.querySelector('input[name="maritalStatus"]:checked') || {}).value || '',
+        hasChildren: (document.querySelector('input[name="hasChildren"]:checked') || {}).value || '',
+        childrenDetails: document.getElementById('editChildrenDetails').value,
+        selfIntro: document.getElementById('editSelfIntro').value,
+        partnerRequirements: document.getElementById('editPartnerRequirements').value,
+        partnerAgeMin: document.getElementById('editPartnerAgeMin').value,
+        partnerAgeMax: document.getElementById('editPartnerAgeMax').value,
+        partnerIncome: document.getElementById('editPartnerIncome').value,
+        personality: selectedPersonalities,
+        photos: photos
+      };
+    }
+
+    function restoreDraft() {
+      var draft = storageGet('dating_profile_draft_' + currentUser.id, null);
+      if (!draft) return false;
+      return confirm('检测到未保存的草稿，是否恢复？');
+    }
+
+    // =========================================================================
+    // 12. Init Everything
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      populateProvinceSelect();
+      populateAgeSelects();
+      prefillForm();
+      initPersonalityChips();
+      renderPhotos();
+      updateSelfIntroCounter();
+      updatePartnerReqCounter();
+      addCompletenessListeners();
+      updateCompleteness();
+
+      // Check for draft
+      if (restoreDraft()) {
+        var draft = storageGet('dating_profile_draft_' + currentUser.id, {});
+        if (draft.name) document.getElementById('editName').value = draft.name;
+        if (draft.province) document.getElementById('editProvince').value = draft.province;
+        if (draft.city) document.getElementById('editCity').value = draft.city;
+        if (draft.district) document.getElementById('editDistrict').value = draft.district;
+        if (draft.height) document.getElementById('editHeight').value = draft.height;
+        if (draft.weight) document.getElementById('editWeight').value = draft.weight;
+        if (draft.education) document.getElementById('editEducation').value = draft.education;
+        if (draft.occupation) document.getElementById('editOccupation').value = draft.occupation;
+        if (draft.selfIntro) document.getElementById('editSelfIntro').value = draft.selfIntro;
+        if (draft.partnerRequirements) document.getElementById('editPartnerRequirements').value = draft.partnerRequirements;
+        if (draft.partnerAgeMin) document.getElementById('editPartnerAgeMin').value = draft.partnerAgeMin;
+        if (draft.partnerAgeMax) document.getElementById('editPartnerAgeMax').value = draft.partnerAgeMax;
+        if (draft.partnerIncome) document.getElementById('editPartnerIncome').value = draft.partnerIncome;
+        if (draft.childrenDetails) document.getElementById('editChildrenDetails').value = draft.childrenDetails;
+        if (draft.personality) { selectedPersonalities = draft.personality.slice(); updatePersonalityChips(); }
+        if (draft.photos) { photos = draft.photos.slice(); renderPhotos(); }
+        if (draft.hasChildren === 'yes') { toggleChildrenField(true); }
+        updateSelfIntroCounter();
+        updatePartnerReqCounter();
+        updateCompleteness();
+      }
+
+      startAutoSave();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查看资料 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus { top: var(--space-sm); }
+
+    /* Sticky Header */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .header-logo:hover { color: var(--color-primary-hover); }
+
+    .main-nav {
+      display: flex; align-items: center; gap: var(--space-xs);
+      list-style: none;
+    }
+    .main-nav a {
+      display: inline-flex; align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+    }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu */
+    .user-menu { position: relative; flex-shrink: 0; }
+    .user-menu-trigger {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none; border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover { background-color: var(--color-bg); }
+    .user-menu-trigger .avatar-sm {
+      width: 40px; height: 40px;
+      font-size: calc(18px * var(--font-scale));
+    }
+    .user-menu-trigger .arrow-down {
+      font-size: 12px; color: var(--color-text-tertiary);
+      transition: transform var(--transition-fast);
+    }
+    .user-menu.open .user-menu-trigger .arrow-down { transform: rotate(180deg); }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px); right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      overflow: hidden;
+      padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown { display: block; }
+    .user-dropdown a, .user-dropdown button {
+      display: flex; align-items: center; gap: var(--space-sm);
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none; background: none; border: none;
+      cursor: pointer; text-align: left;
+      min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover, .user-dropdown button:hover { background-color: var(--color-bg); }
+    .user-dropdown .dropdown-divider {
+      height: 1px; background: var(--color-border-light);
+      margin: var(--space-xs) 0;
+    }
+    .user-dropdown .logout-btn { color: var(--color-danger); }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none;
+      width: 48px; height: 48px;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px;
+      background: none; border: none; cursor: pointer;
+      padding: 8px; border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span {
+      display: block; width: 24px; height: 3px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-fast);
+    }
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 72px; left: 0; right: 0; bottom: 0;
+      background: var(--color-surface);
+      z-index: var(--z-fixed);
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .mobile-nav-panel.open { display: flex; flex-direction: column; }
+    .mobile-nav-panel a {
+      display: flex; align-items: center;
+      padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+    }
+    .mobile-nav-panel a:hover { background-color: var(--color-bg); }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========== Main Content ========== */
+    .main-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    /* Back Button */
+    .back-link {
+      display: inline-flex; align-items: center; gap: var(--space-xs);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      margin-bottom: var(--space-md);
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+    }
+    .back-link:hover { color: var(--color-primary); background-color: var(--color-primary-subtle); }
+
+    /* ========== Photo Section ========== */
+    .photo-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-lg);
+    }
+    .profile-avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: var(--space-md);
+    }
+    .profile-avatar {
+      width: 200px; height: 200px;
+      border-radius: var(--radius-avatar);
+      display: flex; align-items: center; justify-content: center;
+      font-size: calc(72px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      box-shadow: var(--shadow-md);
+    }
+    .profile-avatar img {
+      width: 100%; height: 100%;
+      border-radius: var(--radius-avatar);
+      object-fit: cover;
+    }
+    .verify-badge {
+      position: absolute;
+      bottom: 8px; right: 8px;
+      background: linear-gradient(135deg, #D4A843, #C49A3C);
+      color: #fff;
+      font-size: calc(14px * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .profile-name {
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .profile-subtitle {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    /* ========== Quick Info Bar ========== */
+    .quick-info-bar {
+      display: flex; flex-wrap: wrap; gap: var(--space-sm);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-lg);
+    }
+    .info-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 16px;
+      background: var(--color-primary-subtle);
+      color: var(--color-primary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-tag);
+      white-space: nowrap;
+    }
+    .info-chip .chip-icon { font-size: calc(16px * var(--font-scale)); }
+
+    /* ========== About Me ========== */
+    .about-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-lg);
+    }
+    .section-title {
+      font-size: calc(var(--font-size-h3) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-md);
+      display: flex; align-items: center; gap: var(--space-sm);
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 24px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .self-intro-text {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      line-height: 2;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+      white-space: pre-wrap;
+    }
+    .tag-group { margin-bottom: var(--space-md); }
+    .tag-group-label {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-sm);
+    }
+    .tag-group .tag-list {
+      display: flex; flex-wrap: wrap; gap: var(--space-sm);
+    }
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 6px 18px;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-radius: var(--radius-tag);
+      font-weight: var(--font-weight-medium);
+      transition: transform var(--transition-fast);
+    }
+    .tag:hover { transform: scale(1.05); }
+    .tag-interest {
+      background: var(--color-secondary-light);
+      color: var(--color-secondary-active);
+    }
+    .tag-personality {
+      background: var(--color-surface);
+      color: var(--color-info);
+      border: 2px solid var(--color-info-light);
+    }
+
+    /* ========== Info Cards ========== */
+    .info-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-lg);
+    }
+    .info-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .info-card td {
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      vertical-align: top;
+    }
+    .info-card td:first-child {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      width: 140px;
+    }
+    .info-card td:last-child {
+      color: var(--color-text-primary);
+    }
+    .info-card tr:not(:last-child) td {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .privacy-hidden {
+      color: var(--color-text-disabled);
+      font-style: italic;
+    }
+
+    /* ========== Action Buttons ========== */
+    .actions-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-lg);
+      text-align: center;
+    }
+    .actions-section .btn {
+      margin: var(--space-sm);
+      min-width: 160px;
+    }
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    .btn-heart {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      padding: var(--space-md) var(--space-xl);
+    }
+    .btn-heart:hover {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+    .btn-like {
+      background: var(--color-secondary);
+      color: var(--color-text-on-secondary);
+      border-color: var(--color-secondary);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+    .btn-like:hover {
+      background: var(--color-secondary-hover);
+      border-color: var(--color-secondary-hover);
+    }
+    .btn-danger-outline {
+      background: transparent;
+      color: var(--color-danger);
+      border: 2px solid var(--color-danger);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+    .btn-danger-outline:hover {
+      background: var(--color-danger-light);
+    }
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      cursor: pointer;
+      text-decoration: underline;
+      padding: var(--space-sm);
+      min-height: var(--tap-target-min);
+    }
+    .btn-text:hover { color: var(--color-danger); }
+
+    /* Heart Animation */
+    @keyframes heartBeat {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.3); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.2); }
+      60% { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+    .heart-animating {
+      animation: heartBeat 0.8s ease;
+      display: inline-block;
+    }
+
+    /* ========== Safety Tip ========== */
+    .safety-card {
+      background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+      border: 1px solid #FFD54F;
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      display: flex; align-items: flex-start; gap: var(--space-md);
+    }
+    .safety-icon {
+      font-size: calc(36px * var(--font-scale));
+      flex-shrink: 0;
+    }
+    .safety-content h4 {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-warning-hover);
+      margin-bottom: var(--space-xs);
+    }
+    .safety-content p {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    /* ========== Limited Profile ========== */
+    .limited-notice {
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+    .limited-notice .notice-icon {
+      font-size: calc(48px * var(--font-scale));
+      opacity: 0.5;
+      margin-bottom: var(--space-sm);
+    }
+    .limited-notice p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin: 0;
+    }
+
+    /* ========== Report Dialog ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: var(--z-modal-overlay);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-dialog {
+      background: var(--color-surface);
+      border-radius: var(--radius-modal);
+      padding: var(--space-xl);
+      max-width: 480px;
+      width: 90%;
+      box-shadow: var(--shadow-modal);
+    }
+    .modal-dialog h3 {
+      font-size: calc(var(--font-size-h3) * var(--font-scale));
+      margin-bottom: var(--space-md);
+    }
+    .modal-dialog label {
+      display: block;
+      padding: var(--space-sm) 0;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      cursor: pointer;
+    }
+    .modal-dialog input[type="radio"] {
+      margin-right: var(--space-sm);
+      transform: scale(1.4);
+    }
+    .modal-actions {
+      display: flex; gap: var(--space-sm);
+      margin-top: var(--space-lg);
+      justify-content: flex-end;
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Preview Cards (for matched/liked users) ========== */
+    .preview-card {
+      display: flex; align-items: center; gap: var(--space-md);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      text-decoration: none; color: inherit;
+      cursor: pointer;
+      transition: box-shadow var(--transition-base);
+    }
+    .preview-card:hover { box-shadow: var(--shadow-md); }
+    .preview-card-avatar {
+      width: 64px; height: 64px;
+      border-radius: var(--radius-avatar);
+      display: flex; align-items: center; justify-content: center;
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff; flex-shrink: 0;
+    }
+    .preview-card-info { flex: 1; min-width: 0; }
+    .preview-card-name {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 2px;
+    }
+    .preview-card-meta {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    /* ========== Toast positioning fix ========== */
+    #toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 var(--space-md); }
+      .main-nav { display: none; }
+      .mobile-nav-toggle { display: flex; }
+      .main-content { padding: var(--space-md); }
+      .profile-avatar { width: 160px; height: 160px; font-size: calc(56px * var(--font-scale)); }
+      .photo-section { padding: var(--space-lg); }
+      .info-card td:first-child { width: 100px; font-size: calc(var(--font-size-sm) * var(--font-scale)); }
+      .info-card td { padding: var(--space-sm); font-size: calc(var(--font-size-base) * var(--font-scale)); }
+      .section-title { font-size: calc(var(--font-size-lg) * var(--font-scale)); }
+      .quick-info-bar { justify-content: center; }
+      .info-chip { font-size: calc(16px * var(--font-scale)); padding: 4px 12px; }
+      .btn-heart { font-size: calc(var(--font-size-base) * var(--font-scale)); }
+      .actions-section .btn { display: block; width: 100%; margin: var(--space-sm) 0; }
+    }
+
+    @media (max-width: 576px) {
+      .header-logo { font-size: calc(var(--font-size-lg) * var(--font-scale)); }
+      .user-menu-trigger .user-menu-name { display: none; }
+      .profile-avatar { width: 140px; height: 140px; font-size: calc(48px * var(--font-scale)); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Sticky Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content" id="main-content">
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-link">← 返回</a>
+
+    <!-- Photo Section -->
+    <section class="photo-section" id="photoSection">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="verify-badge" id="verifyBadge" style="display:none;">✓ 已认证</div>
+      </div>
+      <h1 class="profile-name" id="profileName">---</h1>
+      <p class="profile-subtitle" id="profileSubtitle">---</p>
+    </section>
+
+    <!-- Quick Info Bar -->
+    <div class="quick-info-bar" id="quickInfoBar">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- About Me Section -->
+    <section class="about-section" id="aboutSection">
+      <h2 class="section-title">关于我</h2>
+      <div class="self-intro-text" id="selfIntroText">暂无自我介绍</div>
+      <div class="tag-group" id="hobbyTagGroup" style="display:none;">
+        <div class="tag-group-label">🌟 兴趣爱好</div>
+        <div class="tag-list" id="hobbyTags"></div>
+      </div>
+      <div class="tag-group" id="personalityTagGroup" style="display:none;">
+        <div class="tag-group-label">💭 性格特征</div>
+        <div class="tag-list" id="personalityTags"></div>
+      </div>
+    </section>
+
+    <!-- Basic Information Card -->
+    <section class="info-card" id="basicInfoCard">
+      <h2 class="section-title">基本信息</h2>
+      <table id="basicInfoTable">
+        <!-- Filled by JS -->
+      </table>
+    </section>
+
+    <!-- Partner Requirements Card -->
+    <section class="info-card" id="partnerCard">
+      <h2 class="section-title">择偶要求</h2>
+      <table id="partnerInfoTable">
+        <!-- Filled by JS -->
+      </table>
+    </section>
+
+    <!-- Limited Profile Notice -->
+    <div class="limited-notice" id="limitedNotice" style="display:none;">
+      <div class="notice-icon">🔒</div>
+      <p id="limitedNoticeText">该用户设置了隐私保护，部分信息不可见</p>
+    </div>
+
+    <!-- Action Buttons (for viewing others) -->
+    <section class="actions-section" id="actionsSection">
+      <button class="btn btn-heart btn-block" id="messageBtn">
+        💬 发送消息
+      </button>
+      <button class="btn btn-like" id="likeBtn">
+        ❤️ 表示好感
+      </button>
+      <button class="btn btn-danger-outline" id="blockBtn">
+        🚫 屏蔽此人
+      </button>
+      <button class="btn-text" id="reportBtn">
+        举报
+      </button>
+    </section>
+
+    <!-- Edit Profile Button (for own profile) -->
+    <section class="actions-section" id="ownActionsSection" style="display:none;">
+      <a href="profile-edit.html" class="btn btn-primary btn-block">
+        ✏️ 编辑资料
+      </a>
+    </section>
+
+    <!-- Safety Tip -->
+    <div class="safety-card">
+      <div class="safety-icon">🛡️</div>
+      <div class="safety-content">
+        <h4>交友安全提示</h4>
+        <p>初次见面请选择公共场所，并告知家人朋友您的去向。不要轻易透露银行账户等敏感信息。如遇骚扰请及时使用拉黑或举报功能，我们会在24小时内处理。</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Report Dialog -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal-dialog">
+      <h3>举报用户</h3>
+      <p style="margin-bottom: var(--space-md); color: var(--color-text-secondary);">请选择举报原因：</p>
+      <label><input type="radio" name="reportReason" value="虚假信息"> 虚假信息</label>
+      <label><input type="radio" name="reportReason" value="骚扰信息"> 骚扰信息</label>
+      <label><input type="radio" name="reportReason" value="不当言论"> 不当言论</label>
+      <label><input type="radio" name="reportReason" value="诈骗行为"> 诈骗行为</label>
+      <label><input type="radio" name="reportReason" value="其他"> 其他</label>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="reportCancelBtn">取消</button>
+        <button class="btn btn-danger" id="reportSubmitBtn">提交举报</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('profile.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+
+    // =========================================================================
+    // 2. Get target user ID from URL
+    // =========================================================================
+    var targetUserId = getQueryParam('id');
+    if (!targetUserId || targetUserId === currentUser.id) {
+      // Redirect to own profile edit if no id or viewing self
+      window.location.href = 'profile-edit.html';
+      return;
+    }
+
+    var targetUser = Store.getUserById(targetUserId);
+    if (!targetUser || targetUser.status !== 'active') {
+      document.getElementById('photoSection').innerHTML =
+        '<div class="limited-notice"><div class="notice-icon">😕</div><p>用户不存在或已注销</p></div>';
+      return;
+    }
+
+    var targetProfile = Store.getProfile(targetUserId);
+    var privacySettings = Store.getPrivacySettings(targetUserId);
+    var blockedByCurrent = Store.getBlockedUsers(currentUser.id);
+    var blockedByTarget = Store.getBlockedUsers(targetUserId);
+    var isBlockedByTarget = blockedByTarget.indexOf(currentUser.id) !== -1;
+
+    // =========================================================================
+    // 3. Init Header
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % avatarColors.length;
+      }
+      avatarEl.style.backgroundColor = avatarColors[colorIndex];
+    }
+
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+      var dropdown = document.getElementById('userDropdown');
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          menu.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+      dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        Auth.logout();
+      });
+      var mobileLogout = document.getElementById('mobileLogoutBtn');
+      if (mobileLogout) {
+        mobileLogout.addEventListener('click', function (e) {
+          e.preventDefault();
+          Auth.logout();
+        });
+      }
+    }
+
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) {
+          panel.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', '打开菜单');
+        } else {
+          panel.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('aria-label', '关闭菜单');
+        }
+      });
+    }
+
+    // =========================================================================
+    // 4. Render Profile
+    // =========================================================================
+    function getColorForUser(userId) {
+      var idx = 0;
+      if (userId) {
+        for (var i = 0; i < userId.length; i++) {
+          idx += userId.charCodeAt(i);
+        }
+        idx = idx % avatarColors.length;
+      }
+      return avatarColors[idx];
+    }
+
+    function renderPhotoSection() {
+      var name = targetUser.name || '用户';
+      var initial = name.charAt(0);
+      var age = calculateAge(targetUser.birthDate);
+      var city = (targetUser.location && targetUser.location.city) ? targetUser.location.city : '';
+      var province = (targetUser.location && targetUser.location.province) ? targetUser.location.province : '';
+
+      var avatarEl = document.getElementById('profileAvatar');
+      avatarEl.textContent = initial;
+      avatarEl.style.backgroundColor = getColorForUser(targetUserId);
+
+      if (targetUser.avatar) {
+        avatarEl.innerHTML = '<img src="' + escapeHtml(targetUser.avatar) + '" alt="' + escapeHtml(name) + '的头像">';
+      }
+
+      if (targetUser.isVerified) {
+        document.getElementById('verifyBadge').style.display = 'flex';
+      }
+
+      document.getElementById('profileName').textContent = name;
+      var subtitle = (age !== null ? age + '岁' : '');
+      if (province || city) {
+        subtitle += (subtitle ? ' · ' : '') + (province || '') + (city ? ' ' + city : '');
+      }
+      document.getElementById('profileSubtitle').textContent = subtitle || '---';
+    }
+
+    function renderQuickInfoBar() {
+      var age = calculateAge(targetUser.birthDate);
+      var items = [];
+
+      if (targetUser.gender) {
+        items.push({ icon: targetUser.gender === '男' ? '👨' : '👩', text: targetUser.gender });
+      }
+      if (age !== null) {
+        items.push({ icon: '🎂', text: age + '岁' });
+      }
+      if (targetProfile && targetProfile.height) {
+        items.push({ icon: '📏', text: targetProfile.height + 'cm' });
+      }
+      if (targetProfile && targetProfile.education) {
+        items.push({ icon: '🎓', text: targetProfile.education });
+      }
+      if (targetProfile && targetProfile.maritalStatus) {
+        items.push({ icon: '💍', text: targetProfile.maritalStatus });
+      }
+
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        html += '<span class="info-chip"><span class="chip-icon">' + items[i].icon + '</span> ' + escapeHtml(items[i].text) + '</span>';
+      }
+
+      document.getElementById('quickInfoBar').innerHTML = html || '<span class="info-chip">暂无信息</span>';
+    }
+
+    function renderAboutSection() {
+      if (!targetProfile) {
+        document.getElementById('selfIntroText').textContent = '暂无自我介绍';
+        return;
+      }
+
+      var selfIntro = targetProfile.selfIntro || '暂无自我介绍';
+      document.getElementById('selfIntroText').textContent = selfIntro;
+
+      // Hobby tags
+      if (targetProfile.hobbies && targetProfile.hobbies.length > 0) {
+        document.getElementById('hobbyTagGroup').style.display = 'block';
+        var hobbyHtml = '';
+        for (var i = 0; i < targetProfile.hobbies.length; i++) {
+          hobbyHtml += '<span class="tag tag-interest">' + escapeHtml(targetProfile.hobbies[i]) + '</span>';
+        }
+        document.getElementById('hobbyTags').innerHTML = hobbyHtml;
+      }
+
+      // Personality tags
+      if (targetProfile.personality && targetProfile.personality.length > 0) {
+        document.getElementById('personalityTagGroup').style.display = 'block';
+        var persHtml = '';
+        for (var j = 0; j < targetProfile.personality.length; j++) {
+          persHtml += '<span class="tag tag-personality">' + escapeHtml(targetProfile.personality[j]) + '</span>';
+        }
+        document.getElementById('personalityTags').innerHTML = persHtml;
+      }
+    }
+
+    function renderBasicInfoCard() {
+      if (!targetProfile) {
+        document.getElementById('basicInfoTable').innerHTML =
+          '<tr><td colspan="2" style="color:var(--color-text-tertiary);text-align:center;padding:var(--space-lg);">用户暂未完善资料</td></tr>';
+        return;
+      }
+
+      if (isBlockedByTarget) {
+        document.getElementById('basicInfoCard').style.display = 'none';
+        document.getElementById('partnerCard').style.display = 'none';
+        document.getElementById('aboutSection').style.display = 'none';
+        document.getElementById('limitedNotice').style.display = 'block';
+        document.getElementById('limitedNoticeText').textContent = '该用户设置了隐私保护，您无法查看其详细资料';
+        return;
+      }
+
+      var age = calculateAge(targetUser.birthDate);
+      var birthYear = '';
+      if (targetUser.birthDate) {
+        var bd = new Date(targetUser.birthDate);
+        if (!isNaN(bd.getTime())) {
+          birthYear = bd.getFullYear() + '年';
+        }
+      }
+
+      var rows = [
+        { label: '性别', value: targetUser.gender || '未填写' },
+        { label: '年龄', value: (age !== null ? age + '岁' + (birthYear ? '（' + birthYear + '出生）' : '') : '未填写') },
+        { label: '身高', value: targetProfile.height ? targetProfile.height + ' cm' : '未填写' },
+        { label: '体重', value: targetProfile.weight ? targetProfile.weight + ' kg' : '未填写' },
+        { label: '学历', value: targetProfile.education || '未填写' },
+        { label: '职业', value: targetProfile.occupation || '未填写' },
+        { label: '月收入', value: privacySettings.showIncome === false ? '保密' : (targetProfile.incomeRange || targetProfile.income || '未填写') },
+        { label: '婚姻状况', value: targetProfile.maritalStatus || '未填写' },
+        { label: '子女情况', value: targetProfile.hasChildren ? (targetProfile.childrenDetails || '有子女') : '无子女' },
+        { label: '所在地', value: formatLocation(targetUser.location) }
+      ];
+
+      var html = '';
+      for (var i = 0; i < rows.length; i++) {
+        var valClass = rows[i].value === '保密' ? 'privacy-hidden' : '';
+        html += '<tr><td>' + escapeHtml(rows[i].label) + '</td><td class="' + valClass + '">' + escapeHtml(rows[i].value) + '</td></tr>';
+      }
+      document.getElementById('basicInfoTable').innerHTML = html;
+    }
+
+    function renderPartnerCard() {
+      if (!targetProfile || isBlockedByTarget) return;
+
+      var rows = [];
+      var ageRange = '';
+      if (targetProfile.partnerAgeMin || targetProfile.partnerAgeMax) {
+        ageRange = (targetProfile.partnerAgeMin || '不限') + ' - ' + (targetProfile.partnerAgeMax || '不限') + ' 岁';
+      } else {
+        ageRange = '未填写';
+      }
+      rows.push({ label: '年龄范围', value: ageRange });
+
+      var edu = targetProfile.partnerEducation || '未填写';
+      rows.push({ label: '学历要求', value: edu });
+
+      var inc = targetProfile.partnerIncome || '未填写';
+      rows.push({ label: '收入要求', value: inc });
+
+      var maritalPref = targetProfile.partnerMaritalPref || '未填写';
+      rows.push({ label: '可接受婚姻状况', value: maritalPref });
+
+      var requirements = targetProfile.partnerRequirements || '未填写';
+      rows.push({ label: '要求描述', value: requirements });
+
+      var html = '';
+      for (var i = 0; i < rows.length; i++) {
+        html += '<tr><td>' + escapeHtml(rows[i].label) + '</td><td>' + escapeHtml(rows[i].value) + '</td></tr>';
+      }
+      document.getElementById('partnerInfoTable').innerHTML = html;
+    }
+
+    function formatLocation(location) {
+      if (!location || typeof location !== 'object') return '未填写';
+      var parts = [];
+      if (location.province) parts.push(location.province);
+      if (location.city) parts.push(location.city);
+      if (location.district) parts.push(location.district);
+      return parts.length > 0 ? parts.join(' ') : '未填写';
+    }
+
+    function renderActions() {
+      // If viewing own profile (already redirected, but just in case)
+      if (targetUserId === currentUser.id) {
+        document.getElementById('actionsSection').style.display = 'none';
+        document.getElementById('ownActionsSection').style.display = 'block';
+        return;
+      }
+
+      // If blocked by target user
+      if (isBlockedByTarget) {
+        document.getElementById('actionsSection').style.display = 'none';
+        return;
+      }
+
+      // Check if already blocked by current user
+      if (blockedByCurrent.indexOf(targetUserId) !== -1) {
+        document.getElementById('blockBtn').textContent = '✓ 已屏蔽';
+        document.getElementById('blockBtn').disabled = true;
+      }
+
+      // Check if already liked
+      var existingLikes = Store.getMatches(currentUser.id);
+      for (var i = 0; i < existingLikes.length; i++) {
+        if (existingLikes[i].targetUserId === targetUserId && existingLikes[i].type === 'like') {
+          document.getElementById('likeBtn').textContent = '✓ 已表示好感';
+          document.getElementById('likeBtn').disabled = true;
+          break;
+        }
+      }
+    }
+
+    // =========================================================================
+    // 5. Action Handlers
+    // =========================================================================
+
+    // Send Message
+    document.getElementById('messageBtn').addEventListener('click', function () {
+      window.location.href = 'chat.html?partner=' + encodeURIComponent(targetUserId);
+    });
+
+    // Like User
+    document.getElementById('likeBtn').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true;
+      var result = Store.likeUser(currentUser.id, targetUserId);
+      if (result.matched) {
+        btn.textContent = '💕 配对成功！';
+        btn.classList.add('btn-heart');
+        showToast('太棒了！你们互相喜欢，快去聊天吧！', 'success', 4000);
+      } else {
+        btn.textContent = '✓ 已表示好感';
+        showToast('已向对方表示好感', 'success');
+        // Heart animation
+        var heartSpan = document.createElement('span');
+        heartSpan.textContent = '❤️';
+        heartSpan.className = 'heart-animating';
+        heartSpan.style.cssText = 'position:fixed;top:50%;left:50%;font-size:80px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);';
+        document.body.appendChild(heartSpan);
+        setTimeout(function () {
+          document.body.removeChild(heartSpan);
+        }, 800);
+      }
+    });
+
+    // Block User
+    document.getElementById('blockBtn').addEventListener('click', function () {
+      if (!confirm('确认要屏蔽此用户吗？屏蔽后你们将无法看到彼此的资料和消息。')) return;
+      var btn = this;
+      Store.blockUser(currentUser.id, targetUserId);
+      btn.textContent = '✓ 已屏蔽';
+      btn.disabled = true;
+      showToast('已屏蔽该用户', 'warning');
+      // Refresh
+      blockedByCurrent = Store.getBlockedUsers(currentUser.id);
+    });
+
+    // Report User
+    document.getElementById('reportBtn').addEventListener('click', function () {
+      document.getElementById('reportModal').classList.add('open');
+    });
+    document.getElementById('reportCancelBtn').addEventListener('click', function () {
+      document.getElementById('reportModal').classList.remove('open');
+    });
+    document.getElementById('reportSubmitBtn').addEventListener('click', function () {
+      var selected = document.querySelector('input[name="reportReason"]:checked');
+      if (!selected) {
+        showToast('请选择举报原因', 'warning');
+        return;
+      }
+      document.getElementById('reportModal').classList.remove('open');
+      showToast('举报已提交，我们会尽快处理，感谢您的反馈！', 'success', 4000);
+      // In a real app this would post to a server
+      console.log('Report submitted for user ' + targetUserId + ': ' + selected.value);
+    });
+    // Close modal on overlay click
+    document.getElementById('reportModal').addEventListener('click', function (e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+      }
+    });
+
+    // =========================================================================
+    // 6. Init Everything
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      renderPhotoSection();
+      renderQuickInfoBar();
+      renderAboutSection();
+      renderBasicInfoCard();
+      renderPartnerCard();
+      renderActions();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

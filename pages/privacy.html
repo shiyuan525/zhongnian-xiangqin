@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>隐私设置 - 中年相亲网</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    /* ===== Page-Specific Styles ===== */
+    :root {
+      --warm-red: #c0392b;
+      --warm-red-light: #e74c3c;
+      --warm-pink: #f8e8e8;
+      --warm-cream: #fef9f4;
+      --warm-brown: #8b5e3c;
+      --primary: #c0392b;
+      --primary-light: #f8e8e8;
+    }
+
+    body {
+      background: #f5f4f1;
+    }
+
+    /* ===== Auth Header ===== */
+    .auth-header {
+      background: #fff;
+      border-bottom: 3px solid var(--primary);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .auth-header .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 12px;
+    }
+    .auth-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--primary);
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .auth-header .logo .icon { font-size: 32px; }
+    .auth-header .main-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .auth-header .main-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 15px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .auth-header .main-nav a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .auth-header .user-dropdown {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .auth-header .user-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s;
+    }
+    .auth-header .user-trigger:hover {
+      background: #f0f0f0;
+    }
+    .auth-header .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .auth-header .user-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+    .auth-header .user-arrow {
+      font-size: 12px;
+      color: #999;
+    }
+    .auth-header .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 6px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.14);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 200;
+      border: 1px solid #e8e8e8;
+    }
+    .auth-header .dropdown-menu.show {
+      display: block;
+    }
+    .auth-header .dropdown-menu a,
+    .auth-header .dropdown-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: #333;
+      font-size: 15px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .auth-header .dropdown-menu a:hover,
+    .auth-header .dropdown-menu button:hover {
+      background: #f7f7f7;
+    }
+    .auth-header .dropdown-menu .divider {
+      height: 1px;
+      background: #eee;
+      margin: 4px 0;
+    }
+    .auth-header .dropdown-menu .logout-item {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ===== Page Layout ===== */
+    .page-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .page-hero {
+      text-align: center;
+      padding: 40px 0 20px;
+    }
+    .page-hero h1 {
+      font-size: 32px;
+      color: #333;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .page-hero .subtitle {
+      font-size: 17px;
+      color: #777;
+      margin: 0;
+    }
+
+    /* ===== Settings Card ===== */
+    .settings-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      padding: 28px;
+      margin-bottom: 20px;
+      border: 1px solid #eaeaea;
+    }
+    .settings-card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0e0d6;
+    }
+    .settings-card h2 .section-icon {
+      margin-right: 8px;
+    }
+
+    /* ===== Radio Group ===== */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .radio-option:hover {
+      border-color: #d0c0c0;
+      background: #fdfafa;
+    }
+    .radio-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .radio-option input[type="radio"] {
+      margin-top: 2px;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+    }
+    .radio-option .radio-body {
+      flex: 1;
+    }
+    .radio-option .radio-label {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+      display: block;
+    }
+    .radio-option .radio-desc {
+      font-size: 14px;
+      color: #888;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ===== Toggle Switch ===== */
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 16px;
+    }
+    .toggle-item:last-child {
+      border-bottom: none;
+    }
+    .toggle-item .toggle-label {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+    }
+    .toggle-item .toggle-desc {
+      font-size: 13px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 56px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ccc;
+      border-radius: 32px;
+      transition: all 0.3s;
+    }
+    .toggle-switch .slider:before {
+      content: '';
+      position: absolute;
+      height: 26px;
+      width: 26px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: all 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle-switch input:checked + .slider {
+      background: var(--primary);
+    }
+    .toggle-switch input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    .toggle-switch input:focus + .slider {
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.2);
+    }
+
+    /* ===== Blocked Users ===== */
+    .blocked-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .blocked-user-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: #fafafa;
+      border-radius: 10px;
+      border: 1px solid #eee;
+    }
+    .blocked-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ddd;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .blocked-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .blocked-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    .blocked-date {
+      font-size: 13px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .unblock-btn {
+      padding: 7px 16px;
+      background: #fff;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .unblock-btn:hover {
+      background: var(--primary-light);
+    }
+    .empty-blocked {
+      text-align: center;
+      padding: 28px 16px;
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    /* ===== Save Button ===== */
+    .save-section {
+      text-align: center;
+      padding: 8px 0 32px;
+    }
+    .save-btn {
+      width: 100%;
+      max-width: 400px;
+      padding: 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(192,57,43,0.3);
+    }
+    .save-btn:hover {
+      background: var(--warm-red-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(192,57,43,0.4);
+    }
+    .save-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 17px;
+      z-index: 9999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      animation: fadeInUp 0.3s ease;
+      pointer-events: none;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(15px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 700px) {
+      .auth-header .inner { flex-wrap: wrap; gap: 10px; }
+      .auth-header .main-nav { order: 3; width: 100%; justify-content: center; overflow-x: auto; }
+      .auth-header .main-nav a { font-size: 13px; padding: 6px 10px; white-space: nowrap; }
+      .settings-card { padding: 20px; }
+      .radio-option { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Auth Header ===== -->
+<header class="auth-header">
+  <div class="inner">
+    <a href="../index.html" class="logo">
+      <span class="icon">💕</span>
+      <span>中年相亲网</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">首页</a>
+      <a href="search.html">搜索</a>
+      <a href="recommend.html">推荐</a>
+      <a href="messages.html">消息</a>
+      <a href="groups.html">群组</a>
+      <a href="activities.html">活动</a>
+    </nav>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-trigger" onclick="toggleDropdown()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span class="user-name" id="userNameDisplay">用户</span>
+        <span class="user-arrow">▼</span>
+      </div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 个人资料</a>
+        <a href="privacy.html">🔒 隐私设置</a>
+        <a href="questionnaire.html">📝 缘分问卷</a>
+        <div class="divider"></div>
+        <button class="logout-item" onclick="doLogout()">🚪 退出登录</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Page Content ===== -->
+<div class="page-wrapper">
+  <div class="page-hero">
+    <h1>隐私设置</h1>
+    <p class="subtitle">控制谁可以看到您的资料和联系您</p>
+  </div>
+
+  <!-- 1. Profile Visibility -->
+  <div class="settings-card">
+    <h2><span class="section-icon">👁️</span>资料可见范围</h2>
+    <div class="radio-group" data-setting="profileVisibility">
+      <label class="radio-option">
+        <input type="radio" name="profileVisibility" value="all">
+        <div class="radio-body">
+          <span class="radio-label">所有人可见</span>
+          <span class="radio-desc">任何访问网站的人都可以看到您的资料</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="profileVisibility" value="registered">
+        <div class="radio-body">
+          <span class="radio-label">仅注册用户可见</span>
+          <span class="radio-desc">只有注册并登录的用户才能看到您的完整资料</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="profileVisibility" value="matched">
+        <div class="radio-body">
+          <span class="radio-label">仅匹配用户可见</span>
+          <span class="radio-desc">只有与您匹配的用户才能看到您的资料（推荐）</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 2. Profile Display Settings -->
+  <div class="settings-card">
+    <h2><span class="section-icon">📋</span>个人资料显示设置</h2>
+    <div id="displayToggles">
+      <div class="toggle-item">
+        <div>
+          <div class="toggle-label">显示年龄</div>
+          <div class="toggle-desc">在您的资料中显示年龄信息</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" data-key="showAge" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <div>
+          <div class="toggle-label">显示收入</div>
+          <div class="toggle-desc">在您的资料中显示收入范围</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" data-key="showIncome" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <div>
+          <div class="toggle-label">显示职业</div>
+          <div class="toggle-desc">在您的资料中显示职业信息</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" data-key="showOccupation" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <div>
+          <div class="toggle-label">显示子女情况</div>
+          <div class="toggle-desc">在您的资料中显示是否有子女</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" data-key="showChildren" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-item">
+        <div>
+          <div class="toggle-label">显示具体住址（精确到区）</div>
+          <div class="toggle-desc">在资料中显示您所在的区域</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" data-key="showAddress" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Message Permissions -->
+  <div class="settings-card">
+    <h2><span class="section-icon">💬</span>消息权限</h2>
+    <div class="radio-group" data-setting="messagePermission">
+      <label class="radio-option">
+        <input type="radio" name="messagePermission" value="all">
+        <div class="radio-body">
+          <span class="radio-label">所有人可以发消息</span>
+          <span class="radio-desc">任何注册用户都可以向您发送消息</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="messagePermission" value="matched">
+        <div class="radio-body">
+          <span class="radio-label">仅匹配用户</span>
+          <span class="radio-desc">只有与您互相匹配的用户才能发消息（推荐）</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="messagePermission" value="contacted">
+        <div class="radio-body">
+          <span class="radio-label">仅我联系过的人</span>
+          <span class="radio-desc">只有您主动联系过的用户才能回复您</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 4. Photo Visibility -->
+  <div class="settings-card">
+    <h2><span class="section-icon">🖼️</span>谁可以看我的照片</h2>
+    <div class="radio-group" data-setting="photoVisibility">
+      <label class="radio-option">
+        <input type="radio" name="photoVisibility" value="all">
+        <div class="radio-body">
+          <span class="radio-label">所有人</span>
+          <span class="radio-desc">任何访问网站的人都可以看到您的照片</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="photoVisibility" value="registered">
+        <div class="radio-body">
+          <span class="radio-label">仅注册用户</span>
+          <span class="radio-desc">只有注册并登录的用户才能看到您的照片（推荐）</span>
+        </div>
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="photoVisibility" value="matched">
+        <div class="radio-body">
+          <span class="radio-label">仅匹配用户</span>
+          <span class="radio-desc">只有与您匹配的用户才能看到您的照片</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 5. Blocked Users -->
+  <div class="settings-card">
+    <h2><span class="section-icon">🚫</span>屏蔽列表</h2>
+    <div class="blocked-list" id="blockedList">
+      <!-- Rendered by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Save Button -->
+  <div class="save-section">
+    <button class="save-btn" onclick="saveSettings()">💾 保存设置</button>
+  </div>
+</div>
+
+<!-- ===== Common Scripts ===== -->
+<script src="../js/utils.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/match.js"></script>
+<script src="../data/seed-data.js"></script>
+
+<script>
+(function() {
+
+// ===== Auth Check =====
+function checkAuth() {
+  var currentUser = null;
+  try {
+    var stored = localStorage.getItem('currentUser');
+    if (stored) currentUser = JSON.parse(stored);
+    if (!currentUser && typeof Auth !== 'undefined' && typeof Auth.getCurrentUser === 'function') {
+      currentUser = Auth.getCurrentUser();
+    }
+  } catch(e) {}
+
+  if (!currentUser || !currentUser.id) {
+    // Not logged in, redirect to login
+    showToast('请先登录后再访问隐私设置');
+    setTimeout(function() {
+      window.location.href = 'login.html';
+    }, 1200);
+    return null;
+  }
+  return currentUser;
+}
+
+var currentUser = checkAuth();
+if (!currentUser) {
+  // Stop further execution (redirect pending)
+  throw new Error('Auth required');
+}
+
+// ===== Load Settings =====
+function getSettings() {
+  var defaults = {
+    profileVisibility: 'matched',
+    showAge: true,
+    showIncome: true,
+    showOccupation: true,
+    showChildren: true,
+    showAddress: true,
+    messagePermission: 'matched',
+    photoVisibility: 'registered'
+  };
+  try {
+    var key = 'privacySettings_' + currentUser.id;
+    var data = localStorage.getItem(key);
+    if (data) {
+      var parsed = JSON.parse(data);
+      return Object.assign({}, defaults, parsed);
+    }
+  } catch(e) {}
+  return defaults;
+}
+
+function saveSettingsToStore(settings) {
+  try {
+    var key = 'privacySettings_' + currentUser.id;
+    localStorage.setItem(key, JSON.stringify(settings));
+  } catch(e) {}
+}
+
+// ===== Render Settings =====
+function renderSettings() {
+  var settings = getSettings();
+
+  // Radio groups
+  document.querySelectorAll('.radio-group[data-setting]').forEach(function(group) {
+    var settingName = group.getAttribute('data-setting');
+    var value = settings[settingName];
+    var radios = group.querySelectorAll('input[type="radio"]');
+    var radioOptions = group.querySelectorAll('.radio-option');
+
+    radios.forEach(function(radio) {
+      if (radio.value === value) {
+        radio.checked = true;
+      }
+      radio.addEventListener('change', function() {
+        updateRadioSelection(group);
+      });
+    });
+
+    // Set initial selected class
+    updateRadioSelection(group);
+  });
+
+  // Toggle switches
+  var toggleKeys = ['showAge', 'showIncome', 'showOccupation', 'showChildren', 'showAddress'];
+  toggleKeys.forEach(function(key) {
+    var checkbox = document.querySelector('input[data-key="' + key + '"]');
+    if (checkbox) {
+      checkbox.checked = settings[key];
+    }
+  });
+}
+
+function updateRadioSelection(group) {
+  var options = group.querySelectorAll('.radio-option');
+  options.forEach(function(opt) {
+    var radio = opt.querySelector('input[type="radio"]');
+    if (radio && radio.checked) {
+      opt.classList.add('selected');
+    } else {
+      opt.classList.remove('selected');
+    }
+  });
+}
+
+// ===== Save Settings =====
+window.saveSettings = function() {
+  var settings = {};
+
+  // Collect radio values
+  document.querySelectorAll('.radio-group[data-setting]').forEach(function(group) {
+    var name = group.getAttribute('data-setting');
+    var checked = group.querySelector('input[type="radio"]:checked');
+    if (checked) {
+      settings[name] = checked.value;
+    }
+  });
+
+  // Collect toggle values
+  document.querySelectorAll('input[data-key]').forEach(function(checkbox) {
+    settings[checkbox.getAttribute('data-key')] = checkbox.checked;
+  });
+
+  saveSettingsToStore(settings);
+
+  // Also save to Store if available
+  if (typeof Store !== 'undefined' && typeof Store.updatePrivacySettings === 'function') {
+    Store.updatePrivacySettings(currentUser.id, settings);
+  }
+
+  showToast('✅ 隐私设置已保存');
+};
+
+// ===== Blocked Users =====
+function getBlockedUsers() {
+  try {
+    var key = 'blockedUsers_' + currentUser.id;
+    var data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveBlockedUsers(list) {
+  try {
+    var key = 'blockedUsers_' + currentUser.id;
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch(e) {}
+}
+
+function renderBlockedUsers() {
+  var container = document.getElementById('blockedList');
+  var blocked = getBlockedUsers();
+
+  if (!blocked || blocked.length === 0) {
+    container.innerHTML = '<div class="empty-blocked">🕊️ 您还没有屏蔽任何人</div>';
+    return;
+  }
+
+  var html = '';
+  blocked.forEach(function(user, index) {
+    var initials = (user.name || '?').charAt(0);
+    html += '<div class="blocked-user-item">';
+    html += '  <div class="blocked-avatar">' + escapeHtml(initials) + '</div>';
+    html += '  <div class="blocked-info">';
+    html += '    <div class="blocked-name">' + escapeHtml(user.name || '未知用户') + '</div>';
+    html += '    <div class="blocked-date">屏蔽于 ' + escapeHtml(user.date || '未知日期') + '</div>';
+    html += '  </div>';
+    html += '  <button class="unblock-btn" onclick="unblockUser(' + index + ')">解除屏蔽</button>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+window.unblockUser = function(index) {
+  var blocked = getBlockedUsers();
+  var removed = blocked[index];
+  blocked.splice(index, 1);
+  saveBlockedUsers(blocked);
+  renderBlockedUsers();
+  showToast('已解除对' + (removed ? removed.name || '该用户' : '该用户') + '的屏蔽');
+};
+
+// ===== Helper =====
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  var existing = document.querySelector('.toast');
+  if (existing) existing.parentNode.removeChild(existing);
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s';
+    setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+  }, 2200);
+}
+
+// ===== User Dropdown =====
+window.toggleDropdown = function() {
+  var menu = document.getElementById('dropdownMenu');
+  menu.classList.toggle('show');
+};
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('userDropdown');
+  if (dd && !dd.contains(e.target)) {
+    var menu = document.getElementById('dropdownMenu');
+    if (menu) menu.classList.remove('show');
+  }
+});
+
+// ===== Header User Info =====
+function updateHeader() {
+  if (!currentUser) return;
+  document.getElementById('userNameDisplay').textContent = currentUser.name || '用户';
+  document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0);
+}
+
+window.doLogout = function() {
+  try { localStorage.removeItem('currentUser'); } catch(e) {}
+  if (typeof Auth !== 'undefined' && typeof Auth.logout === 'function') {
+    Auth.logout();
+  }
+  showToast('已退出登录');
+  setTimeout(function() {
+    window.location.href = '../index.html';
+  }, 800);
+};
+
+// ===== Init =====
+updateHeader();
+renderSettings();
+renderBlockedUsers();
+
+})();
+</script>
+
+</body>
+</html>

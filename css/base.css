@@ -1,0 +1,519 @@
+/* ==========================================================================
+   中年相亲网 — Base Reset & Global Styles
+   相亲网站 基础重置与全局样式
+   ========================================================================== */
+
+/* --------------------------------------------------------------------
+   1. Box-Sizing Reset
+   -------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------
+   2. HTML & Body
+   -------------------------------------------------------------------- */
+html {
+  font-size: 100%; /* 允许用户浏览器设置决定基准字号 */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* --------------------------------------------------------------------
+   3. Headings 标题
+   -------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: calc(var(--font-size-h1) * var(--font-scale));
+}
+
+h2 {
+  font-size: calc(var(--font-size-h2) * var(--font-scale));
+}
+
+h3 {
+  font-size: calc(var(--font-size-h3) * var(--font-scale));
+}
+
+h4 {
+  font-size: calc(var(--font-size-lg) * var(--font-scale));
+}
+
+h5 {
+  font-size: calc(var(--font-size-md) * var(--font-scale));
+}
+
+h6 {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+}
+
+/* --------------------------------------------------------------------
+   4. Paragraphs 段落
+   -------------------------------------------------------------------- */
+p {
+  margin-top: 0;
+  margin-bottom: var(--space-sm);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  line-height: var(--line-height-base);
+}
+
+/* --------------------------------------------------------------------
+   5. Links 链接
+   -------------------------------------------------------------------- */
+a {
+  color: var(--color-text-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-text-link-hover);
+  text-decoration-thickness: 2px;
+}
+
+a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-xs);
+}
+
+/* 链接用于导航 / 卡片等场景时去掉下划线 */
+a[href]:has(> .card),
+a[href]:has(> img),
+a.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------
+   6. Focus-Visible 焦点可见性 (高对比度)
+   -------------------------------------------------------------------- */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* 键盘焦点：按钮、输入框等已自行控制 */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --------------------------------------------------------------------
+   7. Selection 选中文本样式
+   -------------------------------------------------------------------- */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+/* --------------------------------------------------------------------
+   8. Scrollbar 滚动条 (Webkit)
+   -------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-bg);
+}
+
+/* --------------------------------------------------------------------
+   9. Images 图片
+   -------------------------------------------------------------------- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-style: none;
+}
+
+img[width][height] {
+  /* 保留内联宽高比 */
+}
+
+/* 头像等圆形图片 */
+img[src*="avatar"],
+img.avatar-img {
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------
+   10. Strong / Emphasis 加粗强调
+   -------------------------------------------------------------------- */
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------
+   11. Lists 列表
+   -------------------------------------------------------------------- */
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: var(--space-sm);
+  padding-left: var(--space-lg);
+  line-height: var(--line-height-base);
+}
+
+li {
+  margin-bottom: var(--space-xs);
+}
+
+/* 导航等无样式列表 */
+ul[role="list"],
+ol[role="list"],
+ul.list-unstyled,
+ol.list-unstyled {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* --------------------------------------------------------------------
+   12. Horizontal Rule 分割线
+   -------------------------------------------------------------------- */
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  margin: var(--space-lg) 0;
+}
+
+/* --------------------------------------------------------------------
+   13. Abbreviation 缩写
+   -------------------------------------------------------------------- */
+abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* --------------------------------------------------------------------
+   14. Address
+   -------------------------------------------------------------------- */
+address {
+  font-style: normal;
+  line-height: var(--line-height-base);
+}
+
+/* --------------------------------------------------------------------
+   15. Small
+   -------------------------------------------------------------------- */
+small {
+  font-size: calc(var(--font-size-sm) * var(--font-scale));
+}
+
+/* --------------------------------------------------------------------
+   16. Pre / Code
+   -------------------------------------------------------------------- */
+pre,
+code,
+kbd,
+samp {
+  font-family: var(--font-family-mono);
+}
+
+pre {
+  overflow-x: auto;
+  padding: var(--space-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  line-height: var(--line-height-tight);
+}
+
+/* --------------------------------------------------------------------
+   17. Form Elements 表单元素基础
+   -------------------------------------------------------------------- */
+
+/* 确保表单元素继承字体 */
+input,
+button,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  line-height: var(--line-height-base);
+  margin: 0;
+}
+
+/* Label */
+label {
+  display: inline-block;
+  margin-bottom: var(--space-xs);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+/* Input / Select / Textarea 统一基样式 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  min-height: var(--input-min-height);
+  padding: 0 var(--space-sm);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-input);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+textarea {
+  padding: var(--space-sm);
+  min-height: 120px;
+  resize: vertical;
+  line-height: var(--line-height-base);
+}
+
+/* Select 下拉箭头 */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235A5A5A' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 1;
+}
+
+/* Hover */
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="tel"]:hover,
+input[type="number"]:hover,
+input[type="url"]:hover,
+input[type="search"]:hover,
+input[type="date"]:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--color-primary);
+}
+
+/* Focus */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-primary-light);
+}
+
+/* Disabled */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-bg);
+}
+
+/* Readonly */
+input[readonly],
+textarea[readonly] {
+  background-color: var(--color-bg);
+  cursor: default;
+}
+
+/* Checkbox / Radio — 使用自定义样式 */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 22px;
+  height: 22px;
+  min-height: auto;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: var(--space-xs);
+}
+
+/* Fieldset / Legend */
+fieldset {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin: 0 0 var(--space-md) 0;
+}
+
+legend {
+  font-weight: var(--font-weight-bold);
+  padding: 0 var(--space-sm);
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------
+   18. Button Reset
+   -------------------------------------------------------------------- */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* --------------------------------------------------------------------
+   19. Table Reset
+   -------------------------------------------------------------------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+}
+
+th,
+td {
+  text-align: left;
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+th {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------
+   20. Audio / Video / Canvas
+   -------------------------------------------------------------------- */
+audio,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------
+   21. Hidden
+   -------------------------------------------------------------------- */
+[hidden] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------
+   22. Print Styles 打印样式
+   -------------------------------------------------------------------- */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 14pt;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}

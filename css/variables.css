@@ -1,0 +1,203 @@
+/* ==========================================================================
+   中年相亲网 — Design Tokens (CSS Custom Properties)
+   相亲网站 CSS 变量定义
+   ========================================================================== */
+
+:root {
+  /* --------------------------------------------------------------------
+     Typography 字体系统
+     -------------------------------------------------------------------- */
+  --font-family-base: "Microsoft YaHei", "PingFang SC", "Noto Sans SC",
+    "Source Han Sans CN", sans-serif;
+  --font-family-mono: "Cascadia Code", "Fira Code", "Source Code Pro",
+    "Consolas", monospace;
+
+  /* 字号层级 — 基值 20px，适配中老年阅读 */
+  --font-size-xs: 16px;
+  --font-size-sm: 18px;
+  --font-size-base: 20px;
+  --font-size-md: 22px;
+  --font-size-lg: 24px;
+  --font-size-xl: 28px;
+  --font-size-2xl: 32px;
+  --font-size-h1: 36px;
+  --font-size-h2: 30px;
+  --font-size-h3: 26px;
+
+  /* 行高 — 1.8 保证可读性 */
+  --line-height-tight: 1.4;
+  --line-height-base: 1.8;
+  --line-height-heading: 1.35;
+
+  /* 字重 */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 字号缩放因子 — 支持无障碍放大 */
+  --font-scale: 1;
+
+  /* --------------------------------------------------------------------
+     Colors 色彩系统
+     -------------------------------------------------------------------- */
+
+  /* 品牌主色 — 暖玫瑰红 */
+  --color-primary: #D45161;
+  --color-primary-hover: #BF3D4D;
+  --color-primary-active: #A93340;
+  --color-primary-light: #FBE8EB;
+  --color-primary-subtle: #FDF2F3;
+
+  /* 品牌辅色 — 暖桃色 */
+  --color-secondary: #E8A87C;
+  --color-secondary-hover: #D99364;
+  --color-secondary-active: #C88052;
+  --color-secondary-light: #FDF3EC;
+  --color-secondary-subtle: #FEF9F5;
+
+  /* 语义色 */
+  --color-success: #5B8C5A;
+  --color-success-hover: #4A7A49;
+  --color-success-light: #E9F3E9;
+  --color-success-subtle: #F4F9F4;
+
+  --color-warning: #E09F3E;
+  --color-warning-hover: #CC8C2C;
+  --color-warning-light: #FDF5E8;
+  --color-warning-subtle: #FEFAEF;
+
+  --color-danger: #C1121F;
+  --color-danger-hover: #A30F1A;
+  --color-danger-light: #FCE8EA;
+  --color-danger-subtle: #FDF4F5;
+
+  --color-info: #4A7FB5;
+  --color-info-light: #ECF3F8;
+
+  /* 文字色 */
+  --color-text-primary: #2D2D2D;
+  --color-text-secondary: #5A5A5A;
+  --color-text-tertiary: #8A8A8A;
+  --color-text-disabled: #B5B5B5;
+  --color-text-on-primary: #FFFFFF;
+  --color-text-on-secondary: #2D2D2D;
+  --color-text-link: #C44A58;
+  --color-text-link-hover: #A93340;
+
+  /* 背景色 — 暖白基调 */
+  --color-bg: #FFF8F0;
+  --color-bg-alt: #FFF0E5;
+  --color-bg-warm: #FFF5EC;
+
+  /* 表面 / 卡片色 */
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FFFAF7;
+  --color-surface-alt: #FFFBF8;
+
+  /* 边框 */
+  --color-border: #D4C5B9;
+  --color-border-light: #E5DBD2;
+  --color-border-focus: #D45161;
+
+  /* --------------------------------------------------------------------
+     Spacing 间距系统
+     -------------------------------------------------------------------- */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-xxl: 64px;
+  --space-3xl: 80px;
+
+  /* 内边距快捷 */
+  --section-padding-y: 32px;
+  --section-padding-x: 24px;
+  --card-padding: 24px;
+  --card-gap: 24px;
+
+  /* --------------------------------------------------------------------
+     Touch Targets 触控目标
+     -------------------------------------------------------------------- */
+  --btn-min-height: 56px;
+  --input-min-height: 56px;
+  --icon-btn-size: 56px;
+  --tap-target-min: 56px;
+
+  /* --------------------------------------------------------------------
+     Border Radius 圆角
+     -------------------------------------------------------------------- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* 组件专用 */
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --radius-input: 12px;
+  --radius-badge: 12px;
+  --radius-tag: 20px;
+  --radius-modal: 20px;
+  --radius-avatar: 50%;
+
+  /* --------------------------------------------------------------------
+     Shadows 阴影
+     -------------------------------------------------------------------- */
+  --shadow-xs: 0 1px 2px rgba(45, 45, 45, 0.04);
+  --shadow-sm: 0 2px 8px rgba(45, 45, 45, 0.06);
+  --shadow-md: 0 4px 16px rgba(45, 45, 45, 0.08);
+  --shadow-lg: 0 8px 32px rgba(45, 45, 45, 0.10);
+  --shadow-xl: 0 12px 48px rgba(45, 45, 45, 0.12);
+  --shadow-card: 0 2px 12px rgba(45, 45, 45, 0.06);
+  --shadow-card-hover: 0 6px 24px rgba(45, 45, 45, 0.10);
+  --shadow-modal: 0 16px 64px rgba(45, 45, 45, 0.15);
+
+  /* --------------------------------------------------------------------
+     Transitions 过渡
+     -------------------------------------------------------------------- */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-spring: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --------------------------------------------------------------------
+     Focus 焦点
+     -------------------------------------------------------------------- */
+  --focus-ring-width: 3px;
+  --focus-ring-style: solid;
+  --focus-ring-color: #D45161;
+  --focus-ring-offset: 2px;
+  --focus-ring: var(--focus-ring-width) var(--focus-ring-style)
+    var(--focus-ring-color);
+
+  /* --------------------------------------------------------------------
+     Z-Index 层级
+     -------------------------------------------------------------------- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+
+  /* --------------------------------------------------------------------
+     Breakpoints 响应式断点 (作为参考值)
+     -------------------------------------------------------------------- */
+  /* --bp-sm: 576px   — 手机横屏 */
+  /* --bp-md: 768px   — 平板 */
+  /* --bp-lg: 1024px  — 小桌面 */
+  /* --bp-xl: 1280px  — 大桌面 */
+  /* --bp-2xl: 1440px — 超宽屏 */
+
+  /* --------------------------------------------------------------------
+     Container 容器宽度
+     -------------------------------------------------------------------- */
+  --container-max-width: 1200px;
+  --container-narrow: 720px;
+  --container-wide: 1400px;
+}

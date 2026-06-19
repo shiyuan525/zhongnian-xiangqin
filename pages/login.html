@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page-Level Styles ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #fef3e5 0%, #fde2d0 30%, #fce4d6 60%, #fef0e8 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      line-height: 1.6;
+      color: #3d2e28;
+    }
+
+    /* ========== Card Container ========== */
+    .login-card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(180, 100, 60, 0.15),
+                  0 2px 8px rgba(180, 100, 60, 0.08);
+      width: 100%;
+      max-width: 480px;
+      padding: 48px 40px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle top accent bar */
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #e8734a, #d44a3a, #c0392b);
+    }
+
+    /* ========== Logo & Header ========== */
+    .login-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .login-logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: #c0392b;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .login-logo .heart {
+      display: inline-block;
+      animation: heartbeat 1.4s ease-in-out infinite;
+      font-size: 34px;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.15); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.15); }
+    }
+
+    .login-subtitle {
+      font-size: 18px;
+      color: #8b6f5e;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    /* ========== Error Alert ========== */
+    .error-alert {
+      background: #fff2f0;
+      border: 1px solid #ffccc7;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      color: #cf1322;
+      font-size: 15px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error-alert.visible {
+      display: flex;
+    }
+
+    .error-alert .error-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ========== Form ========== */
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #5c3d2e;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="tel"],
+    .form-group input[type="email"] {
+      width: 100%;
+      height: 56px;
+      padding: 0 18px;
+      font-size: 20px;
+      border: 2px solid #e8d5c8;
+      border-radius: 12px;
+      background: #fefaf7;
+      color: #3d2e28;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #e8734a;
+      box-shadow: 0 0 0 4px rgba(232, 115, 74, 0.12);
+      background: #ffffff;
+    }
+
+    .form-group input::placeholder {
+      color: #c4a99b;
+      font-size: 17px;
+    }
+
+    /* Password wrapper with toggle */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 60px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      font-size: 16px;
+      color: #8b6f5e;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .password-toggle:hover {
+      color: #e8734a;
+    }
+
+    /* Row: remember me + forgot password */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      color: #5c3d2e;
+      user-select: none;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #e8734a;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 15px;
+      color: #e8734a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: #c0392b;
+      text-decoration: underline;
+    }
+
+    /* ========== Submit Button ========== */
+    .btn-submit {
+      width: 100%;
+      height: 58px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #e8734a 0%, #d44a3a 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 4px;
+      transition: transform 0.15s, box-shadow 0.25s, opacity 0.25s;
+      box-shadow: 0 4px 16px rgba(212, 74, 58, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(212, 74, 58, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(212, 74, 58, 0.3);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ========== Bottom Links ========== */
+    .login-footer {
+      margin-top: 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .login-footer a {
+      color: #e8734a;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .login-footer a:hover {
+      color: #c0392b;
+      text-decoration: underline;
+    }
+
+    .login-footer .divider {
+      color: #c4a99b;
+      font-size: 14px;
+    }
+
+    /* ========== Demo Hint Card ========== */
+    .demo-hint {
+      margin-top: 28px;
+      background: #fef9f5;
+      border: 1px dashed #e8c8b0;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #8b6f5e;
+      line-height: 1.8;
+    }
+
+    .demo-hint strong {
+      color: #c0392b;
+      font-weight: 600;
+    }
+
+    .demo-hint .demo-icon {
+      font-size: 18px;
+      margin-right: 4px;
+    }
+
+    /* ========== Loading Spinner (in button) ========== */
+    .spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 520px) {
+      .login-card {
+        padding: 36px 24px 32px;
+        border-radius: 16px;
+      }
+
+      .login-logo {
+        font-size: 26px;
+      }
+
+      .login-logo .heart {
+        font-size: 28px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="password"] {
+        height: 52px;
+        font-size: 18px;
+      }
+
+      .btn-submit {
+        height: 54px;
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="login-logo">
+        中年相亲网 <span class="heart">❤️</span>
+      </div>
+      <p class="login-subtitle">欢迎回来</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="errorAlert" class="error-alert" role="alert" aria-live="assertive">
+      <span class="error-icon">⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" novalidate>
+      <!-- Phone / Email -->
+      <div class="form-group">
+        <label for="phoneOrEmail">手机号 / 邮箱</label>
+        <input
+          type="text"
+          id="phoneOrEmail"
+          name="phoneOrEmail"
+          placeholder="请输入手机号或邮箱"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">密码</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="请输入密码"
+            autocomplete="current-password"
+            required
+          >
+          <button
+            type="button"
+            class="password-toggle"
+            id="passwordToggle"
+            aria-label="显示密码"
+            title="显示密码"
+          >👁️</button>
+        </div>
+      </div>
+
+      <!-- Remember me + Forgot password -->
+      <div class="form-row">
+        <label class="remember-me">
+          <input type="checkbox" id="rememberMe" name="rememberMe">
+          <span>记住我</span>
+        </label>
+        <a href="javascript:void(0)" class="forgot-link" id="forgotPassword">忘记密码？</a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span id="btnText">登录</span>
+      </button>
+    </form>
+
+    <!-- Bottom Links -->
+    <div class="login-footer">
+      <a href="register.html">还没有账号？立即注册</a>
+      <span class="divider">|</span>
+      <a href="../index.html">返回首页</a>
+    </div>
+
+    <!-- Demo Hint -->
+    <div class="demo-hint">
+      <span class="demo-icon">💡</span>
+      演示账号：<strong>13800138001</strong> / <strong>123456</strong>（或任意注册用户的手机号）
+    </div>
+  </div>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ========== Auth Check ==========
+      // If already logged in, redirect to dashboard
+      (function checkAuth() {
+        try {
+          if (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn()) {
+            window.location.replace('dashboard.html');
+            return;
+          }
+          // Fallback: check localStorage
+          var stored = localStorage.getItem('xiangqin_current_user');
+          if (stored) {
+            var user = JSON.parse(stored);
+            if (user && user.id) {
+              window.location.replace('dashboard.html');
+              return;
+            }
+          }
+        } catch (e) {
+          // Not logged in — proceed to login page
+        }
+      })();
+
+      // ========== DOM Refs ==========
+      var loginForm   = document.getElementById('loginForm');
+      var phoneInput  = document.getElementById('phoneOrEmail');
+      var passInput   = document.getElementById('password');
+      var toggleBtn   = document.getElementById('passwordToggle');
+      var rememberCb  = document.getElementById('rememberMe');
+      var forgotLink  = document.getElementById('forgotPassword');
+      var submitBtn   = document.getElementById('submitBtn');
+      var btnText     = document.getElementById('btnText');
+      var errorAlert  = document.getElementById('errorAlert');
+      var errorMsg    = document.getElementById('errorMessage');
+
+      // ========== Error Display ==========
+      function showError(message) {
+        errorMsg.textContent = message;
+        errorAlert.classList.add('visible');
+      }
+
+      function hideError() {
+        errorAlert.classList.remove('visible');
+        errorMsg.textContent = '';
+      }
+
+      // ========== Password Toggle ==========
+      toggleBtn.addEventListener('click', function() {
+        var isPassword = passInput.type === 'password';
+        passInput.type = isPassword ? 'text' : 'password';
+        toggleBtn.textContent = isPassword ? '🙈' : '👁️';
+        toggleBtn.setAttribute('aria-label', isPassword ? '隐藏密码' : '显示密码');
+      });
+
+      // ========== Forgot Password ==========
+      forgotLink.addEventListener('click', function() {
+        alert('请联系客服重置密码\n\n客服电话：400-XXX-XXXX\n服务时间：周一至周日 9:00-21:00');
+      });
+
+      // ========== Restore Remembered Value ==========
+      (function restoreRemembered() {
+        try {
+          var remembered = localStorage.getItem('xiangqin_remembered_phone');
+          if (remembered) {
+            phoneInput.value = remembered;
+            rememberCb.checked = true;
+          }
+        } catch (e) { /* ignore */ }
+      })();
+
+      // ========== Form Submit ==========
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideError();
+
+        var phoneOrEmail = phoneInput.value.trim();
+        var password     = passInput.value;
+
+        // --- Validation ---
+        if (!phoneOrEmail) {
+          showError('请输入手机号或邮箱');
+          phoneInput.focus();
+          return;
+        }
+
+        if (!password) {
+          showError('请输入密码');
+          passInput.focus();
+          return;
+        }
+
+        // --- Attempt Login ---
+        setLoading(true);
+
+        // Use setTimeout to allow the loading state to render
+        setTimeout(function() {
+          try {
+            var result;
+
+            // Try Store.login if available
+            if (typeof Store !== 'undefined' && Store.login) {
+              result = Store.login(phoneOrEmail, password);
+            } else {
+              // Fallback: simulate login with seeded data or localStorage
+              result = fallbackLogin(phoneOrEmail, password);
+            }
+
+            if (result && result.success) {
+              // Save "remember me" preference
+              try {
+                if (rememberCb.checked) {
+                  localStorage.setItem('xiangqin_remembered_phone', phoneOrEmail);
+                } else {
+                  localStorage.removeItem('xiangqin_remembered_phone');
+                }
+              } catch (e) { /* ignore */ }
+
+              // Redirect
+              window.location.replace('dashboard.html');
+            } else {
+              var errMsg = (result && result.message) || '账号或密码错误';
+              // Map known error codes
+              if (result && result.code === 'USER_DISABLED') {
+                errMsg = '该账号已被禁用';
+              }
+              showError(errMsg);
+              setLoading(false);
+            }
+          } catch (err) {
+            showError('登录失败，请稍后重试');
+            setLoading(false);
+          }
+        }, 300);
+      });
+
+      function setLoading(isLoading) {
+        if (isLoading) {
+          btnText.innerHTML = '<span class="spinner"></span>登录中...';
+          submitBtn.disabled = true;
+        } else {
+          btnText.textContent = '登录';
+          submitBtn.disabled = false;
+        }
+      }
+
+      // ========== Fallback Login (when Store is unavailable) ==========
+      function fallbackLogin(phoneOrEmail, password) {
+        // Try to find user in localStorage "xiangqin_users"
+        try {
+          var usersJson = localStorage.getItem('xiangqin_users');
+          if (usersJson) {
+            var users = JSON.parse(usersJson);
+            if (!Array.isArray(users)) { users = []; }
+
+            var found = users.find(function(u) {
+              return (u.phone === phoneOrEmail || u.email === phoneOrEmail)
+                && u.password === password;
+            });
+
+            if (found) {
+              if (found.disabled) {
+                return { success: false, code: 'USER_DISABLED', message: '该账号已被禁用' };
+              }
+              localStorage.setItem('xiangqin_current_user', JSON.stringify(found));
+              return { success: true };
+            }
+          }
+
+          // Try seed data users
+          if (typeof SEED_USERS !== 'undefined' && Array.isArray(SEED_USERS)) {
+            var seedFound = SEED_USERS.find(function(u) {
+              return (u.phone === phoneOrEmail || u.email === phoneOrEmail)
+                && u.password === password;
+            });
+            if (seedFound) {
+              if (seedFound.disabled) {
+                return { success: false, code: 'USER_DISABLED', message: '该账号已被禁用' };
+              }
+              // Save to localStorage so Store can find it
+              var existingUsers = [];
+              try {
+                var raw = localStorage.getItem('xiangqin_users');
+                if (raw) { existingUsers = JSON.parse(raw); }
+              } catch(e) {}
+              existingUsers.push(seedFound);
+              localStorage.setItem('xiangqin_users', JSON.stringify(existingUsers));
+              localStorage.setItem('xiangqin_current_user', JSON.stringify(seedFound));
+              return { success: true };
+            }
+          }
+        } catch (e) {
+          console.error('Fallback login error:', e);
+        }
+
+        return { success: false, message: '账号或密码错误' };
+      }
+
+      // ========== Clear error on input ==========
+      phoneInput.addEventListener('input', hideError);
+      passInput.addEventListener('input', hideError);
+
+    })();
+  </script>
+
+</body>
+</html>

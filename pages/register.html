@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page-Level Styles ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #fef3e5 0%, #fde2d0 30%, #fce4d6 60%, #fef0e8 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      line-height: 1.6;
+      color: #3d2e28;
+    }
+
+    /* ========== Card Container ========== */
+    .register-card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(180, 100, 60, 0.15),
+                  0 2px 8px rgba(180, 100, 60, 0.08);
+      width: 100%;
+      max-width: 680px;
+      padding: 44px 44px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .register-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #e8734a, #d44a3a, #c0392b);
+    }
+
+    /* ========== Header ========== */
+    .register-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .register-logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #c0392b;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .register-logo .heart {
+      display: inline-block;
+      animation: heartbeat 1.4s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.15); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.15); }
+    }
+
+    .register-subtitle {
+      font-size: 20px;
+      font-weight: 600;
+      color: #5c3d2e;
+      letter-spacing: 1px;
+    }
+
+    /* ========== Step Progress Indicator ========== */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 36px;
+      padding: 0 12px;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      flex: 1;
+      max-width: 140px;
+    }
+
+    .step-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      transition: all 0.35s ease;
+      background: #f5ece6;
+      color: #b8a094;
+      border: 3px solid #e8d5c8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-item.active .step-circle {
+      background: #e8734a;
+      color: #ffffff;
+      border-color: #e8734a;
+      box-shadow: 0 0 0 6px rgba(232, 115, 74, 0.18);
+    }
+
+    .step-item.completed .step-circle {
+      background: #27ae60;
+      color: #ffffff;
+      border-color: #27ae60;
+      font-size: 0;  /* hide number, show checkmark */
+    }
+
+    .step-item.completed .step-circle::after {
+      content: '✓';
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .step-label {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #b8a094;
+      text-align: center;
+      transition: color 0.35s;
+    }
+
+    .step-item.active .step-label {
+      color: #e8734a;
+    }
+
+    .step-item.completed .step-label {
+      color: #27ae60;
+    }
+
+    /* Connecting line */
+    .step-connector {
+      flex: 1;
+      height: 3px;
+      background: #e8d5c8;
+      margin: 0 -4px;
+      margin-bottom: 28px;
+      transition: background 0.35s;
+      min-width: 24px;
+    }
+
+    .step-connector.done {
+      background: #27ae60;
+    }
+
+    /* ========== Error Alert (top-level) ========== */
+    .error-alert {
+      background: #fff2f0;
+      border: 1px solid #ffccc7;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      color: #cf1322;
+      font-size: 15px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error-alert.visible {
+      display: flex;
+    }
+
+    /* ========== Success Message ========== */
+    .success-message {
+      background: #f0fff4;
+      border: 1px solid #b7eb8f;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      color: #237804;
+      font-size: 15px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .success-message.visible {
+      display: flex;
+    }
+
+    /* ========== Step Panels ========== */
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    .step-panel h3 {
+      font-size: 18px;
+      color: #5c3d2e;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f5ece6;
+      letter-spacing: 1px;
+    }
+
+    /* ========== Form Groups ========== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #5c3d2e;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group label .required-star {
+      color: #e8734a;
+      margin-left: 2px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="tel"],
+    .form-group input[type="email"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      height: 56px;
+      padding: 0 18px;
+      font-size: 18px;
+      border: 2px solid #e8d5c8;
+      border-radius: 12px;
+      background: #fefaf7;
+      color: #3d2e28;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      height: auto;
+      min-height: 120px;
+      padding: 16px 18px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #e8734a;
+      box-shadow: 0 0 0 4px rgba(232, 115, 74, 0.12);
+      background: #ffffff;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #c4a99b;
+      font-size: 16px;
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b6f5e' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      padding-right: 48px;
+      cursor: pointer;
+    }
+
+    .form-group .input-hint {
+      font-size: 13px;
+      color: #a0897e;
+      margin-top: 6px;
+    }
+
+    .form-group .char-count {
+      font-size: 13px;
+      color: #a0897e;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* ========== Field Error ========== */
+    .field-error {
+      font-size: 14px;
+      color: #cf1322;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.visible {
+      display: block;
+    }
+
+    .form-group.has-error input,
+    .form-group.has-error select,
+    .form-group.has-error textarea {
+      border-color: #cf1322;
+      box-shadow: 0 0 0 3px rgba(207, 19, 34, 0.08);
+    }
+
+    /* ========== Radio Groups ========== */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .radio-group .radio-item {
+      flex: 1;
+      min-width: 90px;
+    }
+
+    .radio-group .radio-item input[type="radio"] {
+      display: none;
+    }
+
+    .radio-group .radio-item label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #5c3d2e;
+      background: #fefaf7;
+      border: 2px solid #e8d5c8;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .radio-group .radio-item input[type="radio"]:checked + label {
+      background: #fff0ea;
+      border-color: #e8734a;
+      color: #c0392b;
+      font-weight: 700;
+    }
+
+    .radio-group .radio-item label:hover {
+      border-color: #e8734a;
+    }
+
+    /* ========== Checkbox Groups ========== */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .checkbox-group .checkbox-item label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 15px;
+      color: #5c3d2e;
+      background: #fefaf7;
+      border: 2px solid #e8d5c8;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+    }
+
+    .checkbox-group .checkbox-item input[type="checkbox"] {
+      accent-color: #e8734a;
+      width: 18px;
+      height: 18px;
+    }
+
+    .checkbox-group .checkbox-item input[type="checkbox"]:checked + span {
+      color: #c0392b;
+      font-weight: 600;
+    }
+
+    /* Hobby category sections */
+    .hobby-category {
+      margin-bottom: 18px;
+    }
+
+    .hobby-category .hobby-cat-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #8b6f5e;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* ========== Chip Select (personality tags) ========== */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip-group .chip {
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #5c3d2e;
+      background: #fefaf7;
+      border: 2px solid #e8d5c8;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .chip-group .chip.selected {
+      background: #fff0ea;
+      border-color: #e8734a;
+      color: #c0392b;
+      font-weight: 700;
+    }
+
+    .chip-group .chip:hover {
+      border-color: #e8734a;
+    }
+
+    .chip-group .chip.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .chip-max-hint {
+      font-size: 13px;
+      color: #a0897e;
+      margin-top: 8px;
+    }
+
+    /* ========== File Upload ========== */
+    .file-upload-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .file-upload-box {
+      width: 130px;
+      height: 130px;
+      border: 3px dashed #e8d5c8;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      background: #fefaf7;
+      flex-shrink: 0;
+    }
+
+    .file-upload-box:hover {
+      border-color: #e8734a;
+      background: #fff5f0;
+    }
+
+    .file-upload-box .upload-icon {
+      font-size: 36px;
+      margin-bottom: 4px;
+    }
+
+    .file-upload-box .upload-text {
+      font-size: 13px;
+      color: #a0897e;
+    }
+
+    .file-upload-box input[type="file"] {
+      display: none;
+    }
+
+    .avatar-preview {
+      width: 130px;
+      height: 130px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 3px solid #e8d5c8;
+      display: none;
+    }
+
+    .avatar-preview.visible {
+      display: block;
+    }
+
+    /* ========== Buttons Row ========== */
+    .btn-row {
+      display: flex;
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      height: 58px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #e8734a 0%, #d44a3a 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      transition: transform 0.15s, box-shadow 0.25s, opacity 0.25s;
+      box-shadow: 0 4px 16px rgba(212, 74, 58, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(212, 74, 58, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      height: 58px;
+      padding: 0 28px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #5c3d2e;
+      background: #fefaf7;
+      border: 2px solid #e8d5c8;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-secondary:hover {
+      border-color: #e8734a;
+      color: #c0392b;
+    }
+
+    /* ========== Bottom Link ========== */
+    .register-footer {
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .register-footer a {
+      color: #e8734a;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .register-footer a:hover {
+      color: #c0392b;
+      text-decoration: underline;
+    }
+
+    /* ========== Occupation Suggestions ========== */
+    .suggestions-wrapper {
+      position: relative;
+    }
+
+    .suggestions-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 2px solid #e8d5c8;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .suggestions-dropdown.visible {
+      display: block;
+    }
+
+    .suggestions-dropdown .suggestion-item {
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .suggestions-dropdown .suggestion-item:hover {
+      background: #fff5f0;
+    }
+
+    /* ========== Two-Column Layout ========== */
+    .form-row-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 20px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 640px) {
+      .register-card {
+        padding: 32px 20px 28px;
+        border-radius: 16px;
+      }
+
+      .register-logo {
+        font-size: 24px;
+      }
+
+      .register-subtitle {
+        font-size: 18px;
+      }
+
+      .step-label {
+        font-size: 11px;
+      }
+
+      .step-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+      }
+
+      .step-item.completed .step-circle::after {
+        font-size: 18px;
+      }
+
+      .radio-group .radio-item label {
+        height: 46px;
+        font-size: 14px;
+        padding: 0 14px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="password"],
+      .form-group input[type="tel"],
+      .form-group input[type="email"],
+      .form-group input[type="number"],
+      .form-group input[type="date"],
+      .form-group select {
+        height: 50px;
+        font-size: 16px;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        height: 52px;
+        font-size: 17px;
+      }
+
+      .file-upload-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* ========== Spinner ========== */
+    .spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== Invalid input shake ========== */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    /* ========== Children conditional ========== */
+    .conditional-fields {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.35s ease, margin 0.35s ease;
+      margin-top: 0;
+    }
+
+    .conditional-fields.open {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-card">
+    <!-- Header -->
+    <div class="register-header">
+      <div class="register-logo">
+        中年相亲网 <span class="heart">❤️</span>
+      </div>
+      <p class="register-subtitle">创建您的账号</p>
+    </div>
+
+    <!-- Step Progress Indicator -->
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step-item active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">基本信息</span>
+      </div>
+      <div class="step-connector" data-connector="1"></div>
+      <div class="step-item" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">个人详情</span>
+      </div>
+      <div class="step-connector" data-connector="2"></div>
+      <div class="step-item" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">择偶偏好</span>
+      </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="errorAlert" class="error-alert" role="alert" aria-live="assertive">
+      <span>⚠️</span>
+      <span id="errorMessage"></span>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message">
+      <span>✅</span>
+      <span id="successText"></span>
+    </div>
+
+    <!-- ============ STEP 1: 基本信息 ============ -->
+    <form id="registerForm" novalidate>
+    <div class="step-panel active" id="step1Panel">
+      <h3>① 基本信息</h3>
+
+      <!-- 姓名 -->
+      <div class="form-group" id="fg_name">
+        <label for="regName">姓名 <span class="required-star">*</span></label>
+        <input type="text" id="regName" name="name" placeholder="请输入您的姓名" required>
+        <span class="field-error" data-field="name">请输入姓名</span>
+      </div>
+
+      <!-- 性别 -->
+      <div class="form-group" id="fg_gender">
+        <label>性别 <span class="required-star">*</span></label>
+        <div class="radio-group" id="genderGroup">
+          <div class="radio-item">
+            <input type="radio" id="genderMale" name="gender" value="男">
+            <label for="genderMale">👨 男</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="genderFemale" name="gender" value="女">
+            <label for="genderFemale">👩 女</label>
+          </div>
+        </div>
+        <span class="field-error" data-field="gender">请选择性别</span>
+      </div>
+
+      <!-- 出生日期 -->
+      <div class="form-group" id="fg_birthDate">
+        <label for="regBirthDate">出生日期 <span class="required-star">*</span></label>
+        <input type="date" id="regBirthDate" name="birthDate"
+               min="1960-01-01" max="1985-12-31" required>
+        <span class="input-hint">适合年龄范围：约40-65岁（1960-1985年出生）</span>
+        <span class="field-error" data-field="birthDate">请选择出生日期（年龄需在40-65岁之间）</span>
+      </div>
+
+      <!-- 手机号 + 邮箱 side by side -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_phone">
+          <label for="regPhone">手机号 <span class="required-star">*</span></label>
+          <input type="tel" id="regPhone" name="phone" placeholder="请输入手机号" required>
+          <span class="field-error" data-field="phone">请输入正确的手机号（1开头11位）</span>
+        </div>
+
+        <div class="form-group" id="fg_email">
+          <label for="regEmail">邮箱</label>
+          <input type="email" id="regEmail" name="email" placeholder="选填">
+          <span class="field-error" data-field="email">请输入正确的邮箱格式</span>
+        </div>
+      </div>
+
+      <!-- 登录密码 + 确认密码 -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_password">
+          <label for="regPassword">登录密码 <span class="required-star">*</span></label>
+          <input type="password" id="regPassword" name="password"
+                 placeholder="至少6位" minlength="6" required>
+          <span class="field-error" data-field="password">密码至少6位</span>
+        </div>
+
+        <div class="form-group" id="fg_confirmPassword">
+          <label for="regConfirmPassword">确认密码 <span class="required-star">*</span></label>
+          <input type="password" id="regConfirmPassword" name="confirmPassword"
+                 placeholder="请再次输入密码" required>
+          <span class="field-error" data-field="confirmPassword">两次密码输入不一致</span>
+        </div>
+      </div>
+
+      <!-- 所在省份 + 所在城市 -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_province">
+          <label for="regProvince">所在省份 <span class="required-star">*</span></label>
+          <select id="regProvince" name="province" required>
+            <option value="">请选择省份</option>
+          </select>
+          <span class="field-error" data-field="province">请选择所在省份</span>
+        </div>
+
+        <div class="form-group" id="fg_city">
+          <label for="regCity">所在城市 <span class="required-star">*</span></label>
+          <input type="text" id="regCity" name="city" placeholder="请输入城市名称" required>
+          <span class="field-error" data-field="city">请输入所在城市</span>
+        </div>
+      </div>
+
+      <!-- Step 1 Buttons -->
+      <div class="btn-row">
+        <button type="button" class="btn-primary" id="step1Next">下一步 →</button>
+      </div>
+    </div>
+
+    <!-- ============ STEP 2: 个人详情 ============ -->
+    <div class="step-panel" id="step2Panel">
+      <h3>② 个人详情</h3>
+
+      <!-- 身高 + 体重 -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_height">
+          <label for="regHeight">身高（cm）</label>
+          <input type="number" id="regHeight" name="height"
+                 min="140" max="200" placeholder="例如：165">
+          <span class="field-error" data-field="height">身高范围：140-200 cm</span>
+        </div>
+
+        <div class="form-group" id="fg_weight">
+          <label for="regWeight">体重（kg）</label>
+          <input type="number" id="regWeight" name="weight"
+                 min="40" max="120" placeholder="例如：60">
+          <span class="field-error" data-field="weight">体重范围：40-120 kg</span>
+        </div>
+      </div>
+
+      <!-- 学历 + 职业 -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_education">
+          <label for="regEducation">学历</label>
+          <select id="regEducation" name="education">
+            <option value="">请选择学历</option>
+            <option value="初中及以下">初中及以下</option>
+            <option value="高中/中专">高中/中专</option>
+            <option value="大专">大专</option>
+            <option value="本科">本科</option>
+            <option value="硕士">硕士</option>
+            <option value="博士">博士</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="fg_occupation">
+          <label for="regOccupation">职业</label>
+          <div class="suggestions-wrapper">
+            <input type="text" id="regOccupation" name="occupation"
+                   placeholder="请输入职业" autocomplete="off">
+            <div class="suggestions-dropdown" id="occupationSuggestions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 月收入范围 -->
+      <div class="form-group" id="fg_income">
+        <label>月收入范围</label>
+        <div class="radio-group" id="incomeGroup">
+          <div class="radio-item">
+            <input type="radio" id="inc1" name="income" value="3000以下">
+            <label for="inc1">3000以下</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="inc2" name="income" value="3000-5000">
+            <label for="inc2">3000-5000</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="inc3" name="income" value="5000-8000">
+            <label for="inc3">5000-8000</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="inc4" name="income" value="8000-12000">
+            <label for="inc4">8000-12000</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="inc5" name="income" value="12000-20000">
+            <label for="inc5">12000-20000</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="inc6" name="income" value="20000以上">
+            <label for="inc6">20000以上</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 婚姻状况 -->
+      <div class="form-group" id="fg_maritalStatus">
+        <label>婚姻状况</label>
+        <div class="radio-group" id="maritalGroup">
+          <div class="radio-item">
+            <input type="radio" id="marital1" name="maritalStatus" value="未婚">
+            <label for="marital1">未婚</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="marital2" name="maritalStatus" value="离异">
+            <label for="marital2">离异</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="marital3" name="maritalStatus" value="丧偶">
+            <label for="marital3">丧偶</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 有无子女 + 子女情况 -->
+      <div class="form-row-fields">
+        <div class="form-group" id="fg_hasChildren">
+          <label>有无子女</label>
+          <div class="radio-group" id="childrenGroup">
+            <div class="radio-item">
+              <input type="radio" id="childYes" name="hasChildren" value="有">
+              <label for="childYes">有</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="childNo" name="hasChildren" value="无">
+              <label for="childNo">无</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group conditional-fields" id="childrenDetailWrapper">
+          <label>子女情况</label>
+          <div class="radio-group" id="childrenDetailGroup">
+            <div class="radio-item">
+              <input type="radio" id="childDetail1" name="childrenDetail" value="和我一起生活">
+              <label for="childDetail1">和我一起生活</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="childDetail2" name="childrenDetail" value="已独立">
+              <label for="childDetail2">已独立</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="childDetail3" name="childrenDetail" value="与前任生活">
+              <label for="childDetail3">与前任生活</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 兴趣爱好 -->
+      <div class="form-group" id="fg_hobbies">
+        <label>兴趣爱好（可多选）</label>
+
+        <div class="hobby-category">
+          <div class="hobby-cat-title">🏃 运动健身</div>
+          <div class="checkbox-group" data-hobby-cat="sports">
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="太极拳"><span>太极拳</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="广场舞"><span>广场舞</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="散步"><span>散步</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="游泳"><span>游泳</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="羽毛球"><span>羽毛球</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="乒乓球"><span>乒乓球</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="骑行"><span>骑行</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="登山"><span>登山</span></label></span>
+          </div>
+        </div>
+
+        <div class="hobby-category">
+          <div class="hobby-cat-title">🎨 文化艺术</div>
+          <div class="checkbox-group" data-hobby-cat="culture">
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="书法"><span>书法</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="国画"><span>国画</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="摄影"><span>摄影</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="唱歌"><span>唱歌</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="戏曲"><span>戏曲</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="乐器"><span>乐器</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="读书"><span>读书</span></label></span>
+          </div>
+        </div>
+
+        <div class="hobby-category">
+          <div class="hobby-cat-title">🌿 生活休闲</div>
+          <div class="checkbox-group" data-hobby-cat="life">
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="烹饪"><span>烹饪</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="园艺"><span>园艺</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="旅游"><span>旅游</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="棋牌"><span>棋牌</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="钓鱼"><span>钓鱼</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="养花"><span>养花</span></label></span>
+          </div>
+        </div>
+
+        <div class="hobby-category">
+          <div class="hobby-cat-title">📚 学习成长</div>
+          <div class="checkbox-group" data-hobby-cat="learning">
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="英语"><span>英语</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="电脑"><span>电脑</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="智能手机"><span>智能手机</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="养生保健"><span>养生保健</span></label></span>
+            <span class="checkbox-item"><label><input type="checkbox" name="hobby" value="投资理财"><span>投资理财</span></label></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 个性标签 -->
+      <div class="form-group" id="fg_personalityTags">
+        <label>个性标签（最多选择4个）</label>
+        <div class="chip-group" id="personalityChipGroup"></div>
+        <div class="chip-max-hint" id="chipHint">已选择 0 / 4</div>
+      </div>
+
+      <!-- 自我介绍 -->
+      <div class="form-group" id="fg_selfIntro">
+        <label for="regSelfIntro">自我介绍</label>
+        <textarea id="regSelfIntro" name="selfIntro" minlength="20"
+                  placeholder="介绍您的性格、生活状态、期待的相处方式..."></textarea>
+        <div class="char-count" id="selfIntroCount">0 / 20 字（最少）</div>
+        <span class="field-error" data-field="selfIntro">自我介绍至少20字</span>
+      </div>
+
+      <!-- Step 2 Buttons -->
+      <div class="btn-row">
+        <button type="button" class="btn-secondary" id="step2Prev">← 上一步</button>
+        <button type="button" class="btn-primary" id="step2Next">下一步 →</button>
+      </div>
+    </div>
+
+    <!-- ============ STEP 3: 择偶偏好 ============ -->
+    <div class="step-panel" id="step3Panel">
+      <h3>③ 择偶偏好</h3>
+
+      <!-- 期望对方年龄 -->
+      <div class="form-group" id="fg_partnerAge">
+        <label>期望对方年龄</label>
+        <div class="form-row-fields">
+          <div>
+            <select id="partnerAgeMin" name="partnerAgeMin">
+              <option value="">最小年龄</option>
+            </select>
+          </div>
+          <div>
+            <select id="partnerAgeMax" name="partnerAgeMax">
+              <option value="">最大年龄</option>
+            </select>
+          </div>
+        </div>
+        <span class="field-error" data-field="partnerAge">最小年龄不能大于最大年龄</span>
+      </div>
+
+      <!-- 期望对方学历 -->
+      <div class="form-group" id="fg_partnerEducation">
+        <label>期望对方学历（可多选）</label>
+        <div class="checkbox-group">
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="初中及以下"><span>初中及以下</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="高中/中专"><span>高中/中专</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="大专"><span>大专</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="本科"><span>本科</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="硕士"><span>硕士</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="partnerEducation" value="博士"><span>博士</span></label></span>
+        </div>
+      </div>
+
+      <!-- 期望对方收入 -->
+      <div class="form-group" id="fg_partnerIncome">
+        <label for="partnerIncome">期望对方收入</label>
+        <select id="partnerIncome" name="partnerIncome">
+          <option value="">请选择</option>
+          <option value="3000以下">3000以下</option>
+          <option value="3000-5000">3000-5000</option>
+          <option value="5000-8000">5000-8000</option>
+          <option value="8000-12000">8000-12000</option>
+          <option value="12000-20000">12000-20000</option>
+          <option value="20000以上">20000以上</option>
+          <option value="不限">不限</option>
+        </select>
+      </div>
+
+      <!-- 可接受婚姻状况 -->
+      <div class="form-group" id="fg_acceptableMarital">
+        <label>可接受婚姻状况（可多选）</label>
+        <div class="checkbox-group">
+          <span class="checkbox-item"><label><input type="checkbox" name="acceptableMarital" value="未婚"><span>未婚</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="acceptableMarital" value="离异"><span>离异</span></label></span>
+          <span class="checkbox-item"><label><input type="checkbox" name="acceptableMarital" value="丧偶"><span>丧偶</span></label></span>
+        </div>
+      </div>
+
+      <!-- 择偶要求描述 -->
+      <div class="form-group" id="fg_partnerRequirement">
+        <label for="partnerRequirement">择偶要求描述</label>
+        <textarea id="partnerRequirement" name="partnerRequirement" minlength="10"
+                  placeholder="描述您对理想伴侣的期望..."></textarea>
+        <div class="char-count" id="partnerReqCount">0 / 10 字（最少）</div>
+        <span class="field-error" data-field="partnerRequirement">择偶要求描述至少10字</span>
+      </div>
+
+      <!-- 上传头像 -->
+      <div class="form-group" id="fg_avatar">
+        <label>上传头像</label>
+        <div class="file-upload-wrapper">
+          <div class="file-upload-box" id="avatarUploadBox">
+            <span class="upload-icon">📷</span>
+            <span class="upload-text">点击上传</span>
+            <input type="file" id="avatarInput" name="avatar" accept="image/*">
+          </div>
+          <img id="avatarPreview" class="avatar-preview" src="" alt="头像预览">
+        </div>
+      </div>
+
+      <!-- Step 3 Buttons -->
+      <div class="btn-row">
+        <button type="button" class="btn-secondary" id="step3Prev">← 上一步</button>
+        <button type="submit" class="btn-primary" id="step3Submit">
+          <span id="submitBtnText">完成注册</span>
+        </button>
+      </div>
+    </div>
+    </form>
+
+    <!-- Bottom Link -->
+    <div class="register-footer">
+      <a href="login.html">已有账号？立即登录</a>
+    </div>
+  </div>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ========== Auth Check ==========
+      (function checkAuth() {
+        try {
+          if (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn()) {
+            window.location.replace('dashboard.html');
+            return;
+          }
+          var stored = localStorage.getItem('xiangqin_current_user');
+          if (stored) {
+            var user = JSON.parse(stored);
+            if (user && user.id) {
+              window.location.replace('dashboard.html');
+              return;
+            }
+          }
+        } catch (e) { /* proceed */ }
+      })();
+
+      // ========== Chinese Provinces ==========
+      var PROVINCES = [
+        '北京市','天津市','上海市','重庆市',
+        '河北省','山西省','辽宁省','吉林省','黑龙江省',
+        '江苏省','浙江省','安徽省','福建省','江西省','山东省',
+        '河南省','湖北省','湖南省','广东省','海南省',
+        '四川省','贵州省','云南省','陕西省','甘肃省','青海省',
+        '内蒙古自治区','广西壮族自治区','西藏自治区','宁夏回族自治区','新疆维吾尔自治区',
+        '香港特别行政区','澳门特别行政区','台湾省'
+      ];
+
+      // ========== Occupation Suggestions ==========
+      var OCCUPATION_SUGGESTIONS = [
+        '教师','医生','护士','公务员','企业职员','个体经营','自由职业',
+        '退休','工人','农民','会计','工程师','律师','销售','行政',
+        '司机','厨师','保安','保洁','家政','服务员','技术员',
+        '退休教师','退休干部','退休工人','已退休','无业'
+      ];
+
+      // ========== Personality Tags ==========
+      var PERSONALITY_TAGS = [
+        '开朗','顾家','稳重','幽默','温柔','体贴','细心',
+        '大方','勤劳','乐观','成熟','真诚','善良','独立','随和'
+      ];
+
+      // ========== State ==========
+      var currentStep = 1;
+      var maxStep = 3;
+
+      // Accumulated form data across steps
+      var formData = {};
+
+      // ========== Initialize ==========
+      function init() {
+        populateProvinces();
+        populateAgeSelects();
+        populatePersonalityChips();
+        bindEvents();
+      }
+
+      // --- Populate province dropdown ---
+      function populateProvinces() {
+        var sel = document.getElementById('regProvince');
+        PROVINCES.forEach(function(p) {
+          var opt = document.createElement('option');
+          opt.value = p;
+          opt.textContent = p;
+          sel.appendChild(opt);
+        });
+      }
+
+      // --- Populate age selects (40-70) ---
+      function populateAgeSelects() {
+        var minSel = document.getElementById('partnerAgeMin');
+        var maxSel = document.getElementById('partnerAgeMax');
+        for (var a = 40; a <= 70; a++) {
+          var opt1 = document.createElement('option');
+          opt1.value = a;
+          opt1.textContent = a + ' 岁';
+          minSel.appendChild(opt1);
+
+          var opt2 = document.createElement('option');
+          opt2.value = a;
+          opt2.textContent = a + ' 岁';
+          maxSel.appendChild(opt2);
+        }
+      }
+
+      // --- Populate personality chips ---
+      function populatePersonalityChips() {
+        var container = document.getElementById('personalityChipGroup');
+        PERSONALITY_TAGS.forEach(function(tag) {
+          var chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = tag;
+          chip.setAttribute('data-tag', tag);
+          chip.addEventListener('click', onChipClick);
+          container.appendChild(chip);
+        });
+      }
+
+      function onChipClick(e) {
+        var chip = e.currentTarget;
+        if (chip.classList.contains('disabled')) return;
+
+        var selected = document.querySelectorAll('#personalityChipGroup .chip.selected');
+        if (chip.classList.contains('selected')) {
+          chip.classList.remove('selected');
+        } else {
+          if (selected.length >= 4) return;
+          chip.classList.add('selected');
+        }
+        updateChipHint();
+      }
+
+      function updateChipHint() {
+        var selected = document.querySelectorAll('#personalityChipGroup .chip.selected');
+        var remaining = 4 - selected.length;
+        document.getElementById('chipHint').textContent = '已选择 ' + selected.length + ' / 4';
+
+        // Disable unselected chips when 4 reached
+        var allChips = document.querySelectorAll('#personalityChipGroup .chip');
+        allChips.forEach(function(c) {
+          if (selected.length >= 4 && !c.classList.contains('selected')) {
+            c.classList.add('disabled');
+          } else {
+            c.classList.remove('disabled');
+          }
+        });
+      }
+
+      // ========== Bind Events ==========
+      function bindEvents() {
+        // Step navigation
+        document.getElementById('step1Next').addEventListener('click', goToStep2);
+        document.getElementById('step2Prev').addEventListener('click', goToStep1);
+        document.getElementById('step2Next').addEventListener('click', goToStep3);
+        document.getElementById('step3Prev').addEventListener('click', function() { goToStep(2); });
+
+        // Form submit
+        document.getElementById('registerForm').addEventListener('submit', onRegisterSubmit);
+
+        // Children conditional
+        document.getElementById('childYes').addEventListener('change', toggleChildrenDetail);
+        document.getElementById('childNo').addEventListener('change', toggleChildrenDetail);
+
+        // Occupation suggestions
+        var occInput = document.getElementById('regOccupation');
+        occInput.addEventListener('input', onOccupationInput);
+        occInput.addEventListener('blur', function() {
+          setTimeout(function() {
+            document.getElementById('occupationSuggestions').classList.remove('visible');
+          }, 200);
+        });
+        occInput.addEventListener('focus', function() {
+          if (occInput.value.trim()) {
+            showOccupationSuggestions(occInput.value.trim());
+          }
+        });
+
+        // Avatar upload
+        document.getElementById('avatarUploadBox').addEventListener('click', function() {
+          document.getElementById('avatarInput').click();
+        });
+        document.getElementById('avatarInput').addEventListener('change', onAvatarChange);
+
+        // Char counters
+        document.getElementById('regSelfIntro').addEventListener('input', function() {
+          var len = this.value.length;
+          document.getElementById('selfIntroCount').textContent = len + ' / 20 字（最少）';
+        });
+        document.getElementById('partnerRequirement').addEventListener('input', function() {
+          var len = this.value.length;
+          document.getElementById('partnerReqCount').textContent = len + ' / 10 字（最少）';
+        });
+
+        // Clear errors on input
+        document.querySelectorAll('#registerForm input, #registerForm select, #registerForm textarea').forEach(function(el) {
+          el.addEventListener('input', function() {
+            clearFieldError(el);
+          });
+          el.addEventListener('change', function() {
+            clearFieldError(el);
+          });
+        });
+      }
+
+      // ========== Occupation Suggestions ==========
+      function onOccupationInput() {
+        var val = this.value.trim();
+        if (val) {
+          showOccupationSuggestions(val);
+        } else {
+          document.getElementById('occupationSuggestions').classList.remove('visible');
+        }
+      }
+
+      function showOccupationSuggestions(query) {
+        var dropdown = document.getElementById('occupationSuggestions');
+        var filtered = OCCUPATION_SUGGESTIONS.filter(function(s) {
+          return s.indexOf(query) !== -1;
+        });
+
+        if (filtered.length === 0) {
+          dropdown.classList.remove('visible');
+          return;
+        }
+
+        dropdown.innerHTML = '';
+        filtered.forEach(function(item) {
+          var div = document.createElement('div');
+          div.className = 'suggestion-item';
+          div.textContent = item;
+          div.addEventListener('mousedown', function(e) {
+            e.preventDefault(); // prevent blur
+            document.getElementById('regOccupation').value = item;
+            dropdown.classList.remove('visible');
+          });
+          dropdown.appendChild(div);
+        });
+        dropdown.classList.add('visible');
+      }
+
+      // ========== Children Conditional ==========
+      function toggleChildrenDetail() {
+        var hasChildren = document.querySelector('input[name="hasChildren"]:checked');
+        var wrapper = document.getElementById('childrenDetailWrapper');
+        if (hasChildren && hasChildren.value === '有') {
+          wrapper.classList.add('open');
+        } else {
+          wrapper.classList.remove('open');
+          // Clear selection
+          var radios = document.querySelectorAll('input[name="childrenDetail"]');
+          radios.forEach(function(r) { r.checked = false; });
+        }
+      }
+
+      // ========== Avatar Upload ==========
+      function onAvatarChange(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        // Validate image type
+        if (!file.type.match(/^image\//)) {
+          showError('请上传图片文件');
+          return;
+        }
+
+        // Validate size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          showError('图片大小不能超过5MB');
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          var preview = document.getElementById('avatarPreview');
+          preview.src = ev.target.result;
+          preview.classList.add('visible');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // ========== Step Navigation ==========
+      function goToStep(step) {
+        // Hide all panels
+        document.querySelectorAll('.step-panel').forEach(function(p) {
+          p.classList.remove('active');
+        });
+        // Show target
+        document.getElementById('step' + step + 'Panel').classList.add('active');
+
+        // Update indicator
+        var stepItems = document.querySelectorAll('#stepIndicator .step-item');
+        var connectors = document.querySelectorAll('#stepIndicator .step-connector');
+
+        stepItems.forEach(function(item, idx) {
+          var s = idx + 1;
+          item.classList.remove('active', 'completed');
+          if (s < step) {
+            item.classList.add('completed');
+          } else if (s === step) {
+            item.classList.add('active');
+          }
+        });
+
+        connectors.forEach(function(conn, idx) {
+          var cStep = idx + 1;
+          if (cStep < step) {
+            conn.classList.add('done');
+          } else {
+            conn.classList.remove('done');
+          }
+        });
+
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        hideError();
+      }
+
+      function goToStep1() { goToStep(1); }
+      function goToStep2() {
+        if (validateStep1()) {
+          collectStep1Data();
+          goToStep(2);
+        }
+      }
+      function goToStep3() {
+        if (validateStep2()) {
+          collectStep2Data();
+          goToStep(3);
+        }
+      }
+
+      // ========== Collect Data ==========
+      function collectStep1Data() {
+        formData.name     = document.getElementById('regName').value.trim();
+        formData.gender   = document.querySelector('input[name="gender"]:checked')
+                           ? document.querySelector('input[name="gender"]:checked').value : '';
+        formData.birthDate = document.getElementById('regBirthDate').value;
+        formData.phone    = document.getElementById('regPhone').value.trim();
+        formData.email    = document.getElementById('regEmail').value.trim();
+        formData.password = document.getElementById('regPassword').value;
+        formData.province = document.getElementById('regProvince').value;
+        formData.city     = document.getElementById('regCity').value.trim();
+      }
+
+      function collectStep2Data() {
+        formData.height         = document.getElementById('regHeight').value;
+        formData.weight         = document.getElementById('regWeight').value;
+        formData.education      = document.getElementById('regEducation').value;
+        formData.occupation     = document.getElementById('regOccupation').value.trim();
+        var incomeEl = document.querySelector('input[name="income"]:checked');
+        formData.income         = incomeEl ? incomeEl.value : '';
+        var maritalEl = document.querySelector('input[name="maritalStatus"]:checked');
+        formData.maritalStatus  = maritalEl ? maritalEl.value : '';
+        var hasChildrenEl = document.querySelector('input[name="hasChildren"]:checked');
+        formData.hasChildren    = hasChildrenEl ? hasChildrenEl.value : '';
+        var childDetailEl = document.querySelector('input[name="childrenDetail"]:checked');
+        formData.childrenDetail = childDetailEl ? childDetailEl.value : '';
+
+        // Hobbies
+        var hobbyCheckboxes = document.querySelectorAll('input[name="hobby"]:checked');
+        formData.hobbies = Array.from(hobbyCheckboxes).map(function(cb) { return cb.value; });
+
+        // Personality tags
+        var tagChips = document.querySelectorAll('#personalityChipGroup .chip.selected');
+        formData.personalityTags = Array.from(tagChips).map(function(c) { return c.getAttribute('data-tag'); });
+
+        formData.selfIntro = document.getElementById('regSelfIntro').value.trim();
+      }
+
+      function collectStep3Data() {
+        formData.partnerAgeMin  = document.getElementById('partnerAgeMin').value;
+        formData.partnerAgeMax  = document.getElementById('partnerAgeMax').value;
+
+        var eduCheckboxes = document.querySelectorAll('input[name="partnerEducation"]:checked');
+        formData.partnerEducation = Array.from(eduCheckboxes).map(function(cb) { return cb.value; });
+
+        formData.partnerIncome = document.getElementById('partnerIncome').value;
+
+        var maritalCheckboxes = document.querySelectorAll('input[name="acceptableMarital"]:checked');
+        formData.acceptableMarital = Array.from(maritalCheckboxes).map(function(cb) { return cb.value; });
+
+        formData.partnerRequirement = document.getElementById('partnerRequirement').value.trim();
+
+        // Avatar (base64 data URL)
+        formData.avatar = document.getElementById('avatarPreview').src || '';
+      }
+
+      // ========== Validation ==========
+      function showFieldError(fieldName, message) {
+        var fg = document.getElementById('fg_' + fieldName);
+        if (fg) fg.classList.add('has-error');
+        var errEl = document.querySelector('.field-error[data-field="' + fieldName + '"]');
+        if (errEl) {
+          if (message) errEl.textContent = message;
+          errEl.classList.add('visible');
+        }
+      }
+
+      function clearFieldError(el) {
+        // Find the parent form-group
+        var fg = el.closest('.form-group');
+        if (fg) {
+          fg.classList.remove('has-error');
+          // Also remove shake
+          fg.classList.remove('shake');
+        }
+        // Clear the specific field error
+        var fieldName = el.name;
+        if (fieldName) {
+          var errEl = document.querySelector('.field-error[data-field="' + fieldName + '"]');
+          if (errEl) errEl.classList.remove('visible');
+        }
+      }
+
+      function clearAllFieldErrors() {
+        document.querySelectorAll('.form-group.has-error').forEach(function(fg) {
+          fg.classList.remove('has-error', 'shake');
+        });
+        document.querySelectorAll('.field-error.visible').forEach(function(err) {
+          err.classList.remove('visible');
+        });
+      }
+
+      function shakeField(fieldName) {
+        var fg = document.getElementById('fg_' + fieldName);
+        if (fg) {
+          fg.classList.add('shake');
+          setTimeout(function() { fg.classList.remove('shake'); }, 500);
+        }
+      }
+
+      function validateStep1() {
+        clearAllFieldErrors();
+        hideError();
+        var valid = true;
+
+        var name = document.getElementById('regName').value.trim();
+        if (!name) {
+          showFieldError('name'); shakeField('name'); valid = false;
+        }
+
+        var gender = document.querySelector('input[name="gender"]:checked');
+        if (!gender) {
+          showFieldError('gender'); valid = false;
+        }
+
+        var birthDate = document.getElementById('regBirthDate').value;
+        if (!birthDate) {
+          showFieldError('birthDate'); shakeField('birthDate'); valid = false;
+        } else {
+          // Validate age 40-65
+          var birth = new Date(birthDate);
+          var today = new Date();
+          var age = today.getFullYear() - birth.getFullYear();
+          var mDiff = today.getMonth() - birth.getMonth();
+          if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+          }
+          if (age < 40 || age > 65) {
+            showFieldError('birthDate', '年龄需在40-65岁之间');
+            shakeField('birthDate');
+            valid = false;
+          }
+        }
+
+        var phone = document.getElementById('regPhone').value.trim();
+        if (!phone) {
+          showFieldError('phone'); shakeField('phone'); valid = false;
+        } else if (!/^1[3-9]\d{9}$/.test(phone)) {
+          showFieldError('phone', '请输入正确的手机号（1开头11位数字）');
+          shakeField('phone');
+          valid = false;
+        }
+
+        var email = document.getElementById('regEmail').value.trim();
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showFieldError('email', '请输入正确的邮箱格式');
+          shakeField('email');
+          valid = false;
+        }
+
+        var password = document.getElementById('regPassword').value;
+        if (!password || password.length < 6) {
+          showFieldError('password'); shakeField('password'); valid = false;
+        }
+
+        var confirmPassword = document.getElementById('regConfirmPassword').value;
+        if (!confirmPassword) {
+          showFieldError('confirmPassword'); shakeField('confirmPassword'); valid = false;
+        } else if (password !== confirmPassword) {
+          showFieldError('confirmPassword', '两次密码输入不一致');
+          shakeField('confirmPassword');
+          valid = false;
+        }
+
+        var province = document.getElementById('regProvince').value;
+        if (!province) {
+          showFieldError('province'); valid = false;
+        }
+
+        var city = document.getElementById('regCity').value.trim();
+        if (!city) {
+          showFieldError('city'); shakeField('city'); valid = false;
+        }
+
+        if (!valid) {
+          showError('请完善基本信息中的必填项');
+          // Scroll to first error
+          var firstError = document.querySelector('.form-group.has-error');
+          if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        return valid;
+      }
+
+      function validateStep2() {
+        clearAllFieldErrors();
+        hideError();
+        var valid = true;
+
+        var height = document.getElementById('regHeight').value;
+        if (height && (parseInt(height) < 140 || parseInt(height) > 200)) {
+          showFieldError('height'); shakeField('height'); valid = false;
+        }
+
+        var weight = document.getElementById('regWeight').value;
+        if (weight && (parseInt(weight) < 40 || parseInt(weight) > 120)) {
+          showFieldError('weight'); shakeField('weight'); valid = false;
+        }
+
+        var selfIntro = document.getElementById('regSelfIntro').value.trim();
+        if (selfIntro && selfIntro.length < 20) {
+          showFieldError('selfIntro', '自我介绍至少20字（当前' + selfIntro.length + '字）');
+          shakeField('selfIntro');
+          valid = false;
+        }
+
+        if (!valid) {
+          showError('请完善个人详情中的必填项');
+          var firstError = document.querySelector('.form-group.has-error');
+          if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        return valid;
+      }
+
+      function validateStep3() {
+        clearAllFieldErrors();
+        hideError();
+        var valid = true;
+
+        var ageMin = parseInt(document.getElementById('partnerAgeMin').value);
+        var ageMax = parseInt(document.getElementById('partnerAgeMax').value);
+        if (ageMin && ageMax && ageMin > ageMax) {
+          showFieldError('partnerAge');
+          valid = false;
+        }
+
+        var req = document.getElementById('partnerRequirement').value.trim();
+        if (req && req.length < 10) {
+          showFieldError('partnerRequirement', '择偶要求描述至少10字（当前' + req.length + '字）');
+          shakeField('partnerRequirement');
+          valid = false;
+        }
+
+        if (!valid) {
+          showError('请完善择偶偏好中的必填项');
+          var firstError = document.querySelector('.form-group.has-error');
+          if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        return valid;
+      }
+
+      // ========== Error / Success Display ==========
+      function showError(message) {
+        var alert = document.getElementById('errorAlert');
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('successMessage').classList.remove('visible');
+        alert.classList.add('visible');
+      }
+
+      function hideError() {
+        document.getElementById('errorAlert').classList.remove('visible');
+      }
+
+      function showSuccess(message) {
+        var succ = document.getElementById('successMessage');
+        document.getElementById('successText').textContent = message;
+        document.getElementById('errorAlert').classList.remove('visible');
+        succ.classList.add('visible');
+      }
+
+      // ========== Register Submit ==========
+      function onRegisterSubmit(e) {
+        e.preventDefault();
+        hideError();
+
+        if (!validateStep3()) return;
+
+        // Collect step 3 data
+        collectStep3Data();
+
+        setSubmitting(true);
+
+        // Simulate async
+        setTimeout(function() {
+          try {
+            // Build user object
+            var birth = new Date(formData.birthDate);
+            var today = new Date();
+            var age = today.getFullYear() - birth.getFullYear();
+            var mDiff = today.getMonth() - birth.getMonth();
+            if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) age--;
+
+            var userData = {
+              id: 'u_' + Date.now(),
+              name: formData.name,
+              gender: formData.gender,
+              age: age,
+              birthDate: formData.birthDate,
+              phone: formData.phone,
+              email: formData.email || '',
+              password: formData.password,
+              province: formData.province,
+              city: formData.city,
+              height: formData.height ? parseInt(formData.height) : null,
+              weight: formData.weight ? parseInt(formData.weight) : null,
+              education: formData.education || '',
+              occupation: formData.occupation || '',
+              income: formData.income || '',
+              maritalStatus: formData.maritalStatus || '',
+              hasChildren: formData.hasChildren || '',
+              childrenDetail: formData.childrenDetail || '',
+              hobbies: formData.hobbies || [],
+              personalityTags: formData.personalityTags || [],
+              selfIntro: formData.selfIntro || '',
+              partnerAgeMin: formData.partnerAgeMin ? parseInt(formData.partnerAgeMin) : null,
+              partnerAgeMax: formData.partnerAgeMax ? parseInt(formData.partnerAgeMax) : null,
+              partnerEducation: formData.partnerEducation || [],
+              partnerIncome: formData.partnerIncome || '',
+              acceptableMarital: formData.acceptableMarital || [],
+              partnerRequirement: formData.partnerRequirement || '',
+              avatar: formData.avatar || '',
+              createdAt: new Date().toISOString(),
+              disabled: false
+            };
+
+            var result;
+
+            // Try Store.register if available
+            if (typeof Store !== 'undefined' && Store.register) {
+              result = Store.register(userData);
+            } else {
+              result = fallbackRegister(userData);
+            }
+
+            if (result && result.success) {
+              showSuccess('注册成功！正在跳转到个人主页...');
+              // Redirect after 2 seconds
+              setTimeout(function() {
+                window.location.replace('dashboard.html');
+              }, 2000);
+            } else {
+              var errMsg = (result && result.message) || '注册失败，请稍后重试';
+              showError(errMsg);
+              setSubmitting(false);
+            }
+          } catch (err) {
+            showError('注册失败：' + (err.message || '未知错误'));
+            setSubmitting(false);
+          }
+        }, 400);
+      }
+
+      function setSubmitting(isSubmitting) {
+        var btn = document.getElementById('step3Submit');
+        var txt = document.getElementById('submitBtnText');
+        if (isSubmitting) {
+          txt.innerHTML = '<span class="spinner"></span>注册中...';
+          btn.disabled = true;
+        } else {
+          txt.textContent = '完成注册';
+          btn.disabled = false;
+        }
+      }
+
+      // ========== Fallback Register (when Store is unavailable) ==========
+      function fallbackRegister(userData) {
+        try {
+          var usersJson = localStorage.getItem('xiangqin_users');
+          var users = usersJson ? JSON.parse(usersJson) : [];
+          if (!Array.isArray(users)) users = [];
+
+          // Check for duplicate phone
+          var existing = users.find(function(u) {
+            return u.phone === userData.phone;
+          });
+          if (existing) {
+            return { success: false, message: '该手机号已被注册' };
+          }
+
+          // Check seed data duplicates
+          if (typeof SEED_USERS !== 'undefined' && Array.isArray(SEED_USERS)) {
+            var seedDup = SEED_USERS.find(function(u) {
+              return u.phone === userData.phone;
+            });
+            if (seedDup) {
+              return { success: false, message: '该手机号已被注册' };
+            }
+          }
+
+          users.push(userData);
+          localStorage.setItem('xiangqin_users', JSON.stringify(users));
+          localStorage.setItem('xiangqin_current_user', JSON.stringify(userData));
+          return { success: true };
+        } catch (e) {
+          return { success: false, message: '存储失败：' + e.message };
+        }
+      }
+
+      // ========== Boot ==========
+      init();
+
+    })();
+  </script>
+
+</body>
+</html>

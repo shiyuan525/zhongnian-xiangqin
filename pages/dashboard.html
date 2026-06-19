@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人首页 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page Layout ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px; /* offset for sticky header */
+    }
+
+    /* ========== Skip Link ========== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus {
+      top: var(--space-sm);
+    }
+
+    /* ========== Sticky Header / Nav Bar ========== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .header-logo:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* Primary Navigation */
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      list-style: none;
+    }
+
+    .main-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+    }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu Dropdown */
+    .user-menu {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .user-menu-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover {
+      background-color: var(--color-bg);
+    }
+    .user-menu-trigger .avatar-sm {
+      width: 40px;
+      height: 40px;
+      font-size: calc(18px * var(--font-scale));
+    }
+    .user-menu-trigger .arrow-down {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-fast);
+    }
+    .user-menu.open .user-menu-trigger .arrow-down {
+      transform: rotate(180deg);
+    }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      overflow: hidden;
+      padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown {
+      display: block;
+    }
+    .user-dropdown a,
+    .user-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover,
+    .user-dropdown button:hover {
+      background-color: var(--color-bg);
+    }
+    .user-dropdown .dropdown-divider {
+      height: 1px;
+      background: var(--color-border-light);
+      margin: var(--space-xs) 0;
+    }
+    .user-dropdown .logout-btn {
+      color: var(--color-danger);
+    }
+
+    /* Mobile Nav Toggle */
+    .mobile-nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-fast);
+    }
+
+    /* Mobile Nav Panel */
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-surface);
+      z-index: var(--z-fixed);
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .mobile-nav-panel.open {
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-nav-panel a {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+    }
+    .mobile-nav-panel a:hover {
+      background-color: var(--color-bg);
+    }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========== Main Content ========== */
+    .main-content {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    /* ========== Welcome Banner ========== */
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #E8734A 50%, var(--color-secondary) 100%);
+      color: #fff;
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl) var(--space-lg);
+      margin-bottom: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 30%;
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .welcome-banner > * {
+      position: relative;
+      z-index: 1;
+    }
+    .welcome-greeting {
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-xs);
+    }
+    .welcome-subtitle {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      opacity: 0.9;
+      margin-bottom: var(--space-lg);
+    }
+
+    /* Profile Completeness */
+    .profile-completeness {
+      background: rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      backdrop-filter: blur(4px);
+    }
+    .profile-completeness-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+    }
+    .profile-completeness-bar {
+      height: 10px;
+      background: rgba(255,255,255,0.3);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: var(--space-sm);
+    }
+    .profile-completeness-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: var(--radius-full);
+      transition: width var(--transition-slow);
+    }
+    .profile-prompt {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      opacity: 0.9;
+      margin: 0;
+    }
+    .profile-prompt a {
+      color: #fff;
+      font-weight: var(--font-weight-bold);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .profile-prompt a:hover {
+      opacity: 0.8;
+    }
+
+    /* ========== Section Headings ========== */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+    }
+    .section-heading h2 {
+      font-size: calc(var(--font-size-h3) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin: 0;
+      color: var(--color-text-primary);
+    }
+    .section-heading .view-all {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-height: var(--tap-target-min);
+      align-items: center;
+    }
+    .section-heading .view-all:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* ========== Quick Stats ========== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--card-gap);
+      margin-bottom: var(--space-xl);
+    }
+    .stat-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+      cursor: pointer;
+    }
+    .stat-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+    }
+    .stat-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .stat-icon.matches { background: var(--color-primary-light); }
+    .stat-icon.messages { background: var(--color-warning-light); }
+    .stat-icon.groups { background: var(--color-success-light); }
+    .stat-icon.events { background: var(--color-info-light); }
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-value {
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+    .stat-value .badge-count {
+      display: inline-block;
+      background: var(--color-danger);
+      color: #fff;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      vertical-align: super;
+      margin-left: 4px;
+    }
+    .stat-label {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: 4px;
+    }
+
+    /* ========== Daily Matches Horizontal Scroll ========== */
+    .matches-scroll-container {
+      position: relative;
+      margin-bottom: var(--space-xl);
+    }
+    .matches-scroll {
+      display: flex;
+      gap: var(--card-gap);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--space-sm);
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border) transparent;
+    }
+    .matches-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+    .matches-scroll::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 3px;
+    }
+
+    .match-card {
+      flex: 0 0 260px;
+      scroll-snap-align: start;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-md);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+    .match-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-4px);
+    }
+    .match-card-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      margin: 0 auto var(--space-sm);
+      flex-shrink: 0;
+    }
+    .match-card-name {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .match-card-meta {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      text-align: center;
+      margin-bottom: var(--space-sm);
+    }
+    .match-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+    }
+    .match-card-tags .tag {
+      font-size: calc(14px * var(--font-scale));
+      padding: 3px 12px;
+    }
+    .match-card-score {
+      margin-top: auto;
+      text-align: center;
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--color-border-light);
+    }
+    .match-score-value {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+    .match-score-label {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    .refresh-matches-btn {
+      display: block;
+      margin: var(--space-md) auto 0;
+    }
+
+    /* ========== Recent Messages ========== */
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--color-border-light);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      margin-bottom: var(--space-xl);
+    }
+    .message-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-surface);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    .message-item:hover {
+      background-color: var(--color-surface-hover);
+    }
+    .message-item-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .message-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .message-item-name {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+    .message-item-preview {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .message-item-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .message-item-time {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      display: block;
+    }
+    .message-item-unread {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--color-danger);
+      border-radius: 50%;
+      margin-top: 4px;
+    }
+    .messages-empty {
+      padding: var(--space-xxl) var(--space-md);
+      text-align: center;
+      background: var(--color-surface);
+    }
+    .messages-empty-icon {
+      font-size: 48px;
+      opacity: 0.4;
+      margin-bottom: var(--space-sm);
+    }
+    .messages-empty p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin: 0;
+    }
+
+    /* ========== Upcoming Events ========== */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: var(--card-gap);
+      margin-bottom: var(--space-xl);
+    }
+    .event-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition-base);
+    }
+    .event-card:hover {
+      box-shadow: var(--shadow-card-hover);
+    }
+    .event-card-title {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .event-card-detail {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+    }
+    .event-card-detail .detail-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+    .event-card-footer {
+      margin-top: auto;
+      padding-top: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .event-attendees {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+    .event-register-btn {
+      min-height: 44px;
+      padding: 0 var(--space-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-btn);
+      border: 2px solid var(--color-primary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .event-register-btn.join {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    .event-register-btn.join:hover {
+      background: var(--color-primary-hover);
+    }
+    .event-register-btn.registered {
+      background: var(--color-success-light);
+      color: var(--color-success);
+      border-color: var(--color-success);
+    }
+    .events-empty {
+      grid-column: 1 / -1;
+      padding: var(--space-xxl);
+      text-align: center;
+      background: var(--color-surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--color-border-light);
+    }
+    .events-empty p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin: 0;
+    }
+
+    /* ========== Recommended Groups ========== */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--card-gap);
+      margin-bottom: var(--space-xl);
+    }
+    .group-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition-base);
+    }
+    .group-card:hover {
+      box-shadow: var(--shadow-card-hover);
+    }
+    .group-card-name {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .group-card-category {
+      display: inline-block;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+      padding: 3px 12px;
+      border-radius: var(--radius-tag);
+      margin-bottom: var(--space-sm);
+      align-self: flex-start;
+    }
+    .group-card-members {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-md);
+    }
+    .group-card-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .group-join-btn {
+      min-height: 44px;
+      padding: 0 var(--space-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-btn);
+      border: 2px solid var(--color-secondary);
+      background: var(--color-secondary);
+      color: #fff;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .group-join-btn:hover {
+      background: var(--color-secondary-hover);
+      border-color: var(--color-secondary-hover);
+    }
+    .group-join-btn.joined {
+      background: var(--color-success-light);
+      color: var(--color-success);
+      border-color: var(--color-success);
+    }
+
+    /* ========== Main Content Sections ========== */
+    .content-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    /* ========== Loading / Error State ========== */
+    .loading-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xxl);
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+      .groups-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .main-nav a {
+        padding: var(--space-sm);
+        font-size: calc(16px * var(--font-scale));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        padding: 0 var(--space-md);
+      }
+      .main-nav {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: flex;
+      }
+      .main-content {
+        padding: var(--space-md);
+      }
+      .welcome-banner {
+        padding: var(--space-lg) var(--space-md);
+      }
+      .welcome-greeting {
+        font-size: calc(var(--font-size-xl) * var(--font-scale));
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+      }
+      .stat-card {
+        padding: var(--space-md);
+        gap: var(--space-sm);
+      }
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+      }
+      .stat-value {
+        font-size: calc(var(--font-size-xl) * var(--font-scale));
+      }
+      .match-card {
+        flex: 0 0 220px;
+      }
+      .events-grid,
+      .groups-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-sm);
+      }
+      .header-logo {
+        font-size: calc(var(--font-size-lg) * var(--font-scale));
+      }
+      .user-menu-trigger .user-menu-name {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Sticky Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html" class="nav-current">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile Nav Toggle -->
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <!-- User Menu -->
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html" class="nav-current">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content" id="main-content">
+
+    <!-- Welcome Banner -->
+    <section class="welcome-banner" id="welcomeBanner">
+      <div class="welcome-greeting" id="welcomeGreeting">欢迎回来！</div>
+      <p class="welcome-subtitle">今天也是寻找缘分的好日子</p>
+      <div class="profile-completeness" id="profileCompleteness">
+        <div class="profile-completeness-label">
+          <span>资料完整度</span>
+          <span id="completenessPercent">0%</span>
+        </div>
+        <div class="profile-completeness-bar">
+          <div class="profile-completeness-fill" id="completenessBar" style="width: 0%;"></div>
+        </div>
+        <p class="profile-prompt" id="profilePrompt" style="display: none;">
+          💡 <a href="profile-edit.html">完善资料可获得更多推荐</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="content-section">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card" onclick="window.location.href='matches.html'">
+          <div class="stat-icon matches">❤️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statDailyMatches">-</div>
+            <div class="stat-label">今日推荐</div>
+          </div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='chat.html'">
+          <div class="stat-icon messages">💬</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statUnread">-</div>
+            <div class="stat-label">未读消息</div>
+          </div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='groups.html'">
+          <div class="stat-icon groups">👥</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statGroups">-</div>
+            <div class="stat-label">我的群组</div>
+          </div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='events.html'">
+          <div class="stat-icon events">📅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statEvents">-</div>
+            <div class="stat-label">近期活动</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Matches -->
+    <section class="content-section">
+      <div class="section-heading">
+        <h2>💝 今日精选推荐</h2>
+        <a href="matches.html" class="view-all">查看全部 →</a>
+      </div>
+      <div class="matches-scroll-container">
+        <div class="matches-scroll" id="dailyMatchesScroll">
+          <!-- Filled by JS -->
+        </div>
+        <button class="btn btn-outline refresh-matches-btn" id="refreshMatchesBtn" style="display: none;">
+          🔄 换一批
+        </button>
+      </div>
+      <div class="empty-state" id="matchesEmpty" style="display: none;">
+        <div class="empty-state-icon">💝</div>
+        <h3 class="empty-state-title">暂无今日推荐</h3>
+        <p class="empty-state-description">完善您的个人资料后，系统会为您推荐更精准的匹配对象</p>
+        <a href="profile-edit.html" class="btn btn-primary">完善资料</a>
+      </div>
+    </section>
+
+    <!-- Recent Messages -->
+    <section class="content-section">
+      <div class="section-heading">
+        <h2>💬 最近消息</h2>
+        <a href="chat.html" class="view-all">查看全部消息 →</a>
+      </div>
+      <div class="messages-list" id="recentMessages">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="content-section">
+      <div class="section-heading">
+        <h2>📅 近期活动</h2>
+        <a href="events.html" class="view-all">更多活动 →</a>
+      </div>
+      <div class="events-grid" id="upcomingEvents">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Recommended Groups -->
+    <section class="content-section">
+      <div class="section-heading">
+        <h2>👥 推荐群组</h2>
+        <a href="groups.html" class="view-all">更多群组 →</a>
+      </div>
+      <div class="groups-grid" id="recommendedGroups">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard — redirect to login if not logged in
+    // =========================================================================
+    if (!Auth.requireAuth('dashboard.html')) {
+      return; // will redirect
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var currentProfile = Store.getProfile(currentUser.id);
+
+    // =========================================================================
+    // 2. Header: Set user info
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      // Assign a consistent color based on user id
+      var colors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % colors.length;
+      }
+      avatarEl.style.backgroundColor = colors[colorIndex];
+    }
+
+    // =========================================================================
+    // 3. User Menu Dropdown Toggle
+    // =========================================================================
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+      var dropdown = document.getElementById('userDropdown');
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          menu.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      // Close dropdown when clicking elsewhere
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+
+      dropdown.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+
+      // Logout button
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        Auth.logout();
+      });
+      var mobileLogout = document.getElementById('mobileLogoutBtn');
+      if (mobileLogout) {
+        mobileLogout.addEventListener('click', function (e) {
+          e.preventDefault();
+          Auth.logout();
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. Mobile Nav Toggle
+    // =========================================================================
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) {
+          panel.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', '打开菜单');
+        } else {
+          panel.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('aria-label', '关闭菜单');
+        }
+      });
+    }
+
+    // =========================================================================
+    // 5. Welcome Banner — Time-based greeting
+    // =========================================================================
+    function initWelcomeBanner() {
+      var hour = new Date().getHours();
+      var greeting;
+      if (hour >= 6 && hour < 12) {
+        greeting = '早上好';
+      } else if (hour >= 12 && hour < 18) {
+        greeting = '下午好';
+      } else {
+        greeting = '晚上好';
+      }
+      var displayName = currentUser.name || '用户';
+      document.getElementById('welcomeGreeting').textContent =
+        greeting + '，' + escapeHtml(displayName) + '！';
+
+      // Profile completeness
+      var completeness = calculateProfileCompleteness(currentProfile);
+      document.getElementById('completenessPercent').textContent = completeness + '%';
+      document.getElementById('completenessBar').style.width = completeness + '%';
+
+      if (completeness < 70) {
+        document.getElementById('profilePrompt').style.display = 'block';
+      }
+    }
+
+    /**
+     * Calculate how complete a profile is (0-100).
+     */
+    function calculateProfileCompleteness(profile) {
+      if (!profile) return 10; // barely anything
+      var fields = [
+        { key: 'height', weight: 1 },
+        { key: 'weight', weight: 1 },
+        { key: 'education', weight: 1 },
+        { key: 'occupation', weight: 1 },
+        { key: 'incomeRange', weight: 1 },
+        { key: 'income', weight: 1 },
+        { key: 'maritalStatus', weight: 1 },
+        { key: 'hasChildren', weight: 0.5 },
+        { key: 'hobbies', weight: 1.5, check: function (v) { return Array.isArray(v) && v.length > 0; } },
+        { key: 'personality', weight: 1, check: function (v) { return Array.isArray(v) && v.length > 0; } },
+        { key: 'selfIntro', weight: 1.5, check: function (v) { return typeof v === 'string' && v.length >= 10; } },
+        { key: 'photos', weight: 0.5, check: function (v) { return Array.isArray(v) && v.length > 0; } },
+        { key: 'partnerAgeMin', weight: 0.5 },
+        { key: 'partnerAgeMax', weight: 0.5 },
+        { key: 'partnerEducation', weight: 0.5 },
+        { key: 'partnerRequirements', weight: 0.5 }
+      ];
+      var totalWeight = 0;
+      var earnedWeight = 0;
+      for (var i = 0; i < fields.length; i++) {
+        totalWeight += fields[i].weight;
+        var val = profile[fields[i].key];
+        if (fields[i].check) {
+          if (fields[i].check(val)) earnedWeight += fields[i].weight;
+        } else {
+          if (val !== null && val !== undefined && val !== '') earnedWeight += fields[i].weight;
+        }
+      }
+      return Math.round((earnedWeight / totalWeight) * 100);
+    }
+
+    // =========================================================================
+    // 6. Quick Stats
+    // =========================================================================
+    function initQuickStats() {
+      // Daily matches count
+      var dailyMatches = MatchEngine.getDailyMatches(currentUser.id, 50);
+      var matchCount = dailyMatches.length;
+      document.getElementById('statDailyMatches').innerHTML = matchCount + '<span style="font-size:0.6em;">人</span>';
+
+      // Unread message count
+      var unreadCount = Store.getUnreadCount(currentUser.id);
+      var unreadHtml = unreadCount + '<span style="font-size:0.6em;">条</span>';
+      if (unreadCount > 0) {
+        unreadHtml += ' <span class="badge-count">' + unreadCount + '</span>';
+      }
+      document.getElementById('statUnread').innerHTML = unreadHtml;
+
+      // Joined groups count
+      var allGroups = Store.getGroups();
+      var joinedCount = 0;
+      for (var g = 0; g < allGroups.length; g++) {
+        if (allGroups[g].members && allGroups[g].members.indexOf(currentUser.id) !== -1) {
+          joinedCount++;
+        }
+      }
+      document.getElementById('statGroups').innerHTML = joinedCount + '<span style="font-size:0.6em;">个</span>';
+
+      // Upcoming events count (user is registered for)
+      var allEvents = Store.getEvents();
+      var now = new Date();
+      var registeredCount = 0;
+      for (var e = 0; e < allEvents.length; e++) {
+        var evt = allEvents[e];
+        if (evt.status === 'upcoming' && new Date(evt.eventDate) > now) {
+          if (evt.attendees && evt.attendees.indexOf(currentUser.id) !== -1) {
+            registeredCount++;
+          }
+        }
+      }
+      document.getElementById('statEvents').innerHTML = registeredCount + '<span style="font-size:0.6em;">个</span>';
+    }
+
+    // =========================================================================
+    // 7. Daily Matches Horizontal Scroll
+    // =========================================================================
+    var currentMatches = [];
+
+    function initDailyMatches() {
+      currentMatches = MatchEngine.getDailyMatches(currentUser.id, 8);
+      renderDailyMatches();
+    }
+
+    function renderDailyMatches() {
+      var container = document.getElementById('dailyMatchesScroll');
+      var refreshBtn = document.getElementById('refreshMatchesBtn');
+      var emptyState = document.getElementById('matchesEmpty');
+
+      if (currentMatches.length === 0) {
+        container.innerHTML = '';
+        refreshBtn.style.display = 'none';
+        emptyState.style.display = 'flex';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      refreshBtn.style.display = currentMatches.length >= 4 ? 'block' : 'none';
+
+      var html = '';
+      var displayCount = Math.min(currentMatches.length, 6);
+
+      var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+
+      for (var i = 0; i < displayCount; i++) {
+        var match = currentMatches[i];
+        var user = match.user;
+        var profile = match.profile;
+        var name = user.name || '用户';
+        var initial = name.charAt(0);
+        var age = match.age || calculateAge(user.birthDate) || '';
+        var city = (user.location && user.location.city) ? user.location.city : '';
+        var occupation = (profile && profile.occupation) ? profile.occupation : '';
+        var hobbies = (profile && Array.isArray(profile.hobbies)) ? profile.hobbies.slice(0, 3) : [];
+        var score = match.score;
+        var colorIndex = 0;
+        if (user.id) {
+          for (var j = 0; j < user.id.length; j++) {
+            colorIndex += user.id.charCodeAt(j);
+          }
+          colorIndex = colorIndex % avatarColors.length;
+        }
+
+        html += '<a class="match-card" href="profile.html?id=' + escapeHtml(user.id) + '" title="查看' + escapeHtml(name) + '的资料">';
+        html += '<div class="match-card-avatar" style="background-color: ' + avatarColors[colorIndex] + ';">' + escapeHtml(initial) + '</div>';
+        html += '<div class="match-card-name">' + escapeHtml(name) + '</div>';
+        html += '<div class="match-card-meta">' + escapeHtml(age + '岁') + (city ? ' · ' + escapeHtml(city) : '') + '</div>';
+        if (occupation) {
+          html += '<div class="match-card-meta" style="margin-top:-8px;">' + escapeHtml(occupation) + '</div>';
+        }
+        if (hobbies.length > 0) {
+          html += '<div class="match-card-tags">';
+          for (var h = 0; h < hobbies.length; h++) {
+            html += '<span class="tag tag-interest">' + escapeHtml(hobbies[h]) + '</span>';
+          }
+          html += '</div>';
+        }
+        html += '<div class="match-card-score">';
+        html += '<span class="match-score-value">' + score + '%</span>';
+        html += '<span class="match-score-label"> 匹配度</span>';
+        html += '</div>';
+        html += '</a>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Refresh (换一批) button
+    document.getElementById('refreshMatchesBtn').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = '⏳ 换一批...';
+      // Get a new random set
+      currentMatches = MatchEngine.getDailyMatches(currentUser.id, 8);
+      setTimeout(function () {
+        renderDailyMatches();
+        btn.disabled = false;
+        btn.textContent = '🔄 换一批';
+      }, 300);
+    });
+
+    // =========================================================================
+    // 8. Recent Messages
+    // =========================================================================
+    function initRecentMessages() {
+      var container = document.getElementById('recentMessages');
+      var conversations = Store.getConversations(currentUser.id);
+
+      if (conversations.length === 0) {
+        container.innerHTML =
+          '<div class="messages-empty">' +
+          '<div class="messages-empty-icon">💬</div>' +
+          '<p>暂无消息，去<a href="matches.html" style="color:var(--color-primary);">发现缘分</a>吧</p>' +
+          '</div>';
+        return;
+      }
+
+      var displayConvs = conversations.slice(0, 3);
+      var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+      var html = '';
+
+      for (var i = 0; i < displayConvs.length; i++) {
+        var conv = displayConvs[i];
+        var partner = conv.partner;
+        var partnerName = partner ? partner.name : '用户';
+        var initial = partnerName.charAt(0);
+        var lastMsg = conv.lastMessage;
+        var preview = lastMsg ? lastMsg.content : '';
+        if (preview.length > 30) preview = preview.substring(0, 30) + '...';
+        var timeStr = lastMsg ? relativeTime(lastMsg.createdAt) : '';
+        var unread = conv.unreadCount > 0;
+
+        var colorIndex = 0;
+        if (conv.partnerId) {
+          for (var j = 0; j < conv.partnerId.length; j++) {
+            colorIndex += conv.partnerId.charCodeAt(j);
+          }
+          colorIndex = colorIndex % avatarColors.length;
+        }
+
+        html += '<a class="message-item" href="chat.html?partner=' + escapeHtml(conv.partnerId) + '">';
+        html += '<div class="message-item-avatar" style="background-color: ' + avatarColors[colorIndex] + ';">' + escapeHtml(initial) + '</div>';
+        html += '<div class="message-item-body">';
+        html += '<div class="message-item-name">' + escapeHtml(partnerName) + '</div>';
+        html += '<div class="message-item-preview">' + escapeHtml(preview) + '</div>';
+        html += '</div>';
+        html += '<div class="message-item-meta">';
+        html += '<span class="message-item-time">' + escapeHtml(timeStr) + '</span>';
+        if (unread) {
+          html += '<span class="message-item-unread"></span>';
+        }
+        html += '</div>';
+        html += '</a>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    // =========================================================================
+    // 9. Upcoming Events
+    // =========================================================================
+    function initUpcomingEvents() {
+      var container = document.getElementById('upcomingEvents');
+      var allEvents = Store.getEvents();
+      var now = new Date();
+
+      // Filter upcoming events
+      var upcoming = [];
+      for (var i = 0; i < allEvents.length; i++) {
+        if (allEvents[i].status === 'upcoming' && new Date(allEvents[i].eventDate) > now) {
+          upcoming.push(allEvents[i]);
+        }
+      }
+      // Sort by date
+      upcoming.sort(function (a, b) {
+        return new Date(a.eventDate) - new Date(b.eventDate);
+      });
+      upcoming = upcoming.slice(0, 3);
+
+      if (upcoming.length === 0) {
+        container.innerHTML =
+          '<div class="events-empty"><p>暂无近期活动</p></div>';
+        return;
+      }
+
+      var html = '';
+      for (var e = 0; e < upcoming.length; e++) {
+        var evt = upcoming[e];
+        var isRegistered = evt.attendees && evt.attendees.indexOf(currentUser.id) !== -1;
+        var attendeeCount = evt.attendees ? evt.attendees.length : 0;
+        var eventDate = new Date(evt.eventDate);
+        var dateStr = eventDate.getFullYear() + '年' + (eventDate.getMonth() + 1) + '月' + eventDate.getDate() + '日';
+        var timeStr = String(eventDate.getHours()).padStart(2, '0') + ':' + String(eventDate.getMinutes()).padStart(2, '0');
+
+        html += '<div class="event-card">';
+        html += '<div class="event-card-title">' + escapeHtml(evt.title) + '</div>';
+        html += '<div class="event-card-detail"><span class="detail-icon">📅</span> ' + escapeHtml(dateStr) + ' ' + escapeHtml(timeStr) + '</div>';
+        html += '<div class="event-card-detail"><span class="detail-icon">📍</span> ' + escapeHtml(evt.location || '待定') + '</div>';
+        html += '<div class="event-card-footer">';
+        html += '<span class="event-attendees">👥 ' + attendeeCount + '人已报名' + (evt.maxAttendees ? ' / 限' + evt.maxAttendees + '人' : '') + '</span>';
+        html += '<button class="event-register-btn ' + (isRegistered ? 'registered' : 'join') + '" data-event-id="' + escapeHtml(evt.id) + '" ' + (isRegistered ? 'disabled' : '') + '>';
+        html += isRegistered ? '✓ 已报名' : '报名参加';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+
+      // Attach event listeners
+      var buttons = container.querySelectorAll('.event-register-btn.join');
+      for (var b = 0; b < buttons.length; b++) {
+        buttons[b].addEventListener('click', function () {
+          var eventId = this.getAttribute('data-event-id');
+          var success = Store.registerForEvent(eventId, currentUser.id);
+          if (success) {
+            showToast('报名成功！', 'success');
+            this.classList.remove('join');
+            this.classList.add('registered');
+            this.textContent = '✓ 已报名';
+            this.disabled = true;
+            // Refresh stats
+            initQuickStats();
+          } else {
+            showToast('报名失败，请重试', 'error');
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 10. Recommended Groups
+    // =========================================================================
+    function initRecommendedGroups() {
+      var container = document.getElementById('recommendedGroups');
+      var allGroups = Store.getGroups();
+      var groups = allGroups.slice(0, 4);
+
+      if (groups.length === 0) {
+        container.innerHTML =
+          '<div class="events-empty"><p>暂无推荐群组</p></div>';
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < groups.length; i++) {
+        var grp = groups[i];
+        var isMember = grp.members && grp.members.indexOf(currentUser.id) !== -1;
+        var memberCount = grp.memberCount || (grp.members ? grp.members.length : 0);
+
+        html += '<div class="group-card">';
+        html += '<div class="group-card-name">' + escapeHtml(grp.name) + '</div>';
+        if (grp.category) {
+          html += '<span class="group-card-category">' + escapeHtml(grp.category) + '</span>';
+        }
+        html += '<div class="group-card-members">👥 ' + memberCount + ' 位成员</div>';
+        html += '<div class="group-card-footer">';
+        html += '<button class="group-join-btn ' + (isMember ? 'joined' : '') + '" data-group-id="' + escapeHtml(grp.id) + '" ' + (isMember ? 'disabled' : '') + '>';
+        html += isMember ? '✓ 已加入' : '加入';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+
+      // Attach join listeners
+      var buttons = container.querySelectorAll('.group-join-btn:not(.joined)');
+      for (var b = 0; b < buttons.length; b++) {
+        buttons[b].addEventListener('click', function () {
+          var groupId = this.getAttribute('data-group-id');
+          var success = Store.joinGroup(groupId, currentUser.id);
+          if (success) {
+            showToast('加入群组成功！', 'success');
+            this.classList.add('joined');
+            this.textContent = '✓ 已加入';
+            this.disabled = true;
+            initQuickStats();
+          } else {
+            showToast('加入失败，请重试', 'error');
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 11. Init Everything
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      initWelcomeBanner();
+      initQuickStats();
+      initDailyMatches();
+      initRecentMessages();
+      initUpcomingEvents();
+      initRecommendedGroups();
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

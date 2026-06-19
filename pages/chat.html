@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>消息 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page Layout ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* ========== Skip Link ========== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus {
+      top: var(--space-sm);
+    }
+
+    /* ========== Sticky Header ========== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .header-logo:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      list-style: none;
+    }
+    .main-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+    }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu */
+    .user-menu {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .user-menu-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover {
+      background-color: var(--color-bg);
+    }
+    .user-menu-trigger .avatar-sm {
+      width: 40px;
+      height: 40px;
+      font-size: calc(18px * var(--font-scale));
+    }
+    .user-menu-trigger .arrow-down {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-fast);
+    }
+    .user-menu.open .user-menu-trigger .arrow-down {
+      transform: rotate(180deg);
+    }
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      overflow: hidden;
+      padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown {
+      display: block;
+    }
+    .user-dropdown a,
+    .user-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover,
+    .user-dropdown button:hover {
+      background-color: var(--color-bg);
+    }
+    .user-dropdown .dropdown-divider {
+      height: 1px;
+      background: var(--color-border-light);
+      margin: var(--space-xs) 0;
+    }
+    .user-dropdown .logout-btn {
+      color: var(--color-danger);
+    }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-fast);
+    }
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-surface);
+      z-index: var(--z-fixed);
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .mobile-nav-panel.open {
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-nav-panel a {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+    }
+    .mobile-nav-panel a:hover {
+      background-color: var(--color-bg);
+    }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========== Chat Layout ========== */
+    .chat-container {
+      display: flex;
+      height: calc(100vh - 72px);
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* Left Panel — Conversation List */
+    .conversation-panel {
+      width: 360px;
+      min-width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--color-border-light);
+      background: var(--color-surface);
+    }
+    .conv-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .conv-header-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+    }
+    .conv-header-title h2 {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin: 0;
+    }
+    .unread-badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 8px;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      border-radius: var(--radius-full);
+    }
+    .unread-badge-count:empty,
+    .unread-badge-count[data-count="0"] {
+      display: none;
+    }
+    .conv-search {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .conv-search:focus {
+      border-color: var(--color-border-focus);
+    }
+    .conv-search::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .conv-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--color-border-light);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    .conv-item:hover {
+      background-color: var(--color-primary-subtle);
+    }
+    .conv-item.active {
+      background-color: var(--color-primary-light);
+    }
+    .conv-avatar {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+    }
+    .conv-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .conv-name {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .conv-preview {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    .conv-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .conv-time {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+    }
+    .conv-unread-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    .conv-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-xxl) var(--space-lg);
+      color: var(--color-text-tertiary);
+    }
+    .conv-empty-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-md);
+      opacity: 0.5;
+    }
+    .conv-empty p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      margin-bottom: var(--space-md);
+    }
+    .conv-empty a {
+      color: var(--color-text-link);
+      font-weight: var(--font-weight-semibold);
+      text-decoration: none;
+    }
+    .conv-empty a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========== Right Panel — Chat Window ========== */
+    .chat-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-bg);
+      min-width: 0;
+    }
+
+    /* Empty state when no conversation selected */
+    .chat-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-xxl);
+      color: var(--color-text-tertiary);
+    }
+    .chat-empty-icon {
+      font-size: 72px;
+      margin-bottom: var(--space-lg);
+      opacity: 0.4;
+    }
+    .chat-empty h3 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    .chat-empty p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      max-width: 400px;
+      line-height: var(--line-height-base);
+    }
+    .chat-empty a {
+      color: var(--color-text-link);
+      font-weight: var(--font-weight-semibold);
+      text-decoration: none;
+    }
+    .chat-empty a:hover {
+      text-decoration: underline;
+    }
+
+    /* Active chat */
+    .chat-active {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .chat-header-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      flex-shrink: 0;
+    }
+    .chat-header-name {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .chat-header-actions .btn {
+      min-height: 40px;
+      padding: 0 var(--space-md);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+    }
+    .chat-back-btn {
+      display: none;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      min-height: 44px;
+    }
+    .chat-back-btn:hover {
+      background: var(--color-primary-subtle);
+    }
+
+    /* Safety Banner */
+    .safety-banner {
+      padding: var(--space-sm) var(--space-lg);
+      background: var(--color-warning-subtle);
+      border-bottom: 1px solid var(--color-warning-light);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-warning-hover);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Demo Note */
+    .demo-note {
+      padding: var(--space-xs) var(--space-lg);
+      background: var(--color-info-light);
+      border-bottom: 1px solid var(--color-border-light);
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-info);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .demo-note button {
+      padding: 4px 12px;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      background: var(--color-info);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 32px;
+    }
+    .demo-note button:hover {
+      opacity: 0.85;
+    }
+
+    /* Message List */
+    .message-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .date-separator {
+      text-align: center;
+      margin: var(--space-md) 0;
+    }
+    .date-separator span {
+      display: inline-block;
+      padding: 4px 16px;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      background: var(--color-surface);
+      border-radius: var(--radius-tag);
+      border: 1px solid var(--color-border-light);
+    }
+
+    .msg-bubble {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+    .msg-bubble.own {
+      align-self: flex-end;
+    }
+    .msg-bubble.partner {
+      align-self: flex-start;
+    }
+    .msg-bubble-content {
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      line-height: var(--line-height-base);
+      word-break: break-word;
+    }
+    .msg-bubble.own .msg-bubble-content {
+      background: var(--color-primary);
+      color: #fff;
+      border-bottom-right-radius: var(--radius-sm);
+    }
+    .msg-bubble.partner .msg-bubble-content {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border-light);
+      border-bottom-left-radius: var(--radius-sm);
+    }
+    .msg-bubble-time {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: 4px;
+      padding: 0 var(--space-sm);
+    }
+    .msg-bubble.own .msg-bubble-time {
+      text-align: right;
+    }
+
+    /* Image thumbnails in chat */
+    .msg-image {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: block;
+    }
+
+    /* Message Input */
+    .message-input-area {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .message-input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-md);
+    }
+    .message-textarea {
+      flex: 1;
+      min-height: 60px;
+      max-height: 150px;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      line-height: var(--line-height-base);
+      color: var(--color-text-primary);
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      resize: none;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .message-textarea:focus {
+      border-color: var(--color-border-focus);
+    }
+    .message-textarea::placeholder {
+      color: var(--color-text-tertiary);
+    }
+    .message-send-btn {
+      min-height: 56px;
+      padding: 0 var(--space-xl);
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      font-family: var(--font-family-base);
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .message-send-btn:hover {
+      background: var(--color-primary-hover);
+    }
+    .message-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .char-counter {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      text-align: right;
+      margin-top: var(--space-xs);
+    }
+    .char-counter.over {
+      color: var(--color-danger);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1024px) {
+      .main-nav a {
+        padding: var(--space-sm);
+        font-size: calc(16px * var(--font-scale));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        padding: 0 var(--space-md);
+      }
+      .main-nav {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: flex;
+      }
+      .header-logo {
+        font-size: calc(var(--font-size-lg) * var(--font-scale));
+      }
+      .user-menu-trigger .user-menu-name {
+        display: none;
+      }
+
+      .chat-container {
+        flex-direction: column;
+        height: calc(100vh - 72px);
+      }
+      .conversation-panel {
+        width: 100%;
+        min-width: unset;
+        flex: 1;
+        border-right: none;
+      }
+      .chat-panel {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--color-bg);
+        z-index: 10;
+      }
+      .chat-panel.mobile-show {
+        display: flex;
+      }
+      .conversation-panel.mobile-hide {
+        display: none;
+      }
+      .chat-back-btn {
+        display: flex;
+      }
+      .msg-bubble {
+        max-width: 85%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .conv-item {
+        padding: var(--space-md);
+      }
+      .message-input-area {
+        padding: var(--space-sm);
+      }
+      .message-send-btn {
+        padding: 0 var(--space-md);
+        font-size: calc(var(--font-size-base) * var(--font-scale));
+        min-height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Sticky Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html" class="nav-current">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html" class="nav-current">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Chat Container ========== -->
+  <div class="chat-container" id="main-content">
+
+    <!-- Left Panel — Conversation List -->
+    <aside class="conversation-panel" id="conversationPanel">
+      <div class="conv-header">
+        <div class="conv-header-title">
+          <h2>💬 消息</h2>
+          <span class="unread-badge-count" id="totalUnreadBadge" data-count="0"></span>
+        </div>
+        <input type="text" class="conv-search" id="convSearch" placeholder="搜索对话..." aria-label="搜索对话">
+      </div>
+      <div class="conv-list" id="convList">
+        <!-- Filled by JS -->
+      </div>
+    </aside>
+
+    <!-- Right Panel — Chat Window -->
+    <section class="chat-panel" id="chatPanel">
+      <div class="chat-empty" id="chatEmpty">
+        <div class="chat-empty-icon">💬</div>
+        <h3>选择一个对话开始聊天</h3>
+        <p>或者去<a href="matches.html">【推荐匹配】</a>发现新的缘分</p>
+      </div>
+
+      <div class="chat-active" id="chatActive" style="display: none;">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <button class="chat-back-btn" id="chatBackBtn" aria-label="返回对话列表">← 返回</button>
+            <div class="chat-header-avatar" id="chatPartnerAvatar">对</div>
+            <div>
+              <div class="chat-header-name" id="chatPartnerName">对方</div>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <a href="#" class="btn btn-outline" id="chatViewProfile" style="min-height:40px;font-size:16px;">查看资料</a>
+            <button class="btn btn-outline" id="chatBlockBtn" style="min-height:40px;font-size:16px;color:var(--color-danger);border-color:var(--color-danger);">屏蔽</button>
+          </div>
+        </div>
+
+        <!-- Safety Banner -->
+        <div class="safety-banner">
+          ⚠️ 温馨提示：请勿透露银行卡号、密码、验证码等个人信息，谨防网络诈骗
+        </div>
+
+        <!-- Demo Note -->
+        <div class="demo-note" id="demoNote">
+          <span>📋 演示模式：消息数据保存在本地浏览器中</span>
+          <button id="simulateReplyBtn">🤖 模拟收到回复</button>
+        </div>
+
+        <!-- Message List -->
+        <div class="message-list" id="messageList">
+          <!-- Filled by JS -->
+        </div>
+
+        <!-- Message Input -->
+        <div class="message-input-area">
+          <div class="message-input-row">
+            <textarea class="message-textarea" id="messageInput" placeholder="输入消息... (Enter发送，Shift+Enter换行)" maxlength="500" rows="1"></textarea>
+            <button class="message-send-btn" id="sendBtn">发送</button>
+          </div>
+          <div class="char-counter" id="charCounter">0/500</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('chat.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var currentUserId = currentUser.id;
+    var activePartnerId = null;
+    var pollTimer = null;
+    var simulatedReplies = {};
+
+    // =========================================================================
+    // 2. Header
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      var colors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % colors.length;
+      }
+      avatarEl.style.backgroundColor = colors[colorIndex];
+    }
+
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          menu.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+
+      document.getElementById('userDropdown').addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        Auth.logout();
+      });
+
+      var mobileLogout = document.getElementById('mobileLogoutBtn');
+      if (mobileLogout) {
+        mobileLogout.addEventListener('click', function (e) {
+          e.preventDefault();
+          Auth.logout();
+        });
+      }
+    }
+
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) {
+          panel.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', '打开菜单');
+        } else {
+          panel.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('aria-label', '关闭菜单');
+        }
+      });
+    }
+
+    // =========================================================================
+    // 3. Avatar Helpers
+    // =========================================================================
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E', '#C88052', '#BF3D4D'];
+
+    function getAvatarColor(id) {
+      var sum = 0;
+      if (id) {
+        for (var i = 0; i < id.length; i++) {
+          sum += id.charCodeAt(i);
+        }
+      }
+      return avatarColors[sum % avatarColors.length];
+    }
+
+    function renderAvatar(user) {
+      var name = (user && user.name) ? user.name : '?';
+      var initial = name.charAt(0);
+      var color = getAvatarColor(user ? user.id : null);
+      return '<span class="conv-avatar" style="background-color:' + color + ';">' + escapeHtml(initial) + '</span>';
+    }
+
+    // =========================================================================
+    // 4. Conversation List
+    // =========================================================================
+    function loadConversations(filterText) {
+      var conversations = Store.getConversations(currentUserId);
+      var totalUnread = 0;
+      var convList = document.getElementById('convList');
+
+      // Apply search filter
+      if (filterText) {
+        var ft = filterText.toLowerCase();
+        conversations = conversations.filter(function (c) {
+          var name = (c.partner && c.partner.name) ? c.partner.name.toLowerCase() : '';
+          return name.indexOf(ft) !== -1;
+        });
+      }
+
+      if (conversations.length === 0) {
+        convList.innerHTML =
+          '<div class="conv-empty">' +
+          '<div class="conv-empty-icon">💬</div>' +
+          '<p>还没有消息，去发现缘分吧</p>' +
+          '<a href="matches.html">💝 看看推荐匹配</a>' +
+          '</div>';
+      } else {
+        var html = '';
+        for (var i = 0; i < conversations.length; i++) {
+          var conv = conversations[i];
+          var partner = conv.partner || {};
+          var name = partner.name || '未知用户';
+          var preview = '';
+          if (conv.lastMessage) {
+            preview = conv.lastMessage.content || '';
+            if (preview.length > 20) {
+              preview = preview.substring(0, 20) + '...';
+            }
+          }
+          var timeStr = conv.lastMessage ? relativeTime(conv.lastMessage.createdAt) : '';
+          var isActive = (activePartnerId === conv.partnerId);
+          var unreadDot = conv.unreadCount > 0 ? '<div class="conv-unread-dot"></div>' : '';
+
+          totalUnread += conv.unreadCount;
+
+          html += '<div class="conv-item' + (isActive ? ' active' : '') + '" data-partner-id="' + escapeHtml(conv.partnerId) + '">';
+          html += renderAvatar(partner);
+          html += '<div class="conv-info">';
+          html += '<div class="conv-name">' + escapeHtml(name) + '</div>';
+          html += '<div class="conv-preview">' + escapeHtml(preview) + '</div>';
+          html += '</div>';
+          html += '<div class="conv-meta">';
+          html += '<span class="conv-time">' + escapeHtml(timeStr) + '</span>';
+          html += unreadDot;
+          html += '</div>';
+          html += '</div>';
+        }
+        convList.innerHTML = html;
+      }
+
+      // Update total unread badge
+      var badge = document.getElementById('totalUnreadBadge');
+      badge.setAttribute('data-count', totalUnread);
+      badge.textContent = totalUnread > 0 ? totalUnread : '';
+
+      // Attach click handlers
+      var items = convList.querySelectorAll('.conv-item');
+      for (var j = 0; j < items.length; j++) {
+        items[j].addEventListener('click', function () {
+          var pid = this.getAttribute('data-partner-id');
+          openConversation(pid);
+        });
+      }
+    }
+
+    // =========================================================================
+    // 5. Open / Render Chat
+    // =========================================================================
+    function openConversation(partnerId) {
+      activePartnerId = partnerId;
+      var partner = Store.getUserById(partnerId);
+      var partnerName = partner ? partner.name : '未知用户';
+      var partnerInitial = partnerName.charAt(0);
+
+      // Mark as read
+      Store.markConversationRead(currentUserId, partnerId);
+
+      // Show chat panel, hide empty
+      document.getElementById('chatEmpty').style.display = 'none';
+      document.getElementById('chatActive').style.display = 'flex';
+
+      // Update header
+      var avatarEl = document.getElementById('chatPartnerAvatar');
+      avatarEl.textContent = partnerInitial;
+      avatarEl.style.backgroundColor = getAvatarColor(partnerId);
+      document.getElementById('chatPartnerName').textContent = partnerName;
+
+      // View profile link
+      document.getElementById('chatViewProfile').href = 'profile.html?id=' + partnerId;
+
+      // Block button
+      document.getElementById('chatBlockBtn').onclick = function () {
+        if (confirm('确认屏蔽用户【' + partnerName + '】？屏蔽后将不再收到对方的消息。')) {
+          Store.blockUser(currentUserId, partnerId);
+          showToast('已屏蔽用户【' + partnerName + '】', 'warning');
+          closeConversation();
+          loadConversations();
+        }
+      };
+
+      // Render messages
+      renderMessages();
+
+      // Scroll to bottom
+      scrollToBottom();
+
+      // Mobile: show chat panel
+      if (window.innerWidth <= 768) {
+        document.getElementById('conversationPanel').classList.add('mobile-hide');
+        document.getElementById('chatPanel').classList.add('mobile-show');
+      }
+
+      // Refresh conversation list
+      loadConversations(document.getElementById('convSearch').value);
+    }
+
+    function closeConversation() {
+      activePartnerId = null;
+      document.getElementById('chatEmpty').style.display = 'flex';
+      document.getElementById('chatActive').style.display = 'none';
+
+      if (window.innerWidth <= 768) {
+        document.getElementById('conversationPanel').classList.remove('mobile-hide');
+        document.getElementById('chatPanel').classList.remove('mobile-show');
+      }
+
+      loadConversations(document.getElementById('convSearch').value);
+    }
+
+    function renderMessages() {
+      if (!activePartnerId) return;
+
+      var messages = Store.getMessages(currentUserId, activePartnerId);
+      var messageList = document.getElementById('messageList');
+
+      if (messages.length === 0) {
+        messageList.innerHTML =
+          '<div style="text-align:center;padding:var(--space-xxl);color:var(--color-text-tertiary);">' +
+          '<div style="font-size:48px;margin-bottom:var(--space-md);">💬</div>' +
+          '<p>还没有消息，发个问候开始对话吧！</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '';
+      var lastDate = '';
+
+      for (var i = 0; i < messages.length; i++) {
+        var msg = messages[i];
+        var msgDate = formatDate(msg.createdAt);
+
+        // Date separator
+        if (msgDate !== lastDate) {
+          lastDate = msgDate;
+          html += '<div class="date-separator"><span>' + escapeHtml(msgDate) + '</span></div>';
+        }
+
+        var isOwn = (msg.senderId === currentUserId);
+        var bubbleClass = isOwn ? 'own' : 'partner';
+
+        html += '<div class="msg-bubble ' + bubbleClass + '">';
+        html += '<div class="msg-bubble-content">';
+
+        if (msg.type === 'image') {
+          html += '<img class="msg-image" src="' + escapeHtml(msg.content) + '" alt="图片消息" loading="lazy">';
+        } else {
+          html += escapeHtml(msg.content);
+        }
+
+        html += '</div>';
+        html += '<div class="msg-bubble-time">' + formatTime(msg.createdAt) + '</div>';
+        html += '</div>';
+      }
+
+      messageList.innerHTML = html;
+    }
+
+    function formatTime(dateStr) {
+      try {
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '';
+        var h = d.getHours();
+        var m = d.getMinutes();
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function scrollToBottom() {
+      var msgList = document.getElementById('messageList');
+      if (msgList) {
+        setTimeout(function () {
+          msgList.scrollTop = msgList.scrollHeight;
+        }, 100);
+      }
+    }
+
+    // =========================================================================
+    // 6. Send Message
+    // =========================================================================
+    function sendMessage() {
+      if (!activePartnerId) return;
+
+      var input = document.getElementById('messageInput');
+      var content = input ? input.value.trim() : '';
+      if (!content) return;
+
+      // Send via Store
+      Store.sendMessage(currentUserId, activePartnerId, content, 'text');
+
+      // Clear input
+      input.value = '';
+      updateCharCounter();
+
+      // Re-render messages
+      renderMessages();
+      scrollToBottom();
+
+      // Refresh conversation list
+      loadConversations(document.getElementById('convSearch').value);
+    }
+
+    function updateCharCounter() {
+      var input = document.getElementById('messageInput');
+      var counter = document.getElementById('charCounter');
+      var len = input.value.length;
+      counter.textContent = len + '/500';
+      if (len > 480) {
+        counter.classList.add('over');
+      } else {
+        counter.classList.remove('over');
+      }
+    }
+
+    function autoResizeTextarea() {
+      var input = document.getElementById('messageInput');
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 150) + 'px';
+    }
+
+    // =========================================================================
+    // 7. Simulate Reply (Demo)
+    // =========================================================================
+    function simulateReply() {
+      if (!activePartnerId) {
+        showToast('请先选择一个对话', 'warning');
+        return;
+      }
+
+      var replyMessages = [
+        '嗯嗯，好的！',
+        '😊 很高兴认识你',
+        '最近工作有点忙，回复晚了不好意思',
+        '我也喜欢旅游，之前去过云南',
+        '哈哈，确实是这样',
+        '周末有空吗？一起出来喝茶吧',
+        '谢谢你的关心，你人真好',
+        '我们可以多了解一下彼此',
+        '你的资料写得很好，很真诚',
+        '☺️ 好的，保持联系'
+      ];
+
+      var btn = document.getElementById('simulateReplyBtn');
+      btn.disabled = true;
+      btn.textContent = '对方正在输入...';
+
+      setTimeout(function () {
+        var reply = replyMessages[Math.floor(Math.random() * replyMessages.length)];
+        Store.sendMessage(activePartnerId, currentUserId, reply, 'text');
+        renderMessages();
+        scrollToBottom();
+        loadConversations(document.getElementById('convSearch').value);
+
+        btn.disabled = false;
+        btn.textContent = '🤖 模拟收到回复';
+        showToast('收到一条新回复', 'info', 2000);
+      }, 1500 + Math.random() * 1000);
+    }
+
+    // =========================================================================
+    // 8. Polling
+    // =========================================================================
+    function startPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(function () {
+        var conversations = Store.getConversations(currentUserId);
+        loadConversations(document.getElementById('convSearch').value);
+        // If viewing a conversation, also refresh messages
+        if (activePartnerId) {
+          renderMessages();
+        }
+      }, 5000);
+    }
+
+    // =========================================================================
+    // 9. Init All
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+
+      // Load conversation list
+      loadConversations();
+
+      // Search filter
+      document.getElementById('convSearch').addEventListener('input', function () {
+        loadConversations(this.value);
+      });
+
+      // Chat back button (mobile)
+      document.getElementById('chatBackBtn').addEventListener('click', function () {
+        closeConversation();
+      });
+
+      // Send button
+      document.getElementById('sendBtn').addEventListener('click', function () {
+        sendMessage();
+      });
+
+      // Enter key sends, Shift+Enter for new line
+      var textarea = document.getElementById('messageInput');
+      textarea.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Auto-resize textarea
+      textarea.addEventListener('input', function () {
+        autoResizeTextarea();
+        updateCharCounter();
+      });
+
+      // Simulate reply button
+      document.getElementById('simulateReplyBtn').addEventListener('click', function () {
+        simulateReply();
+      });
+
+      // Start polling
+      startPolling();
+
+      console.log('💬 聊天页面就绪');
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索找伴 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page Layout ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* ========== Skip Link ========== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus {
+      top: var(--space-sm);
+    }
+
+    /* ========== Sticky Header ========== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .header-logo:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      list-style: none;
+    }
+    .main-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+    }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu */
+    .user-menu {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .user-menu-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover {
+      background-color: var(--color-bg);
+    }
+    .user-menu-trigger .avatar-sm {
+      width: 40px;
+      height: 40px;
+      font-size: calc(18px * var(--font-scale));
+    }
+    .user-menu-trigger .arrow-down {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-fast);
+    }
+    .user-menu.open .user-menu-trigger .arrow-down {
+      transform: rotate(180deg);
+    }
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      overflow: hidden;
+      padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown {
+      display: block;
+    }
+    .user-dropdown a,
+    .user-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover,
+    .user-dropdown button:hover {
+      background-color: var(--color-bg);
+    }
+    .user-dropdown .dropdown-divider {
+      height: 1px;
+      background: var(--color-border-light);
+      margin: var(--space-xs) 0;
+    }
+    .user-dropdown .logout-btn {
+      color: var(--color-danger);
+    }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-fast);
+    }
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-surface);
+      z-index: var(--z-fixed);
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .mobile-nav-panel.open {
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-nav-panel a {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+    }
+    .mobile-nav-panel a:hover {
+      background-color: var(--color-bg);
+    }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========== Main Layout: Sidebar + Content ========== */
+    .search-layout {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-lg);
+      display: flex;
+      gap: var(--space-lg);
+      align-items: flex-start;
+    }
+
+    /* ========== Page Header ========== */
+    .page-header-bar {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-lg) 0;
+    }
+    .page-header-bar h1 {
+      font-size: calc(var(--font-size-h2) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin: 0 0 var(--space-xs) 0;
+    }
+    .page-header-bar .result-subtitle {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    /* ========== Filter Sidebar ========== */
+    .filter-sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      position: sticky;
+      top: 92px;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+
+    .filter-sidebar h2 {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin: 0 0 var(--space-lg) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .filter-group {
+      margin-bottom: var(--space-lg);
+    }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .filter-group-label {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+      display: block;
+    }
+
+    /* Radio rows */
+    .filter-radio-row {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+    .filter-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      min-height: 40px;
+    }
+    .filter-radio-item input[type="radio"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* Checkbox rows */
+    .filter-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .filter-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      min-height: 40px;
+      padding: 2px 0;
+    }
+    .filter-checkbox-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* Select / Input in filters */
+    .filter-select {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+    .filter-select:hover {
+      border-color: var(--color-primary);
+    }
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 var(--focus-ring-width) var(--color-primary-light);
+    }
+    .filter-input {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      transition: border-color var(--transition-fast);
+    }
+    .filter-input:hover {
+      border-color: var(--color-primary);
+    }
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 var(--focus-ring-width) var(--color-primary-light);
+    }
+
+    /* Filter Buttons */
+    .filter-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+    .filter-actions .btn {
+      width: 100%;
+    }
+
+    /* Mobile Filter Toggle */
+    .mobile-filter-toggle {
+      display: none;
+      width: 100%;
+      min-height: 56px;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      margin-bottom: var(--space-md);
+    }
+    .mobile-filter-toggle:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* ========== Results Area ========== */
+    .results-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .results-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border-light);
+    }
+    .results-count {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+    .results-sort {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .results-sort label {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      margin: 0;
+      white-space: nowrap;
+    }
+    .sort-select {
+      min-height: 44px;
+      padding: 0 var(--space-sm);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      background-color: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      cursor: pointer;
+    }
+    .sort-select:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+    }
+
+    /* Results Grid */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--card-gap);
+    }
+
+    /* User Card */
+    .user-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .user-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-4px);
+      border-color: var(--color-secondary);
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .user-card-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .user-card-name-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .user-card-name {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+    }
+    .user-card-verified {
+      display: inline-block;
+      font-size: 14px;
+      background: var(--color-success-light);
+      color: var(--color-success);
+      padding: 1px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+    .user-card-meta {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-top: 2px;
+    }
+    .user-card-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+    .user-card-detail-item {
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      color: var(--color-text-secondary);
+      background: var(--color-bg);
+      padding: 2px 10px;
+      border-radius: var(--radius-xs);
+    }
+    .user-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+    .user-card-tags .tag {
+      font-size: calc(14px * var(--font-scale));
+      padding: 3px 12px;
+    }
+    .user-card-intro {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      line-height: var(--line-height-base);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: var(--space-md);
+    }
+    .user-card-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .user-card-score {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+    .user-card-view-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: var(--space-sm) var(--space-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--transition-fast);
+    }
+    .user-card-view-btn:hover {
+      background: var(--color-primary-hover);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+      padding: var(--space-md);
+    }
+    .pagination-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      min-height: 48px;
+      padding: 0 var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      font-weight: var(--font-weight-medium);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .pagination-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .pagination-info {
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin: 0 var(--space-sm);
+    }
+
+    /* ========== Empty State ========== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-3xl) var(--space-md);
+    }
+    .empty-state-icon {
+      font-size: 80px;
+      margin-bottom: var(--space-lg);
+      opacity: 0.5;
+      line-height: 1;
+    }
+    .empty-state-title {
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-secondary);
+      margin: 0 0 var(--space-sm) 0;
+    }
+    .empty-state-description {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      max-width: 400px;
+      margin: 0 0 var(--space-lg) 0;
+      line-height: var(--line-height-base);
+    }
+    .empty-state-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      justify-content: center;
+      margin-bottom: var(--space-lg);
+    }
+    .empty-state-suggestion {
+      display: inline-block;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-primary);
+      background: var(--color-primary-subtle);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--transition-fast);
+    }
+    .empty-state-suggestion:hover {
+      background: var(--color-primary-light);
+    }
+
+    /* ========== Loading ========== */
+    .loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3xl);
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .loading-container p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-tertiary);
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1024px) {
+      .filter-sidebar {
+        width: 280px;
+      }
+      .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+      .main-nav a {
+        padding: var(--space-sm);
+        font-size: calc(16px * var(--font-scale));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .search-layout {
+        flex-direction: column;
+        padding: var(--space-md);
+      }
+      .page-header-bar {
+        padding: var(--space-md) var(--space-md) 0;
+      }
+      .filter-sidebar {
+        display: none;
+        width: 100%;
+        position: static;
+        max-height: none;
+        border-radius: var(--radius-md);
+      }
+      .filter-sidebar.open {
+        display: block;
+      }
+      .mobile-filter-toggle {
+        display: flex;
+      }
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-inner {
+        padding: 0 var(--space-md);
+      }
+      .main-nav {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: flex;
+      }
+      .results-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .results-sort {
+        justify-content: space-between;
+      }
+      .user-menu-trigger .user-menu-name {
+        display: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header-logo {
+        font-size: calc(var(--font-size-lg) * var(--font-scale));
+      }
+      .page-header-bar h1 {
+        font-size: calc(var(--font-size-xl) * var(--font-scale));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Sticky Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html" class="nav-current">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html" class="nav-current">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Page Header ========== -->
+  <div class="page-header-bar">
+    <h1>💕 寻找有缘人</h1>
+    <p class="result-subtitle" id="resultSubtitle">设置筛选条件，开始寻找您的缘分</p>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <div class="search-layout" id="main-content">
+
+    <!-- Mobile Filter Toggle -->
+    <button class="mobile-filter-toggle" id="mobileFilterToggle">
+      🔍 筛选条件 <span id="mobileFilterActiveCount" style="display:none;"></span>
+    </button>
+
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar" id="filterSidebar" role="search" aria-label="搜索筛选">
+      <h2>🔍 筛选条件</h2>
+
+      <!-- Gender -->
+      <div class="filter-group">
+        <span class="filter-group-label">性别</span>
+        <div class="filter-radio-row">
+          <label class="filter-radio-item">
+            <input type="radio" name="filterGender" value="" checked> 不限
+          </label>
+          <label class="filter-radio-item">
+            <input type="radio" name="filterGender" value="男"> 男
+          </label>
+          <label class="filter-radio-item">
+            <input type="radio" name="filterGender" value="女"> 女
+          </label>
+        </div>
+      </div>
+
+      <!-- Age Range -->
+      <div class="filter-group">
+        <span class="filter-group-label">年龄范围</span>
+        <div style="display: flex; gap: var(--space-sm); align-items: center;">
+          <select class="filter-select" id="filterAgeMin" aria-label="最小年龄" style="flex:1;">
+            <option value="">最小</option>
+          </select>
+          <span style="color: var(--color-text-tertiary);">—</span>
+          <select class="filter-select" id="filterAgeMax" aria-label="最大年龄" style="flex:1;">
+            <option value="">最大</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Province / City -->
+      <div class="filter-group">
+        <span class="filter-group-label">所在地区</span>
+        <select class="filter-select" id="filterProvince" aria-label="省份" style="margin-bottom: var(--space-sm);">
+          <option value="">全部省份</option>
+        </select>
+        <input type="text" class="filter-input" id="filterCity" placeholder="输入城市名（如：北京市）" aria-label="城市">
+      </div>
+
+      <!-- Education -->
+      <div class="filter-group">
+        <span class="filter-group-label">学历</span>
+        <div class="filter-checkbox-list" id="filterEducation">
+          <label class="filter-checkbox-item"><input type="checkbox" value="高中及以下"> 高中及以下</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="中专"> 中专</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="大专"> 大专</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="本科"> 本科</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="硕士"> 硕士</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="博士"> 博士</label>
+        </div>
+      </div>
+
+      <!-- Income -->
+      <div class="filter-group">
+        <span class="filter-group-label">月收入</span>
+        <div class="filter-checkbox-list" id="filterIncome">
+          <label class="filter-checkbox-item"><input type="checkbox" value="3000以下"> 3000以下</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="3000-5000"> 3000-5000</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="5000-8000"> 5000-8000</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="8000-10000"> 8000-10000</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="10000-15000"> 10000-15000</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="15000-20000"> 15000-20000</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="20000以上"> 20000以上</label>
+        </div>
+      </div>
+
+      <!-- Marital Status -->
+      <div class="filter-group">
+        <span class="filter-group-label">婚姻状况</span>
+        <div class="filter-checkbox-list" id="filterMarital">
+          <label class="filter-checkbox-item"><input type="checkbox" value="未婚"> 未婚</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="离异"> 离异</label>
+          <label class="filter-checkbox-item"><input type="checkbox" value="丧偶"> 丧偶</label>
+        </div>
+      </div>
+
+      <!-- Has Children -->
+      <div class="filter-group">
+        <span class="filter-group-label">有无子女</span>
+        <div class="filter-radio-row">
+          <label class="filter-radio-item">
+            <input type="radio" name="filterChildren" value="" checked> 不限
+          </label>
+          <label class="filter-radio-item">
+            <input type="radio" name="filterChildren" value="yes"> 有
+          </label>
+          <label class="filter-radio-item">
+            <input type="radio" name="filterChildren" value="no"> 无
+          </label>
+        </div>
+      </div>
+
+      <!-- Hobby -->
+      <div class="filter-group">
+        <span class="filter-group-label">兴趣爱好</span>
+        <select class="filter-select" id="filterHobby" aria-label="兴趣爱好">
+          <option value="">不限</option>
+          <option value="跑步">跑步</option>
+          <option value="读书">读书</option>
+          <option value="旅游">旅游</option>
+          <option value="烹饪">烹饪</option>
+          <option value="园艺">园艺</option>
+          <option value="广场舞">广场舞</option>
+          <option value="瑜伽">瑜伽</option>
+          <option value="阅读">阅读</option>
+          <option value="烘焙">烘焙</option>
+          <option value="高尔夫">高尔夫</option>
+          <option value="摄影">摄影</option>
+          <option value="书法">书法</option>
+          <option value="茶道">茶道</option>
+          <option value="太极拳">太极拳</option>
+          <option value="钓鱼">钓鱼</option>
+          <option value="下棋">下棋</option>
+          <option value="爬山">爬山</option>
+          <option value="羽毛球">羽毛球</option>
+          <option value="看电影">看电影</option>
+          <option value="美食">美食</option>
+          <option value="游泳">游泳</option>
+          <option value="音乐">音乐</option>
+          <option value="养狗">养狗</option>
+        </select>
+      </div>
+
+      <!-- Keyword -->
+      <div class="filter-group">
+        <span class="filter-group-label">关键词</span>
+        <input type="text" class="filter-input" id="filterKeyword" placeholder="搜索自我介绍、职业等" aria-label="关键词搜索">
+      </div>
+
+      <!-- Buttons -->
+      <div class="filter-actions">
+        <button class="btn btn-primary btn-large" id="searchBtn" style="width:100%;">
+          🔍 搜索
+        </button>
+        <button class="btn btn-outline" id="clearFilterBtn" style="width:100%;">
+          清空筛选
+        </button>
+      </div>
+    </aside>
+
+    <!-- Results Area -->
+    <section class="results-area" id="resultsArea">
+      <!-- Toolbar -->
+      <div class="results-toolbar" id="resultsToolbar">
+        <span class="results-count" id="resultsCount">共找到 0 位用户</span>
+        <div class="results-sort">
+          <label for="sortSelect">排序：</label>
+          <select class="sort-select" id="sortSelect">
+            <option value="score">匹配度优先</option>
+            <option value="recent">最近活跃</option>
+            <option value="ageAsc">年龄（低到高）</option>
+            <option value="ageDesc">年龄（高到低）</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div class="results-grid" id="resultsGrid">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-state-icon">🔍</div>
+        <h3 class="empty-state-title">没有找到符合条件的用户</h3>
+        <p class="empty-state-description">试试放宽筛选条件，也许会发现更多合适的人选</p>
+        <div class="empty-state-suggestions">
+          <span class="empty-state-suggestion" onclick="clearAllFilters()">清空性别限制</span>
+          <span class="empty-state-suggestion" onclick="clearAllFilters()">扩大年龄范围</span>
+          <span class="empty-state-suggestion" onclick="clearAllFilters()">不限地区</span>
+        </div>
+        <button class="btn btn-outline btn-large" onclick="clearAllFilters()">清空筛选</button>
+      </div>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('search.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+
+    // =========================================================================
+    // 2. Header Init
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = userName.charAt(0);
+      var colors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+      var ci = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          ci += currentUser.id.charCodeAt(i);
+        }
+        ci = ci % colors.length;
+      }
+      avatarEl.style.backgroundColor = colors[ci];
+    }
+
+    // =========================================================================
+    // 3. User Menu
+    // =========================================================================
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          menu.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+
+      document.getElementById('userDropdown').addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        Auth.logout();
+      });
+
+      var mlb = document.getElementById('mobileLogoutBtn');
+      if (mlb) {
+        mlb.addEventListener('click', function (e) {
+          e.preventDefault();
+          Auth.logout();
+        });
+      }
+    }
+
+    // =========================================================================
+    // 4. Mobile Nav
+    // =========================================================================
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) {
+          panel.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', '打开菜单');
+        } else {
+          panel.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('aria-label', '关闭菜单');
+        }
+      });
+    }
+
+    // =========================================================================
+    // 5. Populate filter dropdowns
+    // =========================================================================
+    function initFilterDropdowns() {
+      // Age selects (40-70)
+      var ageMin = document.getElementById('filterAgeMin');
+      var ageMax = document.getElementById('filterAgeMax');
+      for (var a = 40; a <= 70; a++) {
+        var optMin = document.createElement('option');
+        optMin.value = a;
+        optMin.textContent = a + '岁';
+        ageMin.appendChild(optMin);
+
+        var optMax = document.createElement('option');
+        optMax.value = a;
+        optMax.textContent = a + '岁';
+        ageMax.appendChild(optMax);
+      }
+
+      // Province select
+      var provinces = [
+        '北京市', '上海市', '天津市', '重庆市',
+        '河北省', '山西省', '辽宁省', '吉林省', '黑龙江省',
+        '江苏省', '浙江省', '安徽省', '福建省', '江西省', '山东省',
+        '河南省', '湖北省', '湖南省', '广东省', '海南省',
+        '四川省', '贵州省', '云南省', '陕西省', '甘肃省', '青海省',
+        '广西壮族自治区', '内蒙古自治区', '西藏自治区', '宁夏回族自治区', '新疆维吾尔自治区',
+        '香港特别行政区', '澳门特别行政区', '台湾省'
+      ];
+      var provSelect = document.getElementById('filterProvince');
+      for (var p = 0; p < provinces.length; p++) {
+        var opt = document.createElement('option');
+        opt.value = provinces[p];
+        opt.textContent = provinces[p];
+        provSelect.appendChild(opt);
+      }
+    }
+
+    // =========================================================================
+    // 6. Mobile Filter Toggle
+    // =========================================================================
+    function initMobileFilter() {
+      var toggle = document.getElementById('mobileFilterToggle');
+      var sidebar = document.getElementById('filterSidebar');
+      toggle.addEventListener('click', function () {
+        var isOpen = sidebar.classList.contains('open');
+        if (isOpen) {
+          sidebar.classList.remove('open');
+          toggle.innerHTML = '🔍 筛选条件 <span id="mobileFilterActiveCount"></span>';
+        } else {
+          sidebar.classList.add('open');
+          toggle.innerHTML = '✕ 收起筛选';
+        }
+      });
+    }
+
+    // =========================================================================
+    // 7. Collect Filter Values
+    // =========================================================================
+    function collectFilters() {
+      var filters = {
+        excludeUserId: currentUser.id
+      };
+
+      // Gender
+      var genderRadio = document.querySelector('input[name="filterGender"]:checked');
+      if (genderRadio && genderRadio.value) {
+        filters.gender = genderRadio.value;
+      }
+
+      // Age range
+      var ageMin = document.getElementById('filterAgeMin').value;
+      var ageMax = document.getElementById('filterAgeMax').value;
+      if (ageMin) filters.ageMin = parseInt(ageMin, 10);
+      if (ageMax) filters.ageMax = parseInt(ageMax, 10);
+
+      // Province
+      var province = document.getElementById('filterProvince').value;
+      if (province) filters.province = province;
+
+      // City
+      var city = document.getElementById('filterCity').value.trim();
+      if (city) filters.city = city;
+
+      // Education (checkboxes — collect all checked)
+      var eduCheckboxes = document.querySelectorAll('#filterEducation input[type="checkbox"]:checked');
+      if (eduCheckboxes.length > 0) {
+        var eduValues = [];
+        for (var e = 0; e < eduCheckboxes.length; e++) {
+          eduValues.push(eduCheckboxes[e].value);
+        }
+        filters.educations = eduValues;
+      }
+
+      // Income (checkboxes)
+      var incCheckboxes = document.querySelectorAll('#filterIncome input[type="checkbox"]:checked');
+      if (incCheckboxes.length > 0) {
+        var incValues = [];
+        for (var i = 0; i < incCheckboxes.length; i++) {
+          incValues.push(incCheckboxes[i].value);
+        }
+        filters.incomes = incValues;
+      }
+
+      // Marital status (checkboxes)
+      var marCheckboxes = document.querySelectorAll('#filterMarital input[type="checkbox"]:checked');
+      if (marCheckboxes.length > 0) {
+        var marValues = [];
+        for (var m = 0; m < marCheckboxes.length; m++) {
+          marValues.push(marCheckboxes[m].value);
+        }
+        filters.maritalStatuses = marValues;
+      }
+
+      // Has children
+      var childRadio = document.querySelector('input[name="filterChildren"]:checked');
+      if (childRadio && childRadio.value) {
+        filters.hasChildren = childRadio.value === 'yes';
+      }
+
+      // Hobby
+      var hobby = document.getElementById('filterHobby').value;
+      if (hobby) {
+        filters.hobbies = [hobby];
+      }
+
+      // Keyword
+      var keyword = document.getElementById('filterKeyword').value.trim();
+      if (keyword) {
+        filters.keyword = keyword;
+      }
+
+      return filters;
+    }
+
+    // =========================================================================
+    // 8. Build an extended search that handles multi-select filters
+    // =========================================================================
+    function performSearch(filters) {
+      // Use MatchEngine.search as the base, then apply multi-value filters
+      var searchFilters = {
+        excludeUserId: filters.excludeUserId,
+        ageMin: filters.ageMin,
+        ageMax: filters.ageMax,
+        gender: filters.gender,
+        province: filters.province,
+        city: filters.city,
+        keyword: filters.keyword
+      };
+
+      // Pass single-value education/income/marital to search if only one selected
+      // otherwise we'll post-filter
+      var singleEducation = null;
+      if (filters.educations && filters.educations.length === 1) {
+        searchFilters.education = filters.educations[0];
+      }
+      var singleIncome = null;
+      if (filters.incomes && filters.incomes.length === 1) {
+        searchFilters.incomeRange = filters.incomes[0];
+      }
+      var singleMarital = null;
+      if (filters.maritalStatuses && filters.maritalStatuses.length === 1) {
+        searchFilters.maritalStatus = filters.maritalStatuses[0];
+      }
+
+      if (filters.hobbies && filters.hobbies.length > 0) {
+        searchFilters.hobbies = filters.hobbies;
+      }
+      if (filters.hasChildren !== undefined && filters.hasChildren !== null) {
+        searchFilters.hasChildren = filters.hasChildren ? 'yes' : 'no';
+      }
+
+      var results = MatchEngine.search(searchFilters);
+
+      // Post-filter for multi-value checkboxes
+      if (filters.educations && filters.educations.length > 1) {
+        results = results.filter(function (r) {
+          if (!r.profile || !r.profile.education) return false;
+          return filters.educations.indexOf(r.profile.education) !== -1;
+        });
+      }
+      if (filters.incomes && filters.incomes.length > 1) {
+        results = results.filter(function (r) {
+          if (!r.profile || !r.profile.incomeRange) return false;
+          return filters.incomes.indexOf(r.profile.incomeRange) !== -1;
+        });
+      }
+      if (filters.maritalStatuses && filters.maritalStatuses.length > 1) {
+        results = results.filter(function (r) {
+          if (!r.profile || !r.profile.maritalStatus) return false;
+          return filters.maritalStatuses.indexOf(r.profile.maritalStatus) !== -1;
+        });
+      }
+
+      return results;
+    }
+
+    // =========================================================================
+    // 9. Sorting
+    // =========================================================================
+    function sortResults(results, sortBy) {
+      switch (sortBy) {
+        case 'score':
+          results.sort(function (a, b) { return b.score - a.score; });
+          break;
+        case 'recent':
+          results.sort(function (a, b) {
+            var aTime = a.user.updatedAt ? new Date(a.user.updatedAt).getTime() : 0;
+            var bTime = b.user.updatedAt ? new Date(b.user.updatedAt).getTime() : 0;
+            return bTime - aTime;
+          });
+          break;
+        case 'ageAsc':
+          results.sort(function (a, b) { return (a.age || 0) - (b.age || 0); });
+          break;
+        case 'ageDesc':
+          results.sort(function (a, b) { return (b.age || 0) - (a.age || 0); });
+          break;
+        default:
+          results.sort(function (a, b) { return b.score - a.score; });
+      }
+      return results;
+    }
+
+    // =========================================================================
+    // 10. Pagination
+    // =========================================================================
+    var currentPage = 1;
+    var pageSize = 12;
+    var allResults = [];
+
+    function paginateResults(results) {
+      var start = (currentPage - 1) * pageSize;
+      return results.slice(start, start + pageSize);
+    }
+
+    function renderPagination(totalResults) {
+      var container = document.getElementById('pagination');
+      var totalPages = Math.ceil(totalResults / pageSize);
+
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      var html = '';
+      html += '<button class="pagination-btn" ' + (currentPage <= 1 ? 'disabled' : '') + ' data-page="' + (currentPage - 1) + '">‹ 上一页</button>';
+
+      // Show page numbers
+      var maxVisible = 5;
+      var startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      var endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+      }
+
+      if (startPage > 1) {
+        html += '<button class="pagination-btn" data-page="1">1</button>';
+        if (startPage > 2) {
+          html += '<span class="pagination-info">...</span>';
+        }
+      }
+
+      for (var p = startPage; p <= endPage; p++) {
+        html += '<button class="pagination-btn' + (p === currentPage ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          html += '<span class="pagination-info">...</span>';
+        }
+        html += '<button class="pagination-btn" data-page="' + totalPages + '">' + totalPages + '</button>';
+      }
+
+      html += '<button class="pagination-btn" ' + (currentPage >= totalPages ? 'disabled' : '') + ' data-page="' + (currentPage + 1) + '">下一页 ›</button>';
+
+      container.innerHTML = html;
+
+      // Bind click events
+      var buttons = container.querySelectorAll('.pagination-btn:not([disabled])');
+      for (var b = 0; b < buttons.length; b++) {
+        buttons[b].addEventListener('click', function () {
+          var page = parseInt(this.getAttribute('data-page'), 10);
+          if (page && page !== currentPage) {
+            currentPage = page;
+            renderResults(allResults);
+            // Scroll to top of results
+            document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 11. Render Results
+    // =========================================================================
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+
+    function getAvatarColor(userId) {
+      var ci = 0;
+      if (userId) {
+        for (var i = 0; i < userId.length; i++) {
+          ci += userId.charCodeAt(i);
+        }
+        ci = ci % avatarColors.length;
+      }
+      return avatarColors[ci];
+    }
+
+    function renderResults(results) {
+      var grid = document.getElementById('resultsGrid');
+      var emptyState = document.getElementById('emptyState');
+      var toolbar = document.getElementById('resultsToolbar');
+      var countEl = document.getElementById('resultsCount');
+      var subtitleEl = document.getElementById('resultSubtitle');
+      var paginationEl = document.getElementById('pagination');
+
+      if (results.length === 0) {
+        grid.innerHTML = '';
+        paginationEl.innerHTML = '';
+        emptyState.style.display = 'flex';
+        toolbar.style.display = 'none';
+        countEl.textContent = '共找到 0 位用户';
+        subtitleEl.textContent = '设置筛选条件，开始寻找您的缘分';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      toolbar.style.display = 'flex';
+      countEl.textContent = '共找到 ' + results.length + ' 位用户';
+      subtitleEl.textContent = '点击卡片查看详细资料';
+
+      // Paginate
+      var pagedResults = paginateResults(results);
+      renderPagination(results.length);
+
+      var html = '';
+      for (var r = 0; r < pagedResults.length; r++) {
+        var item = pagedResults[r];
+        var user = item.user;
+        var profile = item.profile;
+        var name = user.name || '用户';
+        var initial = name.charAt(0);
+        var age = item.age || calculateAge(user.birthDate) || '';
+        var city = (user.location && user.location.city) ? user.location.city : '';
+        var province = (user.location && user.location.province) ? user.location.province : '';
+        var locationStr = city || province || '';
+        var education = (profile && profile.education) ? profile.education : '';
+        var maritalStatus = (profile && profile.maritalStatus) ? profile.maritalStatus : '';
+        var hobbies = (profile && Array.isArray(profile.hobbies)) ? profile.hobbies.slice(0, 4) : [];
+        var selfIntro = (profile && profile.selfIntro) ? profile.selfIntro : '';
+        var isVerified = user.isVerified;
+        var score = item.score;
+        var avatarColor = getAvatarColor(user.id);
+
+        html += '<a class="user-card" href="profile.html?id=' + escapeHtml(user.id) + '" title="查看' + escapeHtml(name) + '的资料">';
+
+        // Header: avatar + name
+        html += '<div class="user-card-header">';
+        html += '<div class="user-card-avatar" style="background-color: ' + avatarColor + ';">' + escapeHtml(initial) + '</div>';
+        html += '<div>';
+        html += '<div class="user-card-name-row">';
+        html += '<span class="user-card-name">' + escapeHtml(name) + '</span>';
+        if (isVerified) {
+          html += '<span class="user-card-verified">✓ 已认证</span>';
+        }
+        html += '</div>';
+        html += '<div class="user-card-meta">' + escapeHtml(age + '岁');
+        if (locationStr) {
+          html += ' · ' + escapeHtml(locationStr);
+        }
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // Detail pills
+        html += '<div class="user-card-details">';
+        if (maritalStatus) {
+          html += '<span class="user-card-detail-item">' + escapeHtml(maritalStatus) + '</span>';
+        }
+        if (education) {
+          html += '<span class="user-card-detail-item">' + escapeHtml(education) + '</span>';
+        }
+        if (profile && profile.incomeRange) {
+          html += '<span class="user-card-detail-item">💰 ' + escapeHtml(profile.incomeRange) + '</span>';
+        }
+        html += '</div>';
+
+        // Hobby tags
+        if (hobbies.length > 0) {
+          html += '<div class="user-card-tags">';
+          for (var h = 0; h < hobbies.length; h++) {
+            html += '<span class="tag tag-interest">' + escapeHtml(hobbies[h]) + '</span>';
+          }
+          html += '</div>';
+        }
+
+        // Self-intro preview
+        if (selfIntro) {
+          html += '<div class="user-card-intro">' + escapeHtml(selfIntro) + '</div>';
+        }
+
+        // Footer
+        html += '<div class="user-card-footer">';
+        html += '<span class="user-card-score">❤️ ' + score + '% 匹配</span>';
+        html += '<span class="user-card-view-btn">查看资料</span>';
+        html += '</div>';
+
+        html += '</a>';
+      }
+
+      grid.innerHTML = html;
+    }
+
+    // =========================================================================
+    // 12. Execute Search
+    // =========================================================================
+    function executeSearch() {
+      var filters = collectFilters();
+      allResults = performSearch(filters);
+
+      // Sort
+      var sortBy = document.getElementById('sortSelect').value;
+      allResults = sortResults(allResults, sortBy);
+
+      // Reset to page 1
+      currentPage = 1;
+
+      renderResults(allResults);
+    }
+
+    // =========================================================================
+    // 13. Clear Filters
+    // =========================================================================
+    function clearAllFilters() {
+      // Gender
+      var genderRadios = document.querySelectorAll('input[name="filterGender"]');
+      if (genderRadios.length > 0) genderRadios[0].checked = true;
+
+      // Age
+      document.getElementById('filterAgeMin').value = '';
+      document.getElementById('filterAgeMax').value = '';
+
+      // Province / City
+      document.getElementById('filterProvince').value = '';
+      document.getElementById('filterCity').value = '';
+
+      // Education checkboxes
+      var eduCbs = document.querySelectorAll('#filterEducation input[type="checkbox"]');
+      for (var e = 0; e < eduCbs.length; e++) { eduCbs[e].checked = false; }
+
+      // Income checkboxes
+      var incCbs = document.querySelectorAll('#filterIncome input[type="checkbox"]');
+      for (var i = 0; i < incCbs.length; i++) { incCbs[i].checked = false; }
+
+      // Marital checkboxes
+      var marCbs = document.querySelectorAll('#filterMarital input[type="checkbox"]');
+      for (var m = 0; m < marCbs.length; m++) { marCbs[m].checked = false; }
+
+      // Children
+      var childRadios = document.querySelectorAll('input[name="filterChildren"]');
+      if (childRadios.length > 0) childRadios[0].checked = true;
+
+      // Hobby
+      document.getElementById('filterHobby').value = '';
+
+      // Keyword
+      document.getElementById('filterKeyword').value = '';
+
+      // Re-run search
+      executeSearch();
+    }
+
+    // Make clearAllFilters available globally for onclick handlers
+    window.clearAllFilters = clearAllFilters;
+
+    // =========================================================================
+    // 14. Event Listeners
+    // =========================================================================
+    function bindEvents() {
+      // Search button
+      document.getElementById('searchBtn').addEventListener('click', function () {
+        executeSearch();
+      });
+
+      // Clear button
+      document.getElementById('clearFilterBtn').addEventListener('click', function () {
+        clearAllFilters();
+      });
+
+      // Sort change
+      document.getElementById('sortSelect').addEventListener('change', function () {
+        var sortBy = this.value;
+        allResults = sortResults(allResults, sortBy);
+        currentPage = 1;
+        renderResults(allResults);
+      });
+
+      // Enter key in keyword field triggers search
+      document.getElementById('filterKeyword').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          executeSearch();
+        }
+      });
+
+      // Enter key in city field triggers search
+      document.getElementById('filterCity').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          executeSearch();
+        }
+      });
+    }
+
+    // =========================================================================
+    // 15. Initial Load — auto-search with no filters
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      initFilterDropdowns();
+      initMobileFilter();
+      bindEvents();
+
+      // Perform initial search with no filters
+      executeSearch();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

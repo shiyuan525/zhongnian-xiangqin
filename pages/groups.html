@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兴趣群组 - 中年相亲网</title>
+
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    /* ========== Page Layout ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: var(--line-height-base);
+      padding-top: 72px;
+    }
+
+    /* ========== Skip Link ========== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      z-index: var(--z-tooltip);
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: top var(--transition-fast);
+    }
+    .skip-link:focus {
+      top: var(--space-sm);
+    }
+
+    /* ========== Sticky Header ========== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-sticky);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-sm);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-xl) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .header-logo:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      list-style: none;
+    }
+    .main-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-target-min);
+      transition: color var(--transition-fast), background-color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .main-nav a:hover {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+    }
+    .main-nav a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* User Menu */
+    .user-menu {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .user-menu-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(18px * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+      background: none;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      min-height: var(--tap-target-min);
+      transition: background-color var(--transition-fast);
+    }
+    .user-menu-trigger:hover {
+      background-color: var(--color-bg);
+    }
+    .user-menu-trigger .avatar-sm {
+      width: 40px;
+      height: 40px;
+      font-size: calc(18px * var(--font-scale));
+    }
+    .user-menu-trigger .arrow-down {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-fast);
+    }
+    .user-menu.open .user-menu-trigger .arrow-down {
+      transform: rotate(180deg);
+    }
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 200px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      overflow: hidden;
+      padding: var(--space-xs) 0;
+    }
+    .user-menu.open .user-dropdown {
+      display: block;
+    }
+    .user-dropdown a,
+    .user-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      min-height: 48px;
+      transition: background-color var(--transition-fast);
+    }
+    .user-dropdown a:hover,
+    .user-dropdown button:hover {
+      background-color: var(--color-bg);
+    }
+    .user-dropdown .dropdown-divider {
+      height: 1px;
+      background: var(--color-border-light);
+      margin: var(--space-xs) 0;
+    }
+    .user-dropdown .logout-btn {
+      color: var(--color-danger);
+    }
+
+    /* Mobile Nav */
+    .mobile-nav-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .mobile-nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: all var(--transition-fast);
+    }
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-surface);
+      z-index: var(--z-fixed);
+      padding: var(--space-lg);
+      overflow-y: auto;
+    }
+    .mobile-nav-panel.open {
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-nav-panel a {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md);
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+    }
+    .mobile-nav-panel a:hover {
+      background-color: var(--color-bg);
+    }
+    .mobile-nav-panel a.nav-current {
+      color: var(--color-primary);
+      background-color: var(--color-primary-light);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* ========== Main Content ========== */
+    .main-content {
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    /* ========== Page Header ========== */
+    .page-header {
+      text-align: center;
+      padding: var(--space-xl) 0 var(--space-lg);
+    }
+    .page-header h1 {
+      font-size: calc(var(--font-size-h1) * var(--font-scale));
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .page-header .subtitle {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ========== Category Filter Tabs ========== */
+    .category-tabs-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-xs);
+    }
+    .category-tabs {
+      display: flex;
+      gap: var(--space-sm);
+      min-width: max-content;
+    }
+    .category-tab {
+      padding: var(--space-sm) var(--space-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-weight: var(--font-weight-medium);
+      font-family: var(--font-family-base);
+      color: var(--color-text-secondary);
+      background: var(--color-surface);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-tag);
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 48px;
+      transition: all var(--transition-fast);
+    }
+    .category-tab:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .category-tab.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+    }
+
+    /* ========== Search Bar ========== */
+    .search-bar {
+      position: relative;
+      margin-bottom: var(--space-lg);
+    }
+    .search-input {
+      width: 100%;
+      min-height: 56px;
+      padding: 0 var(--space-lg) 0 52px;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      font-family: var(--font-family-base);
+      color: var(--color-text-primary);
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-input);
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .search-input:focus {
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+    .search-input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      color: var(--color-text-tertiary);
+      pointer-events: none;
+    }
+
+    /* ========== Groups Grid ========== */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--card-gap);
+    }
+
+    .group-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      padding: var(--card-padding);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+      cursor: pointer;
+    }
+    .group-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-3px);
+      border-color: var(--color-secondary);
+    }
+    .group-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+    }
+    .group-category-badge {
+      display: inline-block;
+      padding: 3px 14px;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+      border-radius: var(--radius-tag);
+      white-space: nowrap;
+    }
+    .group-joined-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 12px;
+      font-size: calc(var(--font-size-xs) * var(--font-scale));
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-success);
+      background: var(--color-success-light);
+      border-radius: var(--radius-tag);
+      white-space: nowrap;
+    }
+    .group-card-name {
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+      line-height: var(--line-height-heading);
+    }
+    .group-card-desc {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin-bottom: var(--space-md);
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .group-card-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-md);
+    }
+    .group-card-actions {
+      display: flex;
+      gap: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--color-border-light);
+    }
+    .group-card-actions .btn {
+      flex: 1;
+      min-height: 44px;
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+
+    /* ========== Modal Overlay ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-modal-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(45, 45, 45, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      padding: var(--space-md);
+      animation: modalFadeIn var(--transition-base) ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal {
+      position: relative;
+      z-index: var(--z-modal);
+      width: 100%;
+      max-width: 560px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-surface);
+      border-radius: var(--radius-modal);
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      animation: modalScaleIn var(--transition-base) ease;
+    }
+    @keyframes modalScaleIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: calc(var(--font-size-lg) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      flex: 1;
+    }
+    .modal-close-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      color: var(--color-text-tertiary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .modal-close-btn:hover {
+      color: var(--color-text-primary);
+      background: var(--color-bg);
+    }
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+    }
+    .modal-body .group-detail-category {
+      display: inline-block;
+      padding: 4px 14px;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+      border-radius: var(--radius-tag);
+      margin-bottom: var(--space-md);
+    }
+    .modal-body .group-detail-desc {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-base);
+      margin-bottom: var(--space-lg);
+    }
+    .modal-body .group-detail-meta {
+      display: flex;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      color: var(--color-text-secondary);
+    }
+    .member-list-title {
+      font-size: calc(var(--font-size-md) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-md);
+      color: var(--color-text-primary);
+    }
+    .member-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+    .member-avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-avatar);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      font-weight: var(--font-weight-bold);
+      flex-shrink: 0;
+    }
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      border-top: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .modal-footer .btn {
+      min-height: 50px;
+      padding: 0 var(--space-xl);
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+    }
+    .btn-joined {
+      background: var(--color-success);
+      color: #fff;
+      border-color: var(--color-success);
+    }
+    .btn-joined:hover {
+      background: var(--color-success-hover);
+      border-color: var(--color-success-hover);
+    }
+
+    /* ========== Empty State ========== */
+    .groups-empty {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-xxl) var(--space-md);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      color: var(--color-text-tertiary);
+    }
+    .groups-empty-icon {
+      font-size: 56px;
+      margin-bottom: var(--space-md);
+      opacity: 0.5;
+    }
+    .groups-empty p {
+      font-size: calc(var(--font-size-base) * var(--font-scale));
+      margin: 0;
+    }
+
+    /* ========== Footer ========== */
+    .site-footer {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--color-text-tertiary);
+      font-size: calc(var(--font-size-sm) * var(--font-scale));
+      border-top: 1px solid var(--color-border-light);
+      margin-top: var(--space-xl);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1024px) {
+      .main-nav a {
+        padding: var(--space-sm);
+        font-size: calc(16px * var(--font-scale));
+      }
+      .groups-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        padding: 0 var(--space-md);
+      }
+      .main-nav {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: flex;
+      }
+      .header-logo {
+        font-size: calc(var(--font-size-lg) * var(--font-scale));
+      }
+      .user-menu-trigger .user-menu-name {
+        display: none;
+      }
+      .main-content {
+        padding: var(--space-md);
+      }
+      .page-header h1 {
+        font-size: calc(var(--font-size-2xl) * var(--font-scale));
+      }
+    }
+
+    @media (max-width: 576px) {
+      .groups-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal {
+        max-width: calc(100vw - 32px);
+        max-height: 90vh;
+        border-radius: var(--radius-lg);
+      }
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+      }
+      .member-list {
+        gap: var(--space-xs);
+      }
+      .member-item {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: calc(var(--font-size-sm) * var(--font-scale));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- ========== Sticky Header ========== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="dashboard.html" class="header-logo" aria-label="中年相亲网首页">
+        中年相亲网 ❤️
+      </a>
+
+      <nav aria-label="主导航">
+        <ul class="main-nav" id="mainNav">
+          <li><a href="dashboard.html">🏠 首页</a></li>
+          <li><a href="search.html">🔍 搜索</a></li>
+          <li><a href="matches.html">💝 推荐</a></li>
+          <li><a href="chat.html">💬 消息</a></li>
+          <li><a href="groups.html" class="nav-current">👥 群组</a></li>
+          <li><a href="events.html">📅 活动</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="打开菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar avatar-sm" id="headerAvatar" style="background-color: #D45161; color: #fff;">我</span>
+          <span class="user-menu-name" id="headerUserName">用户</span>
+          <span class="arrow-down">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 我的资料</a>
+          <a href="profile-edit.html" role="menuitem">✏️ 编辑资料</a>
+          <a href="privacy.html" role="menuitem">🔒 隐私设置</a>
+          <div class="dropdown-divider"></div>
+          <button class="logout-btn" id="logoutBtn" role="menuitem">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Panel -->
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="dashboard.html">🏠 首页</a>
+    <a href="search.html">🔍 搜索</a>
+    <a href="matches.html">💝 推荐</a>
+    <a href="chat.html">💬 消息</a>
+    <a href="groups.html" class="nav-current">👥 群组</a>
+    <a href="events.html">📅 活动</a>
+    <hr>
+    <a href="profile.html">👤 我的资料</a>
+    <a href="profile-edit.html">✏️ 编辑资料</a>
+    <a href="privacy.html">🔒 隐私设置</a>
+    <a href="#" id="mobileLogoutBtn" style="color: var(--color-danger);">🚪 退出登录</a>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content" id="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>👥 兴趣群组</h1>
+      <p class="subtitle">找到志同道合的朋友，一起分享生活的乐趣</p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs-wrapper">
+      <div class="category-tabs" id="categoryTabs">
+        <button class="category-tab active" data-category="">全部</button>
+        <button class="category-tab" data-category="运动健身">运动健身</button>
+        <button class="category-tab" data-category="文化艺术">文化艺术</button>
+        <button class="category-tab" data-category="生活休闲">生活休闲</button>
+        <button class="category-tab" data-category="学习成长">学习成长</button>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="groupSearch" placeholder="搜索群组名称或描述...">
+    </div>
+
+    <!-- Groups Grid -->
+    <div class="groups-grid" id="groupsGrid">
+      <!-- Filled by JS -->
+    </div>
+
+  </main>
+
+  <!-- Group Detail Modal -->
+  <div class="modal-overlay" id="groupModal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalGroupName">群组名称</h2>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Filled by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modalCloseFooterBtn">关闭</button>
+        <button class="btn btn-primary" id="modalJoinBtn">加入群组</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>❤️ 中年相亲网 — 帮您找到人生第二段幸福</p>
+    <p style="margin-top: 4px;">© 2026 中年相亲网 版权所有</p>
+  </footer>
+
+  <!-- Common JS -->
+  <script src="../js/utils.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/match.js"></script>
+  <script src="../data/seed-data.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // =========================================================================
+    // 1. Auth Guard
+    // =========================================================================
+    if (!Auth.requireAuth('groups.html')) {
+      return;
+    }
+
+    var currentUser = Store.getCurrentUser();
+    var currentUserId = currentUser.id;
+    var activeCategory = '';
+    var searchText = '';
+    var modalGroupId = null;
+    var allGroups = [];
+
+    // =========================================================================
+    // 2. Header
+    // =========================================================================
+    function initHeader() {
+      var userName = currentUser.name || '用户';
+      var initial = userName.charAt(0);
+      document.getElementById('headerUserName').textContent = userName;
+      var avatarEl = document.getElementById('headerAvatar');
+      avatarEl.textContent = initial;
+      var colors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E'];
+      var colorIndex = 0;
+      if (currentUser.id) {
+        for (var i = 0; i < currentUser.id.length; i++) {
+          colorIndex += currentUser.id.charCodeAt(i);
+        }
+        colorIndex = colorIndex % colors.length;
+      }
+      avatarEl.style.backgroundColor = colors[colorIndex];
+    }
+
+    function initUserMenu() {
+      var menu = document.getElementById('userMenu');
+      var trigger = document.getElementById('userMenuTrigger');
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          menu.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          menu.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+      document.getElementById('userDropdown').addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+      document.getElementById('logoutBtn').addEventListener('click', function () {
+        Auth.logout();
+      });
+      var mobileLogout = document.getElementById('mobileLogoutBtn');
+      if (mobileLogout) {
+        mobileLogout.addEventListener('click', function (e) {
+          e.preventDefault();
+          Auth.logout();
+        });
+      }
+    }
+
+    function initMobileNav() {
+      var toggle = document.getElementById('mobileNavToggle');
+      var panel = document.getElementById('mobileNavPanel');
+      toggle.addEventListener('click', function () {
+        var isOpen = panel.classList.contains('open');
+        if (isOpen) {
+          panel.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', '打开菜单');
+        } else {
+          panel.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('aria-label', '关闭菜单');
+        }
+      });
+    }
+
+    // =========================================================================
+    // 3. Helpers
+    // =========================================================================
+    var avatarColors = ['#D45161', '#E8A87C', '#5B8C5A', '#4A7FB5', '#E09F3E', '#C44A58', '#6B5B9E', '#3D8B7E', '#C88052', '#BF3D4D'];
+
+    function getAvatarColor(id) {
+      var sum = 0;
+      if (id) {
+        for (var i = 0; i < id.length; i++) {
+          sum += id.charCodeAt(i);
+        }
+      }
+      return avatarColors[sum % avatarColors.length];
+    }
+
+    function getUserName(userId) {
+      var user = Store.getUserById(userId);
+      return user ? user.name : '未知用户';
+    }
+
+    function getUserInitial(userId) {
+      var name = getUserName(userId);
+      return name.charAt(0);
+    }
+
+    function isGroupMember(group) {
+      var members = group.members || [];
+      return members.indexOf(currentUserId) !== -1;
+    }
+
+    function getMemberCount(group) {
+      return group.memberCount || (group.members ? group.members.length : 0);
+    }
+
+    // =========================================================================
+    // 4. Render Groups Grid
+    // =========================================================================
+    function loadAndRenderGroups() {
+      allGroups = Store.getGroups();
+
+      var filtered = allGroups;
+
+      // Filter by category
+      if (activeCategory) {
+        filtered = filtered.filter(function (g) {
+          return g.category === activeCategory;
+        });
+      }
+
+      // Filter by search
+      if (searchText) {
+        var st = searchText.toLowerCase();
+        filtered = filtered.filter(function (g) {
+          var name = (g.name || '').toLowerCase();
+          var desc = (g.description || '').toLowerCase();
+          return name.indexOf(st) !== -1 || desc.indexOf(st) !== -1;
+        });
+      }
+
+      var grid = document.getElementById('groupsGrid');
+
+      if (filtered.length === 0) {
+        grid.innerHTML =
+          '<div class="groups-empty">' +
+          '<div class="groups-empty-icon">👥</div>' +
+          '<p>暂无符合条件的群组</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < filtered.length; i++) {
+        var group = filtered[i];
+        var isMember = isGroupMember(group);
+        var memberCount = getMemberCount(group);
+        var desc = group.description || '';
+        if (desc.length > 60) {
+          desc = desc.substring(0, 60) + '...';
+        }
+
+        html += '<div class="group-card" data-group-id="' + escapeHtml(group.id) + '">';
+        html += '<div class="group-card-top">';
+        html += '<span class="group-category-badge">' + escapeHtml(group.category || '其他') + '</span>';
+        if (isMember) {
+          html += '<span class="group-joined-badge">✓ 已加入</span>';
+        }
+        html += '</div>';
+        html += '<div class="group-card-name">' + escapeHtml(group.name) + '</div>';
+        html += '<div class="group-card-desc">' + escapeHtml(desc) + '</div>';
+        html += '<div class="group-card-meta">👥 ' + memberCount + ' 位成员</div>';
+        html += '<div class="group-card-actions">';
+        html += '<button class="btn btn-outline group-detail-btn" data-group-id="' + escapeHtml(group.id) + '">查看详情</button>';
+        if (isMember) {
+          html += '<button class="btn btn-outline group-leave-btn" data-group-id="' + escapeHtml(group.id) + '" style="color:var(--color-danger);border-color:var(--color-danger);">退出群组</button>';
+        } else {
+          html += '<button class="btn btn-primary group-join-btn" data-group-id="' + escapeHtml(group.id) + '">加入</button>';
+        }
+        html += '</div>';
+        html += '</div>';
+      }
+
+      grid.innerHTML = html;
+
+      // Attach card click → open modal
+      var cards = grid.querySelectorAll('.group-card');
+      for (var c = 0; c < cards.length; c++) {
+        cards[c].addEventListener('click', function (e) {
+          // Don't open if a button was clicked
+          if (e.target.tagName === 'BUTTON') return;
+          var gid = this.getAttribute('data-group-id');
+          openGroupModal(gid);
+        });
+      }
+
+      // Detail buttons
+      var detailBtns = grid.querySelectorAll('.group-detail-btn');
+      for (var d = 0; d < detailBtns.length; d++) {
+        detailBtns[d].addEventListener('click', function (e) {
+          e.stopPropagation();
+          openGroupModal(this.getAttribute('data-group-id'));
+        });
+      }
+
+      // Join buttons
+      var joinBtns = grid.querySelectorAll('.group-join-btn');
+      for (var j = 0; j < joinBtns.length; j++) {
+        joinBtns[j].addEventListener('click', function (e) {
+          e.stopPropagation();
+          handleJoin(this.getAttribute('data-group-id'));
+        });
+      }
+
+      // Leave buttons
+      var leaveBtns = grid.querySelectorAll('.group-leave-btn');
+      for (var l = 0; l < leaveBtns.length; l++) {
+        leaveBtns[l].addEventListener('click', function (e) {
+          e.stopPropagation();
+          handleLeave(this.getAttribute('data-group-id'));
+        });
+      }
+    }
+
+    // =========================================================================
+    // 5. Join / Leave
+    // =========================================================================
+    function handleJoin(groupId) {
+      var success = Store.joinGroup(groupId, currentUserId);
+      if (success) {
+        var group = Store.getGroupById(groupId);
+        showToast('已加入【' + (group ? group.name : '群组') + '】！', 'success');
+        loadAndRenderGroups();
+        // If modal is open, refresh it
+        if (modalGroupId === groupId && document.getElementById('groupModal').style.display !== 'none') {
+          renderModalContent(groupId);
+        }
+      } else {
+        showToast('加入失败，请重试', 'error');
+      }
+    }
+
+    function handleLeave(groupId) {
+      var group = Store.getGroupById(groupId);
+      if (!confirm('确认退出【' + (group ? group.name : '群组') + '】？')) {
+        return;
+      }
+      var success = Store.leaveGroup(groupId, currentUserId);
+      if (success) {
+        showToast('已退出【' + (group ? group.name : '群组') + '】', 'info');
+        loadAndRenderGroups();
+        // Close modal if left while viewing
+        if (modalGroupId === groupId) {
+          closeModal();
+        }
+      } else {
+        showToast('退出失败，请重试', 'error');
+      }
+    }
+
+    // =========================================================================
+    // 6. Modal
+    // =========================================================================
+    function openGroupModal(groupId) {
+      modalGroupId = groupId;
+      renderModalContent(groupId);
+      document.getElementById('groupModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('groupModal').style.display = 'none';
+      document.body.style.overflow = '';
+      modalGroupId = null;
+    }
+
+    function renderModalContent(groupId) {
+      var group = Store.getGroupById(groupId);
+      if (!group) return;
+
+      var isMember = isGroupMember(group);
+      var memberCount = getMemberCount(group);
+
+      document.getElementById('modalGroupName').textContent = group.name;
+
+      var members = group.members || [];
+      var membersToShow = members.slice(0, 10);
+
+      var memberHtml = '';
+      if (membersToShow.length === 0) {
+        memberHtml = '<p style="color:var(--color-text-tertiary);">暂无成员</p>';
+      } else {
+        for (var i = 0; i < membersToShow.length; i++) {
+          var uid = membersToShow[i];
+          var name = getUserName(uid);
+          var initial = getUserInitial(uid);
+          var color = getAvatarColor(uid);
+          memberHtml +=
+            '<div class="member-item">' +
+            '<span class="member-avatar-sm" style="background-color:' + color + ';">' + escapeHtml(initial) + '</span>' +
+            '<span>' + escapeHtml(name) + '</span>' +
+            '</div>';
+        }
+        if (members.length > 10) {
+          memberHtml += '<div class="member-item" style="color:var(--color-text-tertiary);">等 ' + members.length + ' 位成员...</div>';
+        }
+      }
+
+      var bodyHtml =
+        '<span class="group-detail-category">' + escapeHtml(group.category || '其他') + '</span>' +
+        '<div class="group-detail-meta">' +
+        '<span>👥 ' + memberCount + ' 位成员</span>' +
+        '</div>' +
+        '<div class="group-detail-desc">' + escapeHtml(group.description || '暂无描述') + '</div>' +
+        '<div class="member-list-title">群组成员</div>' +
+        '<div class="member-list">' + memberHtml + '</div>';
+
+      document.getElementById('modalBody').innerHTML = bodyHtml;
+
+      // Update join button
+      var joinBtn = document.getElementById('modalJoinBtn');
+      if (isMember) {
+        joinBtn.textContent = '退出群组';
+        joinBtn.className = 'btn btn-outline';
+        joinBtn.style.color = 'var(--color-danger)';
+        joinBtn.style.borderColor = 'var(--color-danger)';
+        joinBtn.onclick = function () {
+          handleLeave(groupId);
+        };
+      } else {
+        joinBtn.textContent = '加入群组';
+        joinBtn.className = 'btn btn-primary';
+        joinBtn.style.color = '';
+        joinBtn.style.borderColor = '';
+        joinBtn.onclick = function () {
+          handleJoin(groupId);
+        };
+      }
+    }
+
+    function initModal() {
+      // Close buttons
+      document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+      document.getElementById('modalCloseFooterBtn').addEventListener('click', closeModal);
+
+      // Click overlay to close
+      document.getElementById('groupModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeModal();
+        }
+      });
+
+      // Escape key to close
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.getElementById('groupModal').style.display !== 'none') {
+          closeModal();
+        }
+      });
+    }
+
+    // =========================================================================
+    // 7. Category Tabs & Search
+    // =========================================================================
+    function initFilters() {
+      // Category tabs
+      var tabs = document.getElementById('categoryTabs').querySelectorAll('.category-tab');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', function () {
+          // Update active
+          for (var t = 0; t < tabs.length; t++) {
+            tabs[t].classList.remove('active');
+          }
+          this.classList.add('active');
+          activeCategory = this.getAttribute('data-category') || '';
+          loadAndRenderGroups();
+        });
+      }
+
+      // Search
+      document.getElementById('groupSearch').addEventListener('input', debounce(function () {
+        searchText = this.value.trim();
+        loadAndRenderGroups();
+      }, 300));
+    }
+
+    // =========================================================================
+    // 8. Init All
+    // =========================================================================
+    function init() {
+      initHeader();
+      initUserMenu();
+      initMobileNav();
+      initFilters();
+      initModal();
+      loadAndRenderGroups();
+      console.log('👥 群组页面就绪');
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
+</body>
+</html>

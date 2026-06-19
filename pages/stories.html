@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成功故事 - 中年相亲网</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    /* ===== Page-Specific Styles ===== */
+    :root {
+      --warm-red: #c0392b;
+      --warm-red-light: #e74c3c;
+      --warm-pink: #f8e8e8;
+      --warm-cream: #fef9f4;
+      --warm-gold: #d4a574;
+      --warm-brown: #8b5e3c;
+      --warm-shadow: 0 4px 20px rgba(139, 94, 60, 0.12);
+      --warm-shadow-hover: 0 8px 32px rgba(139, 94, 60, 0.2);
+    }
+
+    body {
+      background: var(--warm-cream);
+    }
+
+    /* ===== Public Header ===== */
+    .pub-header {
+      background: #fff;
+      border-bottom: 3px solid var(--warm-red);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pub-header .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 16px;
+    }
+    .pub-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--warm-red);
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pub-header .logo .icon {
+      font-size: 32px;
+    }
+    .pub-header .main-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pub-header .main-nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 16px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .pub-header .main-nav a:hover,
+    .pub-header .main-nav a.active {
+      background: var(--warm-pink);
+      color: var(--warm-red);
+    }
+    .pub-header .auth-btns {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .pub-header .btn-login {
+      padding: 9px 22px;
+      border: 2px solid var(--warm-red);
+      background: transparent;
+      color: var(--warm-red);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .pub-header .btn-login:hover {
+      background: var(--warm-pink);
+    }
+    .pub-header .btn-register {
+      padding: 9px 22px;
+      background: var(--warm-red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .pub-header .btn-register:hover {
+      background: var(--warm-red-light);
+    }
+    .pub-header .user-nav {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .pub-header .user-nav .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--warm-red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .pub-header .user-nav .user-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .pub-header .user-nav .logout-btn {
+      background: none;
+      border: 1px solid #ccc;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* ===== Page Title Area ===== */
+    .page-hero {
+      text-align: center;
+      padding: 48px 24px 20px;
+    }
+    .page-hero h1 {
+      font-size: 36px;
+      color: var(--warm-red);
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    .page-hero .subtitle {
+      font-size: 18px;
+      color: var(--warm-brown);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===== Story Cards ===== */
+    .stories-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+    .story-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--warm-shadow);
+      margin-bottom: 36px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-left: 6px solid var(--warm-red);
+      transition: box-shadow 0.3s;
+    }
+    .story-card:hover {
+      box-shadow: var(--warm-shadow-hover);
+    }
+    .story-card .story-inner {
+      display: flex;
+      gap: 24px;
+      padding: 28px;
+    }
+    .story-card .story-photo {
+      width: 160px;
+      height: 160px;
+      min-width: 160px;
+      background: linear-gradient(135deg, #fce4e4 0%, #f8d0d0 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: var(--warm-red);
+      border: 3px dashed #e8b4b4;
+    }
+    .story-card .story-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .story-card .story-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 6px;
+    }
+    .story-card .story-summary {
+      font-size: 18px;
+      font-style: italic;
+      color: var(--warm-brown);
+      margin: 0 0 16px;
+      line-height: 1.6;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #e8d5c8;
+    }
+    .story-card .story-content p {
+      font-size: 20px;
+      line-height: 2;
+      color: #444;
+      margin: 0 0 12px;
+      text-indent: 2em;
+    }
+    .story-card .story-content p:last-child {
+      margin-bottom: 0;
+    }
+    .story-card .story-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      background: #fdf8f5;
+      border-top: 1px solid #f0e0d6;
+    }
+    .story-card .story-date {
+      font-size: 15px;
+      color: #999;
+    }
+    .story-card .bless-btn {
+      background: var(--warm-red);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .story-card .bless-btn:hover {
+      background: var(--warm-red-light);
+      transform: scale(1.04);
+    }
+    .story-card .bless-btn .count {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* ===== Heart Divider ===== */
+    .heart-divider {
+      text-align: center;
+      padding: 8px 0 32px;
+      font-size: 28px;
+      color: var(--warm-red);
+      letter-spacing: 12px;
+      user-select: none;
+    }
+    .heart-divider:last-of-type {
+      display: none;
+    }
+    .quote-divider {
+      text-align: center;
+      padding: 0 0 36px;
+      font-size: 17px;
+      color: var(--warm-brown);
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    /* ===== CTA Banner ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #d4684a 100%);
+      color: #fff;
+      text-align: center;
+      padding: 48px 24px;
+      margin: 0 0 0;
+      border-radius: 0;
+    }
+    .cta-banner h2 {
+      font-size: 30px;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+    .cta-banner p {
+      font-size: 18px;
+      margin: 0 0 24px;
+      opacity: 0.9;
+    }
+    .cta-banner .cta-btn {
+      display: inline-block;
+      background: #fff;
+      color: var(--warm-red);
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-size: 20px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+    }
+    .cta-banner .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: #999;
+      font-size: 20px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 700px) {
+      .story-card .story-inner {
+        flex-direction: column;
+        align-items: center;
+      }
+      .story-card .story-photo {
+        width: 120px;
+        height: 120px;
+        min-width: auto;
+        font-size: 48px;
+      }
+      .pub-header .inner {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .pub-header .main-nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+      .pub-header .main-nav a {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Public Header ===== -->
+<header class="pub-header">
+  <div class="inner">
+    <a href="../index.html" class="logo">
+      <span class="icon">💕</span>
+      <span>中年相亲网</span>
+    </a>
+    <nav class="main-nav">
+      <a href="../index.html">首页</a>
+      <a href="safety.html">安全指南</a>
+      <a href="stories.html" class="active">成功故事</a>
+    </nav>
+    <div class="auth-btns" id="authBtns">
+      <button class="btn-login" onclick="window.location.href='login.html'">登录</button>
+      <button class="btn-register" onclick="window.location.href='register.html'">免费注册</button>
+    </div>
+    <div class="user-nav" id="userNav">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <span class="user-name" id="userNameDisplay">用户</span>
+      <button class="logout-btn" onclick="doLogout()">退出</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Page Title ===== -->
+<section class="page-hero">
+  <h1>成功故事</h1>
+  <p class="subtitle">每一段缘分都值得被祝福，看看他们的幸福故事</p>
+</section>
+
+<!-- ===== Stories Container ===== -->
+<div class="stories-container" id="storiesContainer">
+  <!-- Rendered by JavaScript -->
+</div>
+
+<!-- ===== CTA Banner ===== -->
+<section class="cta-banner">
+  <h2>您也想拥有这样的幸福吗？</h2>
+  <p>缘分就在身边，勇敢迈出第一步</p>
+  <a href="register.html" class="cta-btn">免费注册，开启您的缘分之旅</a>
+</section>
+
+<!-- ===== Common Scripts ===== -->
+<script src="../js/utils.js"></script>
+<script src="../js/store.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/match.js"></script>
+<script src="../data/seed-data.js"></script>
+
+<script>
+(function() {
+
+// ===== Hardcoded Stories =====
+var hardcodedStories = [
+  {
+    id: 1,
+    title: '李大爷和王阿姨',
+    summary: '通过平台认识，交往半年后喜结连理，儿女们全力支持。',
+    content: [
+      '李大爷今年62岁，退休前是一家国企的工程师。老伴在三年前因病去世后，他一直独自生活。虽然儿女们都很孝顺，但工作的忙碌让他们无法时常陪伴。李大爷每天的生活就是去公园散步、下棋，日子过得平淡而孤独。',
+      '在女儿的鼓励下，李大爷半信半疑地注册了中年相亲网。他没想到，第三天就收到了王阿姨的消息。王阿姨是一位退休的幼儿园老师，性格开朗，喜欢唱歌跳舞。两人第一次在平台上聊天就聊了两个多小时，从年轻时的经历聊到退休后的生活。',
+      '第一次见面约在人民公园的茶馆。李大爷特意穿上了女儿给他买的新外套，王阿姨则带了自己亲手做的桂花糕。那天下午，从两点聊到傍晚，两个人都觉得相见恨晚。',
+      '交往半年后，在双方儿女的祝福下，李大爷和王阿姨领取了结婚证。现在的他们每天一起买菜、做饭、逛公园，生活充满了欢声笑语。王阿姨说："我们这个年纪，找一个知冷知热的人，比什么都重要。"'
+    ],
+    date: '2025年10月15日',
+    blessings: 328
+  },
+  {
+    id: 2,
+    title: '退休教师的第二春',
+    summary: '张老师和李老师在平台上重逢，惊喜地发现他们是大学校友。',
+    content: [
+      '张老师和李老师都是退休的中学教师，一个教语文，一个教数学。他们年轻时在同一所师范大学读书，却因为不同系而从未相识。几十年后，命运的线将他们牵到了一起。',
+      '张老师退休后开始学习使用智能手机，在朋友的推荐下注册了中年相亲网。他填写资料时非常认真，把"热爱读书、喜欢古典音乐、希望能找到一位有共同语言的伴侣"写得很详细。李老师恰好被这些文字打动，主动发了一条问候信息。',
+      '两人在聊天中惊讶地发现，他们竟然是同一所大学毕业的，还是同一届！虽然当时未曾谋面，但回忆起校园时光，两人有说不完的共同记忆——同样的食堂、同样的图书馆、同样的小路。',
+      '如今，张老师和李老师已经在一起两年了。他们一起去老年大学学书法，一起参加读书会，还计划着疫情后去欧洲旅行。张老师笑着说："年轻时错过了，老了补上，这就是最好的安排。"'
+    ],
+    date: '2025年8月22日',
+    blessings: 256
+  },
+  {
+    id: 3,
+    title: '异地又如何',
+    summary: '北京的王先生和天津的赵女士通过平台相识，克服距离走到了一起。',
+    content: [
+      '王先生在北京，赵女士在天津，两地相距不过一百多公里，但对于中老年人来说，异地恋需要更多的勇气和信任。',
+      '两人在平台上匹配后，王先生先发了消息。他说，当时看到赵女士的照片和简介，就觉得这个人心地善良。赵女士则被王先生的真诚和幽默所打动。他们每天都会视频通话，分享一天中的点滴小事。',
+      '每个周末，王先生都会坐高铁去天津看赵女士。有时候赵女士也会来北京。他们一起去逛博物馆、看京剧、品尝各地的美食。两地之间的高铁成了他们的"鹊桥"。',
+      '交往一年后，王先生决定搬到天津生活。他说："到了我们这个年纪，物质条件不是最重要的，身边有个知心人比什么都珍贵。"如今两人已经生活在一起，每天散步、聊天、做家务，平淡却幸福。'
+    ],
+    date: '2025年6月10日',
+    blessings: 189
+  },
+  {
+    id: 4,
+    title: '孩子的祝福',
+    summary: '陈女士在子女的鼓励下注册平台，遇到了同样丧偶的刘先生，两颗心彼此温暖。',
+    content: [
+      '陈女士的丈夫五年前因癌症去世，留下她和上大学的儿子相依为命。儿子大学毕业后在外地工作，一直担心妈妈一个人孤单。他帮妈妈报名了中年相亲网，还帮妈妈挑选了照片、填写了资料。',
+      '起初陈女士很抗拒，觉得这个年纪还谈什么感情。但在儿子的坚持下，她开始尝试浏览平台上的信息。有一天，她看到了一张温和的面孔——刘先生，一位退休的工程师，同样丧偶，独自把女儿培养成了医生。',
+      '两人第一次聊天就聊到了深夜，相似的经历让他们对彼此多了一份理解。陈女士说："我们不需要轰轰烈烈的爱情，只是希望在余下的日子里，有人一起吃饭、一起说话、一起看夕阳。"',
+      '如今陈女士和刘先生已经在一起一年半了。最让陈女士欣慰的是，双方的孩子都非常支持，逢年过节两家人会聚在一起，热热闹闹的。陈女士的儿子说："看到妈妈重新笑起来，我心里的大石头终于落地了。"'
+    ],
+    date: '2025年5月8日',
+    blessings: 302
+  },
+  {
+    id: 5,
+    title: '共同的爱好让我们走到一起',
+    summary: '都热爱书法的两个人在平台上发现彼此，笔墨之间生出情愫。',
+    content: [
+      '赵老师和孙阿姨都热爱书法，他们都在平台的"兴趣爱好"一栏里写了"书法"。平台的推荐系统把他们匹配到了一起。',
+      '他们的第一次见面约在文化宫的书法教室。赵老师带了自己写的《兰亭序》，孙阿姨带了自己临摹的《心经》。两人一见如故，当场就交流起了笔法和心得。',
+      '从那以后，每个周六他们都会一起去书法班上课，下课后再一起喝茶、聊天。有时候也会一起去参观书画展览，或者去文房四宝店逛逛。书法成了他们感情最好的纽带。',
+      '孙阿姨说："我们这个年纪的人，找个兴趣爱好一样的伴侣太难得了。现在我们每天一起练字，他指点我楷书，我教他行书，日子过得充实又快乐。"赵老师补充道："墨香里有我们最浪漫的晚年。"'
+    ],
+    date: '2025年3月18日',
+    blessings: 215
+  },
+  {
+    id: 6,
+    title: '最美好的晚年有你陪伴',
+    summary: '68岁的周先生和65岁的吴女士在平台上相遇，彼此陪伴，安享晚年。',
+    content: [
+      '周先生68岁，退休前是工厂的车间主任。吴女士65岁，退休前是医院的护士长。两人都是在丧偶多年后，在家人的劝说下尝试了中年相亲网。',
+      '他们的故事没有太多波澜，但每一个细节都温暖人心。第一次见面时，周先生提前半小时就到了约定的地点，还特意去买了一把吴女士喜欢的花。吴女士说，这个细节让她觉得周先生是一个细心、值得信赖的人。',
+      '两人相处后，周先生每天都会去接吴女士一起去菜市场买菜，然后回家一起做饭。下午他们会一起去公园散步，或者在家看看电视、听听戏曲。吴女士的厨艺很好，周先生总是吃得津津有味。',
+      '周先生说："我们这个年纪，不用追求什么轰轰烈烈，有人陪你说说话、吃吃饭，就是最好的晚年。"吴女士也说："每天早上醒来，知道有人在身边，心里就特别踏实。"'
+    ],
+    date: '2025年1月28日',
+    blessings: 420
+  }
+];
+
+// ===== Quotation Lines for Dividers =====
+var quotes = [
+  '"少年夫妻老来伴，最美不过夕阳红。"',
+  '"幸福不分年龄，爱情不论早晚。"',
+  '"执子之手，与子偕老，任何时候开始都不晚。"',
+  '"人生下半场，愿有人陪你立黄昏，有人问你粥可温。"',
+  '"每一段缘分都是生命中最美的礼物。"'
+];
+
+// ===== Blessing Counts (from localStorage) =====
+function getBlessings() {
+  try {
+    var data = localStorage.getItem('storyBlessings');
+    return data ? JSON.parse(data) : {};
+  } catch(e) {
+    return {};
+  }
+}
+function saveBlessings(blessings) {
+  try {
+    localStorage.setItem('storyBlessings', JSON.stringify(blessings));
+  } catch(e) {}
+}
+
+// ===== Get Stories =====
+function getStories() {
+  // Try Store.getStories() if available
+  if (typeof Store !== 'undefined' && typeof Store.getStories === 'function') {
+    var storeStories = Store.getStories();
+    if (storeStories && storeStories.length > 0) {
+      return storeStories;
+    }
+  }
+  // Try localStorage
+  try {
+    var data = localStorage.getItem('stories');
+    if (data) {
+      var parsed = JSON.parse(data);
+      if (parsed && parsed.length > 0) return parsed;
+    }
+  } catch(e) {}
+  // Fallback to hardcoded
+  return hardcodedStories;
+}
+
+// ===== Render =====
+function renderStories() {
+  var container = document.getElementById('storiesContainer');
+  var stories = getStories();
+  var blessings = getBlessings();
+
+  if (!stories || stories.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无成功故事，敬请期待……</div>';
+    return;
+  }
+
+  var html = '';
+  stories.forEach(function(story, index) {
+    var storyBlessings = (blessings[story.id] || 0) + (story.blessings || 0);
+    var contentParagraphs = '';
+    if (story.content && Array.isArray(story.content)) {
+      story.content.forEach(function(p) {
+        contentParagraphs += '<p>' + escapeHtml(p) + '</p>';
+      });
+    } else if (story.content) {
+      contentParagraphs = '<p>' + escapeHtml(String(story.content)) + '</p>';
+    }
+
+    html += '<article class="story-card">';
+    html += '  <div class="story-inner">';
+    html += '    <div class="story-photo" aria-label="照片占位">💑</div>';
+    html += '    <div class="story-body">';
+    html += '      <h2 class="story-title">' + escapeHtml(story.title) + '</h2>';
+    html += '      <p class="story-summary">' + escapeHtml(story.summary || '') + '</p>';
+    html += '      <div class="story-content">' + contentParagraphs + '</div>';
+    html += '    </div>';
+    html += '  </div>';
+    html += '  <div class="story-footer">';
+    html += '    <span class="story-date">📅 ' + escapeHtml(story.date || '') + '</span>';
+    html += '    <button class="bless-btn" onclick="blessStory(' + story.id + ')">';
+    html += '      ❤️ 祝福他们 <span class="count" id="blessCount-' + story.id + '">(' + storyBlessings + ')</span>';
+    html += '    </button>';
+    html += '  </div>';
+    html += '</article>';
+
+    // Add heart divider or quote divider between stories
+    if (index < stories.length - 1) {
+      if (index % 2 === 0) {
+        html += '<div class="heart-divider">❤️ ❤️ ❤️</div>';
+      } else {
+        var quote = quotes[index % quotes.length];
+        html += '<div class="quote-divider">' + escapeHtml(quote) + '</div>';
+      }
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== Helper =====
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
+// ===== Bless Story =====
+window.blessStory = function(storyId) {
+  var blessings = getBlessings();
+  blessings[storyId] = (blessings[storyId] || 0) + 1;
+  saveBlessings(blessings);
+  var countEl = document.getElementById('blessCount-' + storyId);
+  if (countEl) {
+    countEl.textContent = '(' + (blessings[storyId] + (getStories().find(function(s){return s.id===storyId;}) || {}).blessings || 0) + ')';
+  }
+  // Simple toast
+  showToast('感谢您的祝福！❤️');
+};
+
+function showToast(msg) {
+  var toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:12px 28px;border-radius:30px;font-size:18px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);animation:fadeInUp 0.3s ease;pointer-events:none;';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s';
+    setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+  }, 2000);
+}
+
+// ===== Header: Check Login State =====
+function updateHeader() {
+  var currentUser = null;
+  try {
+    var stored = localStorage.getItem('currentUser');
+    if (stored) currentUser = JSON.parse(stored);
+    if (!currentUser && typeof Auth !== 'undefined' && typeof Auth.getCurrentUser === 'function') {
+      currentUser = Auth.getCurrentUser();
+    }
+  } catch(e) {}
+
+  var authBtns = document.getElementById('authBtns');
+  var userNav = document.getElementById('userNav');
+
+  if (currentUser && currentUser.name) {
+    if (authBtns) authBtns.style.display = 'none';
+    if (userNav) {
+      userNav.style.display = 'flex';
+      document.getElementById('userNameDisplay').textContent = currentUser.name;
+      document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0);
+    }
+  } else {
+    if (authBtns) authBtns.style.display = 'flex';
+    if (userNav) userNav.style.display = 'none';
+  }
+}
+
+window.doLogout = function() {
+  try { localStorage.removeItem('currentUser'); } catch(e) {}
+  if (typeof Auth !== 'undefined' && typeof Auth.logout === 'function') {
+    Auth.logout();
+  }
+  updateHeader();
+  // Also update main nav for auth pages
+  showToast('已退出登录');
+};
+
+// ===== Init =====
+renderStories();
+updateHeader();
+
+})();
+</script>
+
+</body>
+</html>
