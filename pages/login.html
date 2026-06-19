@@ -455,7 +455,7 @@
             return;
           }
           // Fallback: check localStorage
-          var stored = localStorage.getItem('xiangqin_current_user');
+          var stored = localStorage.getItem('dating_app_currentUser');
           if (stored) {
             var user = JSON.parse(stored);
             if (user && user.id) {
@@ -592,46 +592,49 @@
 
       // ========== Fallback Login (when Store is unavailable) ==========
       function fallbackLogin(phoneOrEmail, password) {
-        // Try to find user in localStorage "xiangqin_users"
+        // Try to find user in localStorage "dating_app_users"
         try {
-          var usersJson = localStorage.getItem('xiangqin_users');
+          var usersJson = localStorage.getItem('dating_app_users');
           if (usersJson) {
             var users = JSON.parse(usersJson);
             if (!Array.isArray(users)) { users = []; }
 
+            var hashedPw = typeof simpleHash === 'function' ? simpleHash(password) : password;
             var found = users.find(function(u) {
               return (u.phone === phoneOrEmail || u.email === phoneOrEmail)
-                && u.password === password;
+                && u.password === hashedPw;
             });
 
             if (found) {
-              if (found.disabled) {
+              if (found.status === 'blocked') {
                 return { success: false, code: 'USER_DISABLED', message: '该账号已被禁用' };
               }
-              localStorage.setItem('xiangqin_current_user', JSON.stringify(found));
+              localStorage.setItem('dating_app_currentUser', JSON.stringify(found));
               return { success: true };
             }
           }
 
-          // Try seed data users
-          if (typeof SEED_USERS !== 'undefined' && Array.isArray(SEED_USERS)) {
-            var seedFound = SEED_USERS.find(function(u) {
+          // Try seed data users (SEED_DATA)
+          if (typeof SEED_DATA !== 'undefined' && SEED_DATA.USERS) {
+            var seedUsers = SEED_DATA.USERS;
+            var seedFound = seedUsers.find(function(u) {
               return (u.phone === phoneOrEmail || u.email === phoneOrEmail)
                 && u.password === password;
             });
             if (seedFound) {
-              if (seedFound.disabled) {
+              if (seedFound.status === 'blocked') {
                 return { success: false, code: 'USER_DISABLED', message: '该账号已被禁用' };
               }
               // Save to localStorage so Store can find it
               var existingUsers = [];
               try {
-                var raw = localStorage.getItem('xiangqin_users');
+                var raw = localStorage.getItem('dating_app_users');
                 if (raw) { existingUsers = JSON.parse(raw); }
               } catch(e) {}
+              seedFound.password = typeof simpleHash === 'function' ? simpleHash(seedFound.password) : seedFound.password;
               existingUsers.push(seedFound);
-              localStorage.setItem('xiangqin_users', JSON.stringify(existingUsers));
-              localStorage.setItem('xiangqin_current_user', JSON.stringify(seedFound));
+              localStorage.setItem('dating_app_users', JSON.stringify(existingUsers));
+              localStorage.setItem('dating_app_currentUser', JSON.stringify(seedFound));
               return { success: true };
             }
           }

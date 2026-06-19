@@ -1071,5 +1071,8 @@
   // 挂载到全局
   window.Store = Store;
 
+  // 自动初始化数据（确保种子数据在任何页面都能加载）
+  Store.init();
+
   console.log('✅ store.js 已加载 - 数据存储层就绪');
 })();

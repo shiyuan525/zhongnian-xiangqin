@@ -1204,7 +1204,7 @@
             window.location.replace('dashboard.html');
             return;
           }
-          var stored = localStorage.getItem('xiangqin_current_user');
+          var stored = localStorage.getItem('dating_app_currentUser');
           if (stored) {
             var user = JSON.parse(stored);
             if (user && user.id) {
@@ -1868,7 +1868,7 @@
       // ========== Fallback Register (when Store is unavailable) ==========
       function fallbackRegister(userData) {
         try {
-          var usersJson = localStorage.getItem('xiangqin_users');
+          var usersJson = localStorage.getItem('dating_app_users');
           var users = usersJson ? JSON.parse(usersJson) : [];
           if (!Array.isArray(users)) users = [];
 
@@ -1881,8 +1881,8 @@
           }
 
           // Check seed data duplicates
-          if (typeof SEED_USERS !== 'undefined' && Array.isArray(SEED_USERS)) {
-            var seedDup = SEED_USERS.find(function(u) {
+          if (typeof SEED_DATA !== 'undefined' && SEED_DATA.USERS) {
+            var seedDup = SEED_DATA.USERS.find(function(u) {
               return u.phone === userData.phone;
             });
             if (seedDup) {
@@ -1890,9 +1890,13 @@
             }
           }
 
+          // Hash password before storing
+          if (typeof simpleHash === 'function') {
+            userData.password = simpleHash(userData.password);
+          }
           users.push(userData);
-          localStorage.setItem('xiangqin_users', JSON.stringify(users));
-          localStorage.setItem('xiangqin_current_user', JSON.stringify(userData));
+          localStorage.setItem('dating_app_users', JSON.stringify(users));
+          localStorage.setItem('dating_app_currentUser', JSON.stringify(userData));
           return { success: true };
         } catch (e) {
           return { success: false, message: '存储失败：' + e.message };
